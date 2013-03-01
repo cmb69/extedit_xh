@@ -1,0 +1,40 @@
+<!-- Extedit: info -->
+<h1><a href="http://3-magi.net/?CMSimple_XH/Extedit_XH">Extedit_XH</a></h1>
+<h4><?php echo $ptx['synopsis'];?></h4>
+<p>{{{PLUGIN:extedit('<?php echo $ptx['synopsis_username'];?>', '<?php echo
+$ptx['synopsis_textname'];?>');}}}</p>
+<dl>
+    <dt><?php echo $ptx['synopsis_username'];?>:</dt>
+    <dd><?php echo $ptx['synopsis_username_desc'];?></dd>
+    <dt><?php echo $ptx['synopsis_textname'];?>:</dt>
+    <dd><?php echo $ptx['synopsis_textname_desc'];?></dd>
+</dl>
+<hr />
+<h4><?php echo $ptx['syscheck'];?></h4>
+<ul style="list-style: none">
+<?php foreach ($checks as $check => $state):?>
+    <li>
+        <img src="<?php echo $images[$state];?>" alt="<?php echo
+        $images[$state];?>" style="padding-right: 1em"/>
+        <?php echo $check;?>
+    </li>
+<?php endforeach;?>
+</ul>
+<hr />
+<h4><?php echo $ptx['about'];?></h4>
+<img src="<?php echo $icon;?>" style="float: left; width: 128px; height: 128px"
+alt="Plugin Icon" />
+<p>Version: <?php echo $version;?></p>
+<p>Copyright &copy; 2012-2013 <a href="http://3-magi.net/">Christoph M.
+Becker</a></p>
+<p style="text-align: justify">This program is free software: you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.</p>
+<p style="text-align: justify">This program is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHAN&shy;TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.</p>
+<p style="text-align: justify">You should have received a copy of the GNU
+General Public License along with this program. If not, see
+<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
