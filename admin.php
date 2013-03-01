@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Back-end of Extedit_XH.
+ *
+ * @package	Extedit
+ * @copyright	Copyright (c) 2013 Christoph M. Becker <http://3-magi.net/>
+ * @license	http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @version     $Id$
+ * @link	http://3-magi.net/?CMSimple_XH/Extedit_XH
+ */
+
+
+/**
+ * Returns the plugin information view.
+ *
+ * @return string  The (X)HTML.
+ */
 function Extedit_info() // RELEASE-TODO: syscheck
 {
     global $pth, $tx, $plugin_tx;
@@ -37,6 +53,7 @@ function Extedit_info() // RELEASE-TODO: syscheck
     );
     return Extedit_view('info', $bag);
 }
+
 
 /*
  * Handle plugin administration.
