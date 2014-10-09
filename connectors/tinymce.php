@@ -1,6 +1,5 @@
 <?php
 
-
 function extedit_tinymce_init()
 {
     if (session_id() == '') {
@@ -34,3 +33,5 @@ function extedit_imagepicker(field_name, url, type, win) {
 </script>
 EOS;
 }
+
+?>
