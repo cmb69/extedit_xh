@@ -3,13 +3,16 @@
 /**
  * Front-end of Extedit_XH.
  *
- * @package	Extedit
- * @copyright	Copyright (c) 2013 Christoph M. Becker <http://3-magi.net/>
- * @license	http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version     $Id$
- * @link	http://3-magi.net/?CMSimple_XH/Extedit_XH
+ * PHP versions 4 and 5
+ *
+ * @category  CMSimple_XH
+ * @package   Extedit
+ * @author    Christoph M. Becker <cmbecker69@gmx.de>
+ * @copyright 2013-2014 Christoph M. Becker <http://3-magi.net/>
+ * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @version   SVN: $Id$
+ * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
-
 
 /*
  * Prevent direct access.
@@ -20,12 +23,10 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
     exit('Access forbidden');
 }
 
-
 /**
  * The plugin version.
  */
 define('EXTEDIT_VERSION', '1alpha1');
-
 
 /*
  * For backward compatibility.
@@ -34,13 +35,14 @@ if (!defined('XH_ADM')) {
     define('XH_ADM', $adm);
 }
 
-
 /**
  * Returns the accessible images in the images folder or a subfolder thereof.
  *
- * @global array  The paths of system files and folders.
- * @param string $subfolder
+ * @param string $subfolder A subfolder path.
+ *
  * @return array
+ *
+ * @global array The paths of system files and folders.
  */
 function Extedit_images($subfolder = '')
 {
@@ -51,8 +53,8 @@ function Extedit_images($subfolder = '')
     if (($dh = opendir($dn)) !== false) {
         while (($fn = readdir($dh)) !== false) {
             if ($fn[0] != '.' && is_file($ffn = $dn . $fn) && is_readable($ffn)
-                && getimagesize($ffn) !== false)
-            {
+                && getimagesize($ffn) !== false
+            ) {
                 $images[$fn] = $ffn;
             }
         }
@@ -60,14 +62,13 @@ function Extedit_images($subfolder = '')
     return $images;
 }
 
-
 /**
- * Returns the path of the content folder.
- * If it doesn't exists, tries to create it.
- * If that fails, an error is reported.
+ * Returns the path of the content folder. If it doesn't exists, tries to create
+ * it. If that fails, an error is reported.
  *
- * @global array  The paths of system files and folders.
  * @return string
+ *
+ * @global array The paths of system files and folders.
  */
 function Extedit_contentFolder()
 {
@@ -82,11 +83,11 @@ function Extedit_contentFolder()
     return $dn;
 }
 
-
 /**
  * Returns the modification time of an extedit.
  *
- * @param string $textname
+ * @param string $textname A text name.
+ *
  * @return int
  */
 function Extedit_mtime($textname)
@@ -99,13 +100,12 @@ function Extedit_mtime($textname)
     }
 }
 
-
 /**
- * Returns the content of an extedit file.
- * If the file doesn't exist, returns an empty string.
- * If the file can't be read, an error is reported.
+ * Returns the content of an extedit file. If the file doesn't exist, returns
+ * an empty string. If the file can't be read, an error is reported.
  *
- * @param string $textname
+ * @param string $textname A text name.
+ *
  * @return string
  */
 function Extedit_read($textname)
@@ -119,21 +119,20 @@ function Extedit_read($textname)
     return $contents;
 }
 
-
 /**
- * Writes contents back to an extedit file.
- * If that fails, an error is reported.
+ * Writes contents back to an extedit file. If that fails, an error is reported.
  *
- * @param string $textname
- * @param string $content
+ * @param string $textname A text name.
+ * @param string $contents Some contents.
+ *
  * @return void
  */
 function Extedit_write($textname, $contents)
 {
     $fn = Extedit_contentFolder() . $textname . '.htm';
     if (($fp = fopen($fn, 'w')) === false
-        || fwrite($fp, $contents) === false)
-    {
+        || fwrite($fp, $contents) === false
+    ) {
         e('cntsave', 'content', $fn);
     }
     if (!empty($fp)) {
@@ -141,15 +140,16 @@ function Extedit_write($textname, $contents)
     }
 }
 
-
 /**
  * Returns an instantiated view template.
  *
- * @global array  The paths of system files and folders.
- * @global array  The configuration of the core.
- * @param string $_template  The path of the template file.
- * @param array $_bag  The variables.
+ * @param string $_template The path of the template file.
+ * @param array  $_bag      The variables.
+ *
  * @return string
+ *
+ * @global array The paths of system files and folders.
+ * @global array The configuration of the core.
  */
 function Extedit_view($_template, $_bag)
 {
@@ -169,15 +169,15 @@ function Extedit_view($_template, $_bag)
     return $view;
 }
 
-
 /**
  * Returns the (X)HTML document constituting the image picker.
  * If user is not logged in as member, returns FALSE.
  *
- * @global array  The paths of system files and folders.
- * @global array  The configuration of the plugins.
- * @global array  The localization of the plugins.
  * @return string
+ *
+ * @global array The paths of system files and folders.
+ * @global array The configuration of the plugins.
+ * @global array The localization of the plugins.
  */
 function Extedit_imagePicker()
 {
@@ -204,15 +204,17 @@ function Extedit_imagePicker()
     }
 }
 
-
 /**
- * Returns the sanitized text name.
- * If $textname is empty, returns the sanitized heading of the current page.
+ * Returns the sanitized text name. If $textname is empty, returns the sanitized
+ * heading of the current page.
  *
- * @global array  The headings of the pages.
- * @global int  The current page index.
- * @global int  The number of pages.
+ * @param string $textname A text name.
+ *
  * @return string
+ *
+ * @global array The headings of the pages.
+ * @global int   The current page index.
+ * @global int   The number of pages.
  */
 function Extedit_textname($textname)
 {
@@ -226,12 +228,12 @@ function Extedit_textname($textname)
     return $textname;
 }
 
-
 /**
- * Returns the content with plugin calls evaluated,
- * if allowed in the configuration.
+ * Returns the content with plugin calls evaluated, if allowed in the
+ * configuration.
  *
- * @param string $content
+ * @param string $content A content.
+ *
  * @return string
  */
 function Extedit_evaluated($content)
@@ -245,17 +247,17 @@ function Extedit_evaluated($content)
     return $content;
 }
 
-
 /**
- * Initializes the configured editor for extedit.
- * Makes available an image picker, if the editor is tinyMCE.
+ * Initializes the configured editor for extedit. Makes available an image
+ * picker, if the editor is tinyMCE.
  *
- * @todo: image picker for other editors
+ * @return void
  *
  * @global array  The paths of system files and folders.
- * @global string  (X)HTML to insert into the `head' element.
+ * @global string (X)HTML to insert into the `head' element.
  * @global array  The configuration of the system core.
- * @return void
+ *
+ * @todo: image picker for other editors
  */
 function Extedit_initEditor()
 {
@@ -278,20 +280,19 @@ function Extedit_initEditor()
     init_editor(array('xh-editor'), $config);
 }
 
-
 /**
  * Returns the view of an extedit.
  *
- * @access public
+ * @param string $username The name of the user, who may edit this extedit.
+ * @param string $textname The name of the extedit.
  *
- * @global int  The current page index.
- * @global string  The list of error messages.
+ * @return string (X)HTML.
+ *
+ * @global int    The current page index.
+ * @global string The list of error messages.
  * @global array  The localization of the plugins.
- * @param string $username  The name of the user, who may edit this extedit.
- * @param string $textname  The name of the extedit.
- * @return string  The (X)HTML.
  */
-function Extedit($username, $textname = '')
+function extedit($username, $textname = '')
 {
     global $s, $e, $plugin_tx;
 
@@ -304,13 +305,12 @@ function Extedit($username, $textname = '')
         session_start();
     }
     if (XH_ADM
-        || isset($_SESSION['username']) && $username == $_SESSION['username'])
-    {
+        || isset($_SESSION['username']) && $username == $_SESSION['username']
+    ) {
         $mtime = Extedit_mtime($textname);
         if (isset($_POST["extedit_${textname}_text"])) {
             $content = stsl($_POST["extedit_${textname}_text"]);
-            if ($_POST["extedit_${textname}_mtime"] >= $mtime)
-            {
+            if ($_POST["extedit_${textname}_mtime"] >= $mtime) {
                 Extedit_write($textname, $content);
                 $mtime = time(); // to avoid calling clearstatcache()
             } else {
@@ -325,8 +325,10 @@ function Extedit($username, $textname = '')
                 . ' rows="25" class="xh-editor" style="width: 100%">'
                 . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
                 . '</textarea>'
-                . tag('input type="hidden" name="extedit_' . $textname . '_mtime"'
-                      . ' value="' . $mtime . '"')
+                . tag(
+                    'input type="hidden" name="extedit_' . $textname . '_mtime"'
+                    . ' value="' . $mtime . '"'
+                )
                 . '</form>';
             Extedit_initEditor();
         } else {
@@ -338,7 +340,6 @@ function Extedit($username, $textname = '')
     }
     return $o;
 }
-
 
 /*
  * Handle request for image picker.
