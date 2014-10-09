@@ -10,6 +10,7 @@
             <directory suffix=".php">classes</directory>
             <file>admin.php</file>
             <file>index.php</file>
+            <file>connectors/tinymce.php</file>
         </whitelist>
     </filter>
     <logging>

@@ -5,6 +5,7 @@
     <fileset id="php-sources" dir=".">
         <include name="classes/*.php"/>
         <include name="index.php"/>
+        <include name="connectors/*.php"/>
     </fileset>
 
     <fileset id="js-sources" dir=".">
