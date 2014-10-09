@@ -32,8 +32,6 @@ class Extedit_Controller
      */
     public function dispatch()
     {
-        global $extedit, $admin, $action, $o;
-
         /*
          * Handle request for image picker.
          */
@@ -42,19 +40,46 @@ class Extedit_Controller
             exit;
         }
         if (XH_ADM) {
-            /*
-             * Handle plugin administration.
-             */
-            if (isset($extedit) && $extedit == 'true') {
-                $o .= print_plugin_admin('off');
-                switch ($admin) {
-                case '':
-                    $o .= $this->info();
-                    break;
-                default:
-                    $o .= plugin_admin_common($action, $admin, 'extedit');
-                }
+            if ($this->isAdministrationRequested()) {
+                $this->handleAdministration();
             }
+        }
+    }
+
+    /**
+     * Returns whether the plugin administration is requested.
+     *
+     * @return bool
+     *
+     * @global string Whether the query parameter <var>extedit</var> is set.
+     */
+    protected function isAdministrationRequested()
+    {
+        global $extedit;
+
+        return isset($extedit) && $extedit == 'true';
+    }
+
+    /**
+     * Handles the plugin administration.
+     *
+     * @return void
+     *
+     * @global string The value of the <var>admin</var> GP parameter.
+     * @global string The value of the <var>action</var> GP parameter.
+     * @global string The (X)HTML of the contents area.
+     */
+    protected function handleAdministration()
+    {
+        global $admin, $action, $o;
+
+        $o .= print_plugin_admin('off');
+        switch ($admin) {
+        case '':
+            $o .= $this->renderInfo();
+            break;
+        default:
+            $o .= plugin_admin_common($action, $admin, 'extedit');
         }
     }
 
@@ -74,11 +99,11 @@ class Extedit_Controller
         $dn = rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
         $images = array();
         if (($dh = opendir($dn)) !== false) {
-            while (($fn = readdir($dh)) !== false) {
-                if ($fn[0] != '.' && is_file($ffn = $dn . $fn) && is_readable($ffn)
-                    && getimagesize($ffn) !== false
+            while (($entry = readdir($dh)) !== false) {
+                if ($entry[0] != '.' && is_file($ffn = $dn . $entry)
+                    && is_readable($ffn) && getimagesize($ffn) !== false
                 ) {
-                    $images[$fn] = $ffn;
+                    $images[$entry] = $ffn;
                 }
             }
         }
@@ -107,6 +132,18 @@ class Extedit_Controller
     }
 
     /**
+     * Returns the filename of an extedit.
+     *
+     * @param string $textname A text name.
+     *
+     * @return string
+     */
+    protected function getFilename($textname)
+    {
+        return $this->contentFolder() . $textname . '.htm';
+    }
+
+    /**
      * Returns the modification time of an extedit.
      *
      * @param string $textname A text name.
@@ -115,9 +152,9 @@ class Extedit_Controller
      */
     protected function mtime($textname)
     {
-        $fn = $this->contentFolder() . $textname . '.htm';
-        if (file_exists($fn)) {
-            return filemtime($fn);
+        $filename = $this->getFilename($textname);
+        if (file_exists($filename)) {
+            return filemtime($filename);
         } else {
             return 0;
         }
@@ -133,11 +170,13 @@ class Extedit_Controller
      */
     protected function read($textname)
     {
-        $fn = $this->contentFolder() . $textname . '.htm';
-        if (!file_exists($fn)) {
-            $contents = '';
-        } elseif (($contents = file_get_contents($fn)) === false) {
-            e('cntopen', 'content', $fn);
+        $filename = $this->getFilename($textname);
+        if (!file_exists($filename)) {
+            return '';
+        }
+        $contents = file_get_contents($filename);
+        if ($contents === false) {
+            e('cntopen', 'content', $filename);
         }
         return $contents;
     }
@@ -152,14 +191,9 @@ class Extedit_Controller
      */
     protected function write($textname, $contents)
     {
-        $fn = $this->contentFolder() . $textname . '.htm';
-        if (($fp = fopen($fn, 'w')) === false
-            || fwrite($fp, $contents) === false
-        ) {
-            e('cntsave', 'content', $fn);
-        }
-        if (!empty($fp)) {
-            fclose($fp);
+        $filename = $this->getFilename($textname);
+        if (file_put_contents($filename, $contents) === false) {
+            e('cntsave', 'content', $filename);
         }
     }
 
@@ -174,7 +208,7 @@ class Extedit_Controller
      * @global array The paths of system files and folders.
      * @global array The configuration of the core.
      */
-    protected function view($_template, $_bag)
+    protected function render($_template, $_bag)
     {
         global $pth, $cf;
 
@@ -209,22 +243,19 @@ class Extedit_Controller
 
         $pcf = $plugin_cf['extedit'];
         $ptx = $plugin_tx['extedit'];
-        if (session_id() == '') {
-            session_start();
-        }
-        if (empty($_SESSION['username'])) {
+        if (!$this->getCurrentUser()) {
             return false;
         } else {
             header('Content-type: text/html; charset=utf-8');
             $images = $pcf['images_subfolder']
-                ? preg_replace('/[^a-z0-9-]/i', '', $_SESSION['username'])
+                ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
                 : '';
             $bag['images'] = $this->images($images);
             $bag['title'] = $ptx['imagepicker_title'];
             $bag['no_images'] = $ptx['imagepicker_empty'];
             $bag['tinymce_popup'] = $pth['folder']['plugins']
                 . 'tinymce/tiny_mce/tiny_mce_popup.js';
-            return $this->view('imagepicker', $bag);
+            return $this->render('imagepicker', $bag);
         }
     }
 
@@ -260,7 +291,7 @@ class Extedit_Controller
      *
      * @return string
      */
-    protected function evaluated($content)
+    protected function evaluatePlugincall($content)
     {
         global $plugin_cf;
 
@@ -280,7 +311,7 @@ class Extedit_Controller
      * @global string (X)HTML to insert into the `head' element.
      * @global array  The configuration of the system core.
      *
-     * @todo: image picker for other editors
+     * @todo Image picker for other editors
      */
     protected function initEditor()
     {
@@ -324,12 +355,7 @@ class Extedit_Controller
         if (!isset($_POST["extedit_${textname}_text"])) {
             $content = $this->read($textname);
         }
-        if (session_id() == '') {
-            session_start();
-        }
-        if (XH_ADM
-            || isset($_SESSION['username']) && $username == $_SESSION['username']
-        ) {
+        if (XH_ADM || $this->getCurrentUser() == $username) {
             $mtime = $this->mtime($textname);
             if (isset($_POST["extedit_${textname}_text"])) {
                 $content = stsl($_POST["extedit_${textname}_text"]);
@@ -356,10 +382,10 @@ class Extedit_Controller
                 $this->initEditor();
             } else {
                 $o = a($s, '&amp;extedit_mode=edit') . $ptx['mode_edit'] . '</a>'
-                    . $this->evaluated($content);
+                    . $this->evaluatePlugincall($content);
             }
         } else {
-            $o = $this->evaluated($content);
+            $o = $this->evaluatePlugincall($content);
         }
         return $o;
     }
@@ -368,16 +394,42 @@ class Extedit_Controller
      * Returns the plugin information view.
      *
      * @return string  The (X)HTML.
+     *
+     * @global array The paths of system files and folders.
+     * @global array The localization of the plugins.
      */
-    protected function info()
+    protected function renderInfo()
+    {
+        global $pth, $plugin_tx;
+
+        foreach (array('ok', 'warn', 'fail') as $state) {
+            $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
+        }
+        $bag = array(
+            'ptx' => $plugin_tx['extedit'],
+            'images' => $images,
+            'checks' => $this->systemChecks(),
+            'icon' => $pth['folder']['plugins'] . 'extedit/extedit.png',
+            'version' => EXTEDIT_VERSION
+        );
+        return $this->render('info', $bag);
+    }
+
+    /**
+     * Returns the system checks.
+     *
+     * @return array
+     *
+     * @global array The paths of system files and folders.
+     * @global array The localization of the core.
+     * @global array The localization of the plugins.
+     */
+    protected function systemChecks()
     {
         global $pth, $tx, $plugin_tx;
 
         $ptx = $plugin_tx['extedit'];
         $phpVersion = '5.0.0';
-        foreach (array('ok', 'warn', 'fail') as $state) {
-            $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
-        }
         $checks = array();
         $checks[sprintf($ptx['syscheck_phpversion'], $phpVersion)]
             = version_compare(PHP_VERSION, $phpVersion) >= 0 ? 'ok' : 'fail';
@@ -397,16 +449,23 @@ class Extedit_Controller
             $checks[sprintf($ptx['syscheck_writable'], $folder)]
                 = is_writable($folder) ? 'ok' : 'warn';
         }
-        $bag = array(
-            'ptx' => $ptx,
-            'images' => $images,
-            'checks' => $checks,
-            'icon' => $pth['folder']['plugins'] . 'extedit/extedit.png',
-            'version' => EXTEDIT_VERSION
-        );
-        return $this->view('info', $bag);
+        return $checks;
     }
 
+    /**
+     * Returns the current user.
+     *
+     * @return string
+     */
+    protected function getCurrentUser()
+    {
+        if (session_id() == '') {
+            session_start();
+        }
+        return isset($_SESSION['username'])
+            ? $_SESSION['username']
+            : '';
+    }
 }
 
 ?>
