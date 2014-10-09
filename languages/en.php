@@ -23,7 +23,7 @@ $plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
 
 $plugin_tx['extedit']['about']="About Extedit_XH";
 
-$plugin_tx['extedit']['cf_images_subfolder']="Whether the editor should have access to the general image folder (\"0\") or to his own subfolder (\"1\").";
-$plugin_tx['extedit']['cf_allow_scripting']="Whether plugin calls are allowed in the 'extedits': \"1\" (yes) or \"0\" (no).";
+$plugin_tx['extedit']['cf_images_subfolder']="Shall the editor have access to his personal image folder only?";
+$plugin_tx['extedit']['cf_allow_scripting']="Shall plugin calls be evaluated in the \"extedits\"?";
 
 ?>

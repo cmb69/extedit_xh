@@ -23,7 +23,7 @@ $plugin_tx['extedit']['syscheck_writable']="Ordner '%s' beschreibbar";
 
 $plugin_tx['extedit']['about']="Über Extedit_XH";
 
-$plugin_tx['extedit']['cf_images_subfolder']="Ob der Editor Zugriff auf den allgemeinen Bilderordner (\"0\") oder seinen eigenen Unterordner (\"1\") haben soll.";
-$plugin_tx['extedit']['cf_allow_scripting']="Ob Plugin-Aufrufe in den 'extedits' erlaubt sind: \"1\" (ja) oder \"0\" (nein).";
+$plugin_tx['extedit']['cf_images_subfolder']="Soll der Editor nur Zugriff auf seinen eigenen Bilderordner haben?";
+$plugin_tx['extedit']['cf_allow_scripting']="Sollen Plugin-Aufrufe in den \"extedits\" ausgewertet werden?";
 
 ?>
