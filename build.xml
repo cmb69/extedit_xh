@@ -93,8 +93,6 @@
     <target name="doc" depends="php-doc,js-doc"
             description="generates the developer documentation"/>
 
-    <!-- Build -->
-
     <target name="build" description="builds a distributable ZIP archive">
         <fail unless="version" message="version is not defined!"/>
         <svnexport revision="" repositoryurl="." todir="export"/>
