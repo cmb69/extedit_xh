@@ -3,7 +3,7 @@
 /**
  * The extedit controllers.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Extedit
@@ -30,7 +30,7 @@ class Extedit_Controller
      *
      * @return void
      */
-    function dispatch()
+    public function dispatch()
     {
         global $extedit, $admin, $action, $o;
 
@@ -67,7 +67,7 @@ class Extedit_Controller
      *
      * @global array The paths of system files and folders.
      */
-    function images($subfolder = '')
+    protected function images($subfolder = '')
     {
         global $pth;
 
@@ -93,7 +93,7 @@ class Extedit_Controller
      *
      * @global array The paths of system files and folders.
      */
-    function contentFolder()
+    protected function contentFolder()
     {
         global $pth;
 
@@ -113,7 +113,7 @@ class Extedit_Controller
      *
      * @return int
      */
-    function mtime($textname)
+    protected function mtime($textname)
     {
         $fn = $this->contentFolder() . $textname . '.htm';
         if (file_exists($fn)) {
@@ -131,7 +131,7 @@ class Extedit_Controller
      *
      * @return string
      */
-    function read($textname)
+    protected function read($textname)
     {
         $fn = $this->contentFolder() . $textname . '.htm';
         if (!file_exists($fn)) {
@@ -150,7 +150,7 @@ class Extedit_Controller
      *
      * @return void
      */
-    function write($textname, $contents)
+    protected function write($textname, $contents)
     {
         $fn = $this->contentFolder() . $textname . '.htm';
         if (($fp = fopen($fn, 'w')) === false
@@ -174,7 +174,7 @@ class Extedit_Controller
      * @global array The paths of system files and folders.
      * @global array The configuration of the core.
      */
-    function view($_template, $_bag)
+    protected function view($_template, $_bag)
     {
         global $pth, $cf;
 
@@ -203,7 +203,7 @@ class Extedit_Controller
      * @global array              The localization of the plugins.
      * @global Extedit_Controller The plugin controller.
      */
-    function imagePicker()
+    protected function imagePicker()
     {
         global $pth, $plugin_cf, $plugin_tx, $_Extedit_controller;
 
@@ -240,7 +240,7 @@ class Extedit_Controller
      * @global int   The current page index.
      * @global int   The number of pages.
      */
-    function textname($textname)
+    protected function textname($textname)
     {
         global $h, $s, $cl;
 
@@ -260,12 +260,11 @@ class Extedit_Controller
      *
      * @return string
      */
-    function evaluated($content)
+    protected function evaluated($content)
     {
         global $plugin_cf;
 
-        $pcf = $plugin_cf['extedit'];
-        if ($pcf['allow_scripting'] && function_exists('evaluate_plugincall')) {
+        if ($plugin_cf['extedit']['allow_scripting']) {
             $content = evaluate_plugincall($content);
         }
         return $content;
@@ -283,7 +282,7 @@ class Extedit_Controller
      *
      * @todo: image picker for other editors
      */
-    function initEditor()
+    protected function initEditor()
     {
         global $pth, $hjs, $cf;
         static $again = false;
@@ -316,7 +315,7 @@ class Extedit_Controller
      * @global string The list of error messages.
      * @global array  The localization of the plugins.
      */
-    function main($username, $textname = '')
+    public function main($username, $textname = '')
     {
         global $s, $e, $plugin_tx;
 
@@ -347,7 +346,7 @@ class Extedit_Controller
                     . '<form action="" method="POST">'
                     . '<textarea name="extedit_' . $textname . '_text" cols="80"'
                     . ' rows="25" class="xh-editor" style="width: 100%">'
-                    . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+                    . XH_hsc($content)
                     . '</textarea>'
                     . tag(
                         'input type="hidden" name="extedit_' . $textname . '_mtime"'
@@ -370,12 +369,12 @@ class Extedit_Controller
      *
      * @return string  The (X)HTML.
      */
-    function info()
+    protected function info()
     {
         global $pth, $tx, $plugin_tx;
 
         $ptx = $plugin_tx['extedit'];
-        $phpVersion = '4.3.0';
+        $phpVersion = '5.0.0';
         foreach (array('ok', 'warn', 'fail') as $state) {
             $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
         }
