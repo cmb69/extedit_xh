@@ -62,8 +62,7 @@ wiki</a> for further details.</p>
 <li>Unzip the distribution on your computer.</li>
 <li>Upload the whole directory extedit/ to your server into CMSimple_XH's plugins
 directory.</li>
-<li>Set write permissions to the subdirectories config/, languages/ and the
-plugin's content folder.</li>
+<li>Set write permissions for the subdirectories config/, css/ and languages/.</li>
 <li>Switch to "Extedit" in the back-end to check if all requirements are
 fulfilled.</li>
 </ol>
@@ -80,6 +79,7 @@ mouse.</p>
 <p>Localization is done under "Language". You can translate the character
 strings to your own language if there is no appropriate language file available,
 or customize them according to your needs.</p>
+<p>The look of Extedit_XH can be customized under "Stylesheet".</p>
 <!-- TODO: customization of the editor -->
 <div class="toplink"><a href="#">back to top</a></div>
 </section>
@@ -87,21 +87,21 @@ or customize them according to your needs.</p>
 <section>
 <h2 id="usage">Usage</h2>
 <p>To embed an "extedit" on a page, insert the following:</p>
-<pre>{{{PLUGIN:extedit('USERNAME', 'TEXTNAME');}}}</pre>
+<pre>{{{extedit('USERNAME', 'TEXTNAME');}}}</pre>
 <p>The parameters have the following meaning:</p>
 <dl>
     <dt>USERNAME</dt>
     <dd>The name of the Register_XH or Memberpages_XH user, who may edit the
     content.</dd>
     <dt>TEXTNAME</dt>
-    <dd>The unique name of the extedit. Omit this parameter to use the heading
+    <dd>The unique name of the "extedit". Omit this parameter to use the heading
     of the containing page.</dd>
 </dl>
 <p>When the respective user is logged in, he's presented an "Edit" link, where
 he can edit the contents of the "extedit". He can insert images via the editor,
 but he has no access to the file browser&mdash;only a simple image picker is
 available. So the images have to be uploaded by other means. In preview mode the
-admin of the website is also able to edit the "extedit" , and has access to the
+admin of the website is also able to edit the "extedit", and has access to the
 file browser as usual. Visitors will only see the content of the "extedit".</p>
 <p>It's possible to have an arbitrary amount of "extedits" on a single page, all
 of them assigned to a certain user, each of them assigned to a different user,
@@ -110,7 +110,7 @@ or a mixture thereof.</p>
 current content/ folder, each in a single file. The filename is made from the
 TEXTNAME by stripping all invalid characters (only alphanumeric characters and
 hyphens are allowed). <em>Therefore all respectively stripped TEXTNAMEs have
-to be unique for each language of the CMSimple installation.</em></p>
+to be unique for each language of the CMSimple_XH installation.</em></p>
 <p>Caveat: If you omit the TEXTNAME parameter, the heading of the page will
 be used instead. If you later change the page heading, the "extedit" file has to
 be manually renamed. Furthermore it's perfectly valid to have the same page
@@ -147,14 +147,14 @@ href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.</p>
 
 <section>
 <h2 id="credits">Credits</h2>
-<p>The plugin icon is designed by <a href="http://www.mentalrey.it/">Alessandro
+<p>The plugin logo is designed by <a href="http://www.mentalrey.it/">Alessandro
 Rei</a>. Many thanks for publishing this icon under GPL.</p>
 <p>This plugin uses free applications icons from <a
 href="http://www.aha-soft.com/">Aha-Soft</a>. Many thanks for making these icons
 freely available.</p>
-<!--<p>Many thanks to the community at the <a-->
-<!--href="http://www.cmsimpleforum.com">CMSimple_XH forum</a> for tips, suggestions-->
-<!--and testing.</p>-->
+<p>Many thanks to the community at the <a
+href="http://www.cmsimpleforum.com">CMSimple_XH forum</a> for tips, suggestions
+and testing.</p>
 <p>And last but not least many thanks to <a href="http://www.harteg.dk/">Peter
 Harteg</a>, the "father" of CMSimple, and to all developers of <a
 href="http://www.cmsimple-xh.org/">CMSimple_XH</a> without whom this amazing CMS

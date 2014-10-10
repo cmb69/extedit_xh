@@ -12,7 +12,7 @@ $plugin_tx['extedit']['synopsis']="Kurzfassung";
 $plugin_tx['extedit']['synopsis_username']="BENUTZERNAME";
 $plugin_tx['extedit']['synopsis_username_desc']="Der Name des Register_XH oder Memberpages_XH Benutzers, der den Inhalt bearbeiten darf.";
 $plugin_tx['extedit']['synopsis_textname']="TEXTNAME";
-$plugin_tx['extedit']['synopsis_textname_desc']="Der eindeutige Name des extedits. Lassen Sie diesen Parameter aus, um die Überschrift der enthaltenden Seite zu verwenden.";
+$plugin_tx['extedit']['synopsis_textname_desc']="Der eindeutige Name des \"Extedits\". Lassen Sie diesen Parameter aus, um die Überschrift der enthaltenden Seite zu verwenden.";
 
 $plugin_tx['extedit']['syscheck']="Systemprüfung";
 $plugin_tx['extedit']['syscheck_phpversion']="PHP-Version &ge; %s";

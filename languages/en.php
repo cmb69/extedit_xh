@@ -12,7 +12,7 @@ $plugin_tx['extedit']['synopsis']="Synopsis";
 $plugin_tx['extedit']['synopsis_username']="USERNAME";
 $plugin_tx['extedit']['synopsis_username_desc']="The name of the Register_XH or Memberpages_XH user, who may edit the content.";
 $plugin_tx['extedit']['synopsis_textname']="TEXTNAME";
-$plugin_tx['extedit']['synopsis_textname_desc']="The unique name of the extedit. Omit this parameter to use the heading of the containing page.";
+$plugin_tx['extedit']['synopsis_textname_desc']="The unique name of the \"extedit\". Omit this parameter to use the heading of the containing page.";
 
 $plugin_tx['extedit']['syscheck']="System check";
 $plugin_tx['extedit']['syscheck_phpversion']="PHP version &ge; %s";
