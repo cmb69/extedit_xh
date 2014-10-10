@@ -40,6 +40,9 @@ class Extedit_Controller
             exit;
         }
         if (XH_ADM) {
+            if (function_exists('XH_registerStandardPluginMenuItems')) {
+                XH_registerStandardPluginMenuItems(false);
+            }
             if ($this->isAdministrationRequested()) {
                 $this->handleAdministration();
             }
@@ -57,7 +60,9 @@ class Extedit_Controller
     {
         global $extedit;
 
-        return isset($extedit) && $extedit == 'true';
+        return function_exists('XH_wantsPluginAdministration')
+            && XH_wantsPluginAdministration('extedit')
+            || isset($extedit) && $extedit == 'true';
     }
 
     /**
