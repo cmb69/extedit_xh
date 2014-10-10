@@ -27,7 +27,10 @@ reasons the file browser is replaced with a minimal image picker.</p>
 <li><a href="#requirements">Requirements</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#settings">Settings</a></li>
-<li><a href="#usage">Usage</a></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#usage_imagepicker">Image Picker</a></li>
+</ul></li>
 <li><a href="#limitations">Limitations</a></li>
 <li><a href="#license">License</a></li>
 <li><a href="#credits">Credits</a></li>
@@ -99,10 +102,11 @@ or customize them according to your needs.</p>
 </dl>
 <p>When the respective user is logged in, he's presented an "Edit" link, where
 he can edit the contents of the "extedit". He can insert images via the editor,
-but he has no access to the file browser&mdash;only a simple image picker is
-available. So the images have to be uploaded by other means. In preview mode the
-admin of the website is also able to edit the "extedit", and has access to the
-file browser as usual. Visitors will only see the content of the "extedit".</p>
+but he has no access to the file browser&mdash;only a simple <a
+href="#usage_imagepicker">image picker</a> is available. So the images have to
+be uploaded by other means. In preview mode the admin of the website is also
+able to edit the "extedit", and has access to the file browser as usual.
+Visitors will only see the content of the "extedit".</p>
 <p>It's possible to have an arbitrary amount of "extedits" on a single page, all
 of them assigned to a certain user, each of them assigned to a different user,
 or a mixture thereof.</p>
@@ -122,6 +126,20 @@ in the configuration), but this is of limited use, as the users will not be able
 to actually manage the plugins. However, some plugins don't need such
 management, so they can be used ad hoc, and others could be prepared
 by the admin.</p>
+<div class="toplink"><a href="#">back to top</a></div>
+</section>
+
+<section id="usage_imagepicker">
+<h3>Image Picker</h3>
+<p>As the filebrowser (neither the default filebrowser nor external filebrowsers
+such as hi_kcfinder) is only available for the administrator of the web site
+for security reasons, Extedit_XH offers a very simplistic image picker for users
+who are logged in via Memberpages_XH or Register_XH.</p>
+<p>By default the user has only access to his own subfolder of the image folder
+(which is normally userfiles/images/). This subfolder has to have the same name
+as the user and must be created by the administrator. The user can neither
+upload images to this folder, nor is he able to access subfolders of his own
+image folder.</p>
 <div class="toplink"><a href="#">back to top</a></div>
 </section>
 

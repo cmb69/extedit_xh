@@ -28,7 +28,10 @@ ersetzt.</p>
 <li><a href="#requirements">Voraussetzungen</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#settings">Einstellungen</a></li>
-<li><a href="#usage">Verwendung</a></li>
+<li><a href="#usage">Verwendung</a>
+<ul>
+<li><a href="#usage_imagepicker">Image-Picker</a></li>
+</ul></li>
 <li><a href="#limitations">Einschränkungen</a></li>
 <li><a href="#license">Lizenz</a></li>
 <li><a href="#credits">Danksagung</a></li>
@@ -104,11 +107,11 @@ Sprachdatei zur Verfügung steht, oder diese Ihren Wünschen gemäß anpassen.</
 <p>Wenn der entsprechende Benutzer angemeldet ist, dann wird ihm ein
 "Bearbeiten" Link angezeigt, über den er den Inhalt des "Extedits" bearbeiten
 kann. Er kann Bilder mit dem Editor einfügen, aber er hat keinen Zugriff auf den
-Filebrowser &ndash; nur ein einfacher Bildwähler ist verfügbar. Daher müssen
-Bilder auf anderem Weg hoch geladen werden. Im Vorschaumodus kann der
-Administrator der Website ebenfalls das "Extedit" bearbeiten, und hat dabei wie
-üblich Zugriff auf den Filebrowser. Besucher sehen nur den Inhalt des
-"Extedits".</p>
+Filebrowser &ndash; nur ein einfacher <a
+href="#usage_imagepicker">Bildwähler</a> ist verfügbar. Daher müssen Bilder auf
+anderem Weg hoch geladen werden. Im Vorschaumodus kann der Administrator der
+Website ebenfalls das "Extedit" bearbeiten, und hat dabei wie üblich Zugriff auf
+den Filebrowser. Besucher sehen nur den Inhalt des "Extedits".</p>
 <p>Es ist möglich eine beliebige Anzahl von "Extedits" auf einer einzelnen Seite
 darzustellen, wobei alle diese einem bestimmten Benutzer zugeordnet sind, jedes
 einem anderen Benutzer zugeordnet ist, oder eine Mischung davon.</p>
@@ -130,6 +133,20 @@ Konfiguration aktiviert werden muss), aber dies ist nur bedingt sinnvoll, da die
 Benutzer die Plugins nicht verwalten können. Allerdings benötigen manche Plugins
 keine Administration, so dass sie ad-hoc verwendet werden können, und andere
 Plugins können vom Administrator vorbereitet werden.</p>
+<div class="toplink"><a href="#">zum Seitenanfang</a></div>
+</section>
+
+<section id="usage_imagepicker">
+<h3>Bildwähler</h3>
+<p>Da der Dateibrowser (weder der Standard-Dateibrowser noch externe
+Dateibrowser wie hi_kcfinder) aus Sicherheitsgründen nur für den Administrator
+der Website verfügbar ist, bietet Extedit_XH einen simplistischen Bildwähler für
+Benutzer, die über Memberpages_XH oder Register_XH angemeldet sind.</p>
+<p>Per Voreinstellung hat der Benutzer nur Zugriff auf seinen eigenen
+Unterordner des Bilderordners (normalerweise userfiles/images/). Dieser
+Unterordner muss den Namen des Benutzers haben, und er muss vom Administrator
+angelegt werden. Der Benutzer kann weder Bilder in diesen Ordner hoch laden,
+noch kann er auf dessen Unterordner zugreifen.</p>
 <div class="toplink"><a href="#">zum Seitenanfang</a></div>
 </section>
 
