@@ -1,6 +1,12 @@
+* support XH_registerStandardPluginMenuItems() and
+  XH_wantsPluginAdministration()
+* change alpha to beta warning in manuals
+
 * what about browsing media and downloads?
 * wenn Deutsch verfuegbar, ankuendigen:
   <http://cmsimpleforum.com/viewtopic.php?f=16&t=4928>
 * bessere Doku bzgl. Image-Subfolder
   <http://cmsimpleforum.com/viewtopic.php?f=12&t=5858&p=34223#p34210>
 * weitere inits (konfigurierbar) (insp. by Bjoern)
+* improve image picker
+  (<http://cmsimpleforum.com/viewtopic.php?f=12&t=5858&p=34223#p34210>)
