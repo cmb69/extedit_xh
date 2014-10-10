@@ -111,39 +111,6 @@ class Extedit_Controller
     }
 
     /**
-     * Returns the path of the content folder. If it doesn't exists, tries to create
-     * it. If that fails, an error is reported.
-     *
-     * @return string
-     *
-     * @global array The paths of system files and folders.
-     */
-    protected function contentFolder()
-    {
-        global $pth;
-
-        $dn = $pth['folder']['content'] . 'extedit/';
-        if (!file_exists($dn)) {
-            if (!mkdir($dn)) {
-                e('cntwriteto', 'folder', $dn);
-            }
-        }
-        return $dn;
-    }
-
-    /**
-     * Returns the filename of an extedit.
-     *
-     * @param string $textname A text name.
-     *
-     * @return string
-     */
-    protected function getFilename($textname)
-    {
-        return $this->contentFolder() . $textname . '.htm';
-    }
-
-    /**
      * Returns the modification time of an extedit.
      *
      * @param string $textname A text name.
@@ -152,7 +119,7 @@ class Extedit_Controller
      */
     protected function mtime($textname)
     {
-        $filename = $this->getFilename($textname);
+        $filename = Extedit_Content::getFilename($textname);
         if (file_exists($filename)) {
             return filemtime($filename);
         } else {
@@ -170,15 +137,12 @@ class Extedit_Controller
      */
     protected function read($textname)
     {
-        $filename = $this->getFilename($textname);
-        if (!file_exists($filename)) {
-            return '';
+        $content = Extedit_Content::find($textname);
+        if ($content->getHtml() !== null) {
+            return $content->getHtml();
+        } else {
+            e('cntopen', 'content', Extedit_Content::getFilename($textname));
         }
-        $contents = file_get_contents($filename);
-        if ($contents === false) {
-            e('cntopen', 'content', $filename);
-        }
-        return $contents;
     }
 
     /**
@@ -191,7 +155,7 @@ class Extedit_Controller
      */
     protected function write($textname, $contents)
     {
-        $filename = $this->getFilename($textname);
+        $filename = Extedit_Content::getFilename($textname);
         if (file_put_contents($filename, $contents) === false) {
             e('cntsave', 'content', $filename);
         }
@@ -444,7 +408,7 @@ class Extedit_Controller
         foreach (array('config/', 'languages/') as $folder) {
             $folders[] = $pth['folder']['plugins'] . 'extedit/' . $folder;
         }
-        $folders[] = $this->contentFolder();
+        $folders[] = Extedit_Content::getFoldername();
         foreach ($folders as $folder) {
             $checks[sprintf($ptx['syscheck_writable'], $folder)]
                 = is_writable($folder) ? 'ok' : 'warn';

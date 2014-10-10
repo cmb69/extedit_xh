@@ -31,7 +31,12 @@ EOT
 }
 
 /**
- * The controller.
+ * The contents.
+ */
+require_once $pth['folder']['plugin_classes'] . 'Content.php';
+
+/**
+ * The controllers.
  */
 require_once $pth['folder']['plugin_classes'] . 'Controller.php';
 
