@@ -1,2 +1,10 @@
+Version 1.0beta1 - released 2014-10-11
+* lifted requirements to CMSimple_XH >= 1.6 and PHP >= 5.0.0
+* added support for CMSimple_XH 1.6 APIs
+* added image filenames as titles to image-picker (suggested by svasti)
+* added German manual
+* added Danish translation (contributed by maeg)
+* added version.nfo for hi_updatecheck
+
 Version 1alpha1 - released 2013-03-01
 * initial release
