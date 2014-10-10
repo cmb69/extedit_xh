@@ -18,7 +18,7 @@ $plugin_tx['extedit']['syscheck']="Systemprüfung";
 $plugin_tx['extedit']['syscheck_phpversion']="PHP-Version &ge; %s";
 $plugin_tx['extedit']['syscheck_extension']="Erweiterung '%s' geladen";
 $plugin_tx['extedit']['syscheck_encoding']="UTF-8-Kodierung eingestellt";
-$plugin_tx['extedit']['syscheck_magic_quotes']="'Magic_quotes_runtime' aus";
+$plugin_tx['extedit']['syscheck_magic_quotes']="magic_quotes_runtime aus";
 $plugin_tx['extedit']['syscheck_writable']="Ordner '%s' beschreibbar";
 
 $plugin_tx['extedit']['label_info']="Info";
