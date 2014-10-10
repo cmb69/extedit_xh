@@ -21,7 +21,11 @@ $plugin_tx['extedit']['syscheck_encoding']="UTF-8-Kodierung eingestellt";
 $plugin_tx['extedit']['syscheck_magic_quotes']="'Magic_quotes_runtime' aus";
 $plugin_tx['extedit']['syscheck_writable']="Ordner '%s' beschreibbar";
 
+$plugin_tx['extedit']['label_info']="Info";
+
 $plugin_tx['extedit']['about']="Über Extedit_XH";
+
+$plugin_tx['extedit']['alt_logo']="Büste mit Textmarker";
 
 $plugin_tx['extedit']['cf_images_subfolder']="Soll der Editor nur Zugriff auf seinen eigenen Bilderordner haben?";
 $plugin_tx['extedit']['cf_allow_scripting']="Sollen Plugin-Aufrufe in den \"extedits\" ausgewertet werden?";

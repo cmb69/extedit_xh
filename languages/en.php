@@ -23,6 +23,10 @@ $plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
 
 $plugin_tx['extedit']['about']="About Extedit_XH";
 
+$plugin_tx['extedit']['label_info']="Info";
+
+$plugin_tx['extedit']['alt_logo']="Bust with highlighter";
+
 $plugin_tx['extedit']['cf_images_subfolder']="Shall the editor have access to his personal image folder only?";
 $plugin_tx['extedit']['cf_allow_scripting']="Shall plugin calls be evaluated in the \"extedits\"?";
 
