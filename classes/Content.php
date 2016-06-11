@@ -1,45 +1,35 @@
 <?php
 
-/**
- * The contents.
- *
- * PHP version 5
- *
- * @category  CMSimple_XH
- * @package   Extedit
- * @author    Christoph M. Becker <cmbecker69@gmx.de>
- * @copyright 2013-2016 Christoph M. Becker <http://3-magi.net/>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
+/*
+Copyright 2013-2016 Christoph M. Becker
+
+This file is part of Extedit_XH.
+
+Extedit_XH is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Extedit_XH is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 namespace Extedit;
 
-/**
- * The contents.
- *
- * @category CMSimple_XH
- * @package  Extedit
- * @author   Christoph M. Becker <cmbecker69@gmx.de>
- * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
 class Content
 {
     /**
-     * The (X)HTML.
-     *
      * @var string
      */
     protected $html;
 
     /**
-     * Returns the path of the content folder. If it doesn't exists, tries to
-     * create it.
-     *
      * @return string
-     *
-     * @global array The paths of system files and folders.
      */
     public static function getFoldername()
     {
@@ -54,10 +44,7 @@ class Content
     }
 
     /**
-     * Returns the filename of an extedit.
-     *
-     * @param string $name A name.
-     *
+     * @param string $name
      * @return string
      */
     public static function getFilename($name)
@@ -66,10 +53,7 @@ class Content
     }
 
     /**
-     * Finds and returns a content.
-     *
-     * @param string $name A name.
-     *
+     * @param string $name
      * @return string
      */
     public static function find($name)
@@ -88,8 +72,6 @@ class Content
     }
 
     /**
-     * Returns the (X)HTML.
-     *
      * @return string (X)HTML.
      */
     public function getHtml()

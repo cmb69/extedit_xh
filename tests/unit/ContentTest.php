@@ -1,17 +1,23 @@
 <?php
 
-/**
- * Testing the contents.
- *
- * PHP version 5
- *
- * @category  Testing
- * @package   Extedit
- * @author    Christoph M. Becker <cmbecker69@gmx.de>
- * @copyright 2014-2016 Christoph M. Becker <http://3-magi.net/>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
+/*
+Copyright 2014-2016 Christoph M. Becker
+
+This file is part of Extedit_XH.
+
+Extedit_XH is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Extedit_XH is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 namespace Extedit;
 
@@ -19,23 +25,10 @@ use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStream;
 
-/**
- * Testing the contents.
- *
- * @category Testing
- * @package  Extedit
- * @author   Christoph M. Becker <cmbecker69@gmx.de>
- * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
 class ContentTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Sets up the test fixture.
-     *
      * @return void
-     *
-     * @global array The paths of system files and folders.
      */
     public function setUp()
     {
@@ -47,8 +40,6 @@ class ContentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that reading the foldername creates the content folder.
-     *
      * @return void
      */
     public function testReadingFoldernameCreatesContentFolder()
@@ -58,8 +49,6 @@ class ContentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that the filename is correct.
-     *
      * @return void
      */
     public function testFilenameIsCorrect()
@@ -71,8 +60,6 @@ class ContentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that the content is found.
-     *
      * @return void
      */
     public function testContentIsFound()
@@ -86,8 +73,6 @@ class ContentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests that a non existing content is empty.
-     *
      * @return void
      */
     public function testNonExistingContentIsEmpty()

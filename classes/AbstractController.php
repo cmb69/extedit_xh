@@ -24,8 +24,6 @@ namespace Extedit;
 abstract class AbstractController
 {
     /**
-     * Returns the current user.
-     *
      * @return string
      */
     protected function getCurrentUser()
@@ -39,15 +37,9 @@ abstract class AbstractController
     }
 
     /**
-     * Returns an instantiated view template.
-     *
-     * @param string $_template The path of the template file.
-     * @param array  $_bag      The variables.
-     *
+     * @param string $_template
+     * @param array  $_bag
      * @return string
-     *
-     * @global array The paths of system files and folders.
-     * @global array The configuration of the core.
      */
     protected function render($_template, $_bag)
     {
@@ -66,6 +58,9 @@ abstract class AbstractController
         return $view;
     }
 
+    /**
+     * @return void
+     */
     protected function preventAccess()
     {
         // do nothing!

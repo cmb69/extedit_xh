@@ -24,14 +24,8 @@ namespace Extedit;
 class ImagePicker extends AbstractController
 {
     /**
-     * Returns the (X)HTML document constituting the image picker.
-     * If user is not logged in as member, returns FALSE.
-     *
+     * @param string $message
      * @return string
-     *
-     * @global array  The paths of system files and folders.
-     * @global array  The localization of the plugins.
-     * @global string The site name.
      */
     public function show($message = '')
     {
@@ -50,6 +44,9 @@ class ImagePicker extends AbstractController
         return $this->render('imagepicker', $bag);
     }
 
+    /**
+     * @return string (X)HTML
+     */
     public function handleUpload()
     {
         global $plugin_tx;
@@ -71,17 +68,29 @@ class ImagePicker extends AbstractController
         echo $this->show($message);
     }
 
+    /**
+     * @param string $filename
+     * @return bool
+     */
     private function isImage($filename)
     {
         return strpos($this->getMimeTypeOf($filename), 'image/') === 0;
     }
 
+    /**
+     * @param string $filename
+     * @return string
+     */
     private function getMimeTypeOf($filename)
     {
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         return $finfo->file($filename);
     }
 
+    /**
+     * @param array $upload
+     * @return bool
+     */
     private function moveUpload($upload)
     {
         $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload['name']));
@@ -91,10 +100,7 @@ class ImagePicker extends AbstractController
     }
 
     /**
-     * Returns the accessible images.
-     *
      * @param string $folder
-     *
      * @return array
      */
     private function images($folder)
@@ -112,6 +118,9 @@ class ImagePicker extends AbstractController
         return $images;
     }
 
+    /**
+     * @return string
+     */
     private function getImageFolder()
     {
         global $pth, $plugin_cf;
@@ -122,6 +131,10 @@ class ImagePicker extends AbstractController
         return rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
     }
 
+    /**
+     * @param int
+     * @return string
+     */
     private function getUploadErrorKey($error)
     {
         switch ($error) {

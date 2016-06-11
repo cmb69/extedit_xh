@@ -1,17 +1,23 @@
 <?php
 
-/**
- * Front-end of Extedit_XH.
- *
- * PHP version 5
- *
- * @category  CMSimple_XH
- * @package   Extedit
- * @author    Christoph M. Becker <cmbecker69@gmx.de>
- * @copyright 2013-2016 Christoph M. Becker <http://3-magi.net/>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
+/*
+Copyright 2013-2016 Christoph M. Becker
+
+This file is part of Extedit_XH.
+
+Extedit_XH is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Extedit_XH is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /*
  * Prevent direct access and usage from unsupported CMSimple_XH versions.
@@ -29,28 +35,18 @@ EOT
     );
 }
 
-/**
- * The plugin version.
- */
 define('EXTEDIT_VERSION', '@EXTEDIT_VERSION@');
 
 /**
- * The controller.
- *
- * @var Extedit_Controller
+ * @var Extedit\Controller
  */
 $_Extedit_controller = new Extedit\Controller();
 $_Extedit_controller->dispatch();
 
 /**
- * Returns the view of an extedit.
- *
- * @param string $username The name of the user, who may edit this extedit.
- * @param string $textname The name of the extedit.
- *
- * @return string (X)HTML.
- *
- * @global Extedit_Controller The plugin controller.
+ * @param string $username
+ * @param string $textname
+ * @return string (X)HTML
  */
 function extedit($username, $textname = '')
 {

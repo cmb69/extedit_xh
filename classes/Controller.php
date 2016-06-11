@@ -1,34 +1,29 @@
 <?php
 
-/**
- * The extedit controllers.
- *
- * PHP version 5
- *
- * @category  CMSimple_XH
- * @package   Extedit
- * @author    Christoph M. Becker <cmbecker69@gmx.de>
- * @copyright 2013-2016 Christoph M. Becker <http://3-magi.net/>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
+/*
+Copyright 2013-2016 Christoph M. Becker
+
+This file is part of Extedit_XH.
+
+Extedit_XH is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Extedit_XH is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 namespace Extedit;
 
-/**
- * The extedit controllers.
- *
- * @category CMSimple_XH
- * @package  Extedit
- * @author   Christoph M. Becker <cmbecker69@gmx.de>
- * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
- */
 class Controller extends AbstractController
 {
     /**
-     * Dispatches on plugin related requests.
-     *
      * @return void
      */
     public function dispatch()
@@ -56,11 +51,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns whether the plugin administration is requested.
-     *
      * @return bool
-     *
-     * @global string Whether the query parameter <var>extedit</var> is set.
      */
     protected function isAdministrationRequested()
     {
@@ -72,13 +63,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Handles the plugin administration.
-     *
      * @return void
-     *
-     * @global string The value of the <var>admin</var> GP parameter.
-     * @global string The value of the <var>action</var> GP parameter.
-     * @global string The (X)HTML of the contents area.
      */
     protected function handleAdministration()
     {
@@ -95,10 +80,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the modification time of an extedit.
-     *
-     * @param string $textname A text name.
-     *
+     * @param string $textname
      * @return int
      */
     protected function mtime($textname)
@@ -112,11 +94,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the content of an extedit file. If the file doesn't exist, returns
-     * an empty string. If the file can't be read, an error is reported.
-     *
-     * @param string $textname A text name.
-     *
+     * @param string $textname
      * @return string
      */
     protected function read($textname)
@@ -130,11 +108,8 @@ class Controller extends AbstractController
     }
 
     /**
-     * Writes contents back to an extedit file. If that fails, an error is reported.
-     *
-     * @param string $textname A text name.
-     * @param string $contents Some contents.
-     *
+     * @param string $textname
+     * @param string $contents
      * @return void
      */
     protected function write($textname, $contents)
@@ -146,15 +121,8 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the sanitized text name. If $textname is empty, returns the sanitized
-     * heading of the current page.
-     *
-     * @param string $textname A text name.
-     *
+     * @param string $textname
      * @return string
-     *
-     * @global array The headings of the pages.
-     * @global int   The current page index.
      */
     protected function textname($textname)
     {
@@ -169,11 +137,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the content with plugin calls evaluated, if allowed in the
-     * configuration.
-     *
-     * @param string $content A content.
-     *
+     * @param string $content
      * @return string
      */
     protected function evaluatePlugincall($content)
@@ -187,15 +151,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Initializes the configured editor for extedit. Makes available an image
-     * picker, if the editor is tinyMCE.
-     *
      * @return void
-     *
-     * @global array  The paths of system files and folders.
-     * @global string (X)HTML to insert into the `head' element.
-     * @global array  The configuration of the system core.
-     *
      * @todo Image picker for other editors
      */
     protected function initEditor()
@@ -220,16 +176,9 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the view of an extedit.
-     *
-     * @param string $username The name of the user, who may edit this extedit.
-     * @param string $textname The name of the extedit.
-     *
-     * @return string (X)HTML.
-     *
-     * @global int    The current page index.
-     * @global string The list of error messages.
-     * @global array  The localization of the plugins.
+     * @param string $username
+     * @param string $textname
+     * @return string (X)HTML
      */
     public function main($username, $textname = '')
     {
@@ -276,12 +225,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the plugin information view.
-     *
-     * @return string  The (X)HTML.
-     *
-     * @global array The paths of system files and folders.
-     * @global array The localization of the plugins.
+     * @return string (X)HTML
      */
     protected function renderInfo()
     {
@@ -301,13 +245,7 @@ class Controller extends AbstractController
     }
 
     /**
-     * Returns the system checks.
-     *
      * @return array
-     *
-     * @global array The paths of system files and folders.
-     * @global array The localization of the core.
-     * @global array The localization of the plugins.
      */
     protected function systemChecks()
     {
