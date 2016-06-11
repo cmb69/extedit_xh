@@ -68,6 +68,16 @@
                 </replacetokens>
             </filterchain>
         </move>
+        <move todir="dist">
+            <fileset dir="export">
+                <include name="views/*.php"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="\?=" replace="?php echo "/>
+                </replaceregexp>
+            </filterchain>
+        </move>
         <jsMin targetDir="dist" suffix="" failOnError="false">
             <fileset dir="export">
                 <include name="*.js"/>

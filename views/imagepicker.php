@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-        <title><?php echo $title?></title>
+        <title><?=$title?></title>
         <style type="text/css">
             #message {
                 background: #ffa7a7;
@@ -19,7 +19,7 @@
                 clear: both;
             }
         </style>
-        <script type="text/javascript" src="<?php echo $tinymce_popup?>">
+        <script type="text/javascript" src="<?=$tinymce_popup?>">
         </script>
         <script type="text/javascript">
             function init() {
@@ -53,20 +53,19 @@
         </script>
     </head>
     <body onload="init()">
-        <div id="message"><p><?php echo $message?></p></div>
+        <div id="message"><p><?=$message?></p></div>
         <div id="imagepicker">
 <?php if (empty($images)):?>
-            <p><?php echo $no_images?></p>
+            <p><?=$no_images?></p>
 <?php else:?>
 <?php foreach ($images as $image => $url):?>
-            <img src="<?php echo $url?>" alt="<?php echo $image?>" title="<?php
-            echo $image?>">
+            <img src="<?=$url?>" alt="<?=$image?>" title="<?=$image?>"/>
 <?php endforeach?>
 <?php endif?>
         </div>
-        <form id="upload" action="<?php echo $upload_url?>" method="POST" enctype="multipart/form-data">
+        <form id="upload" action="<?=$upload_url?>" method="POST" enctype="multipart/form-data">
             <input name="extedit_file" type="file">
-            <button><?php echo $upload?></button>
+            <button><?=$upload?></button>
         </form>
     </body>
 </html>
