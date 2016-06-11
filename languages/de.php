@@ -4,6 +4,7 @@ $plugin_tx['extedit']['mode_edit']="Bearbeiten";
 $plugin_tx['extedit']['mode_view']="Ansicht";
 
 $plugin_tx['extedit']['err_changed']="Der Inhalt von '%s' wurde in der Zwischenzeit geändert! Speichern Sie erneut, um die vorigen Änderungen zu überschreiben.";
+$plugin_tx['extedit']['err_save']="Die Datei %s konnte nicht gespeichert werden.";
 
 $plugin_tx['extedit']['imagepicker_title']="Bild auswählen";
 $plugin_tx['extedit']['imagepicker_empty']="Es befinden sich keine Bilder im Bilderordner.";

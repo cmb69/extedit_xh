@@ -30,29 +30,32 @@ class FunctionController extends AbstractController
      */
     public function handle($username, $textname = '')
     {
-        global $s, $e, $plugin_tx, $su;
+        global $s, $plugin_tx, $su;
 
         $ptx = $plugin_tx['extedit'];
         $textname = $this->textname($textname);
         if (!isset($_POST["extedit_{$textname}_text"])) {
             $content = $this->read($textname);
         }
+        $o = '';
         if ($this->isAuthorizedToEdit($username)) {
             if (isset($_POST["extedit_{$textname}_text"])) {
                 $content = stsl($_POST["extedit_{$textname}_text"]);
                 $mtime = $this->mtime($textname);
                 if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
-                    $this->write($textname, $content);
-                    header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
-                    exit;
+                    if ($this->write($textname, $content)) {
+                        header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
+                        exit;
+                    } else {
+                        $o .= XH_message('fail', $ptx['err_save'], Content::getFilename($textname));
+                    }
                 } else {
-                    $e .= '<li>' . sprintf($ptx['err_changed'], $textname)
-                        . '</li>';
+                    $o .= XH_message('fail', $ptx['err_changed'], $textname);
                 }
             }
             if (isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit') {
                 $mtime = $this->mtime($textname);
-                $o = a($s, '') . $ptx['mode_view'] . '</a>'
+                $o .= a($s, '') . $ptx['mode_view'] . '</a>'
                     . '<form action="" method="POST">'
                     . '<textarea name="extedit_' . $textname . '_text" cols="80"'
                     . ' rows="25" class="xh-editor" style="width: 100%">'
@@ -65,11 +68,11 @@ class FunctionController extends AbstractController
                     . '</form>';
                 $this->initEditor();
             } else {
-                $o = a($s, '&amp;extedit_mode=edit') . $ptx['mode_edit'] . '</a>'
+                $o .= a($s, '&amp;extedit_mode=edit') . $ptx['mode_edit'] . '</a>'
                     . $this->evaluatePlugincall($content);
             }
         } else {
-            $o = $this->evaluatePlugincall($content);
+            $o .= $this->evaluatePlugincall($content);
         }
         return $o;
     }
@@ -92,16 +95,12 @@ class FunctionController extends AbstractController
 
     /**
      * @param string $textname
-     * @return string
+     * @return ?string
      */
     private function read($textname)
     {
         $content = Content::find($textname);
-        if ($content->getHtml() !== null) {
-            return $content->getHtml();
-        } else {
-            e('cntopen', 'content', Content::getFilename($textname));
-        }
+        return $content->getHtml();
     }
 
     /**
@@ -121,14 +120,13 @@ class FunctionController extends AbstractController
     /**
      * @param string $textname
      * @param string $contents
-     * @return void
+     * @return bool
      */
     private function write($textname, $contents)
     {
         $filename = Content::getFilename($textname);
-        if (file_put_contents($filename, $contents) === false) {
-            e('cntsave', 'content', $filename);
-        }
+        return is_writable($filename)
+            && file_put_contents($filename, $contents) !== false;
     }
 
     /**
