@@ -17,7 +17,9 @@ genannter "Extedits" zu haben, d.h. Inhaltsbereiche, die von Benutzern
 bearbeitet werden können, die mit <a
 href="http://frankziesing.de/cmsimple/?Start:Memberpages">Memberpages_XH</a>
 oder <a href="http://3-magi.net/de/?CMSimple_XH/Register_XH">Register_XH</a>
-angemeldet sind. Das Plugin bietet prinzipiell die gleiche Funktionalität wie <a
+angemeldet sind. Das erlaubt eine sehr beschränkte Mehrbenutzer-Fähigkeit,
+ohne dass diesen Benutzern die volle Administration-Authorisation gewährt werden
+muss. Das Plugin bietet prinzipiell die gleiche Funktionalität wie <a
 href="http://cmsimplewiki.com/doku.php/plugins/one_page_for_simplemultiuser">One
 Page for simpleMultiUser</a>, aber es verwendet den Editor von CMSimple_XH. Aus
 Sicherheitsgründen wurde der Filebrowser durch einen minimalen Bildwähler
@@ -120,8 +122,10 @@ Website ebenfalls das "Extedit" bearbeiten, und hat dabei wie üblich Zugriff au
 den Filebrowser. Besucher sehen nur den Inhalt des "Extedits".</p>
 <p>Es ist möglich eine beliebige Anzahl von "Extedits" auf einer einzelnen Seite
 darzustellen, wobei alle diese einem bestimmten Benutzer zugeordnet sind, jedes
-einem anderen Benutzer zugeordnet ist, oder eine Mischung davon.</p>
-<p>Die Inhalte aller "Extedits" werden im Unterordner extedit/ des aktuellen
+einem anderen Benutzer zugeordnet ist, oder eine Mischung davon. Um zu
+verhindern, dass ein Benutzer versehentlich Änderungen eines anderen Benutzers
+überschreibt, wurde eine einfache optimistische Sperre implementiert.</p>
+<p>Die Inhalte aller "Extedits" werden im automatisch erstellten Unterordner extedit/ des aktuellen
 content/ Ordners gespeichert, jeder in einer eigenen Datei. Der Dateiname
 besteht aus dem TEXTNAMEn aus dem alle ungültigen Zeichen entfernt wurden (nur
 alphanumerische Zeichen und Minuszeichen sind erlaubt). <em>Daher müssen alle

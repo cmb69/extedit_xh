@@ -16,7 +16,9 @@ height: 128px" alt="Bust with highlighter">
 of so called "extedits", i.e. content areas, which can be edited by users logged
 in via <a
 href="http://frankziesing.de/cmsimple/en/?Welcome:Memberpages">Memberpages_XH</a>
-or <a href="http://3-magi.net/?CMSimple_XH/Register_XH">Register_XH</a>. The
+or <a href="http://3-magi.net/?CMSimple_XH/Register_XH">Register_XH</a>. That
+allows a very limited multi-user capability without granting these users full
+administration authorisation. The
 plugin offers basically the same functionality as <a
 href="http://cmsimplewiki.com/doku.php/plugins/one_page_for_simplemultiuser">One
 Page for simpleMultiUser</a>, but uses the editor of CMSimple_XH. For security
@@ -114,8 +116,9 @@ able to edit the "extedit", and has access to the file browser as usual.
 Visitors will only see the content of the "extedit".</p>
 <p>It's possible to have an arbitrary amount of "extedits" on a single page, all
 of them assigned to a certain user, each of them assigned to a different user,
-or a mixture thereof.</p>
-<p>The contents of all "extedits" are stored in the subfolder extedit/ of the
+or a mixture thereof. To avoid that a user inadvertently overwrites the changes
+made by another user, a simple optimistic concurrency lock is implemented.</p>
+<p>The contents of all "extedits" are stored in the automatically created subfolder extedit/ of the
 current content/ folder, each in a single file. The filename is made from the
 TEXTNAME by stripping all invalid characters (only alphanumeric characters and
 hyphens are allowed). <em>Therefore all respectively stripped TEXTNAMEs have
