@@ -33,16 +33,15 @@ class Controller
      */
     public function dispatch()
     {
-        /*
-         * Handle request for image picker.
-         */
-        if (isset($_GET['extedit_imagepicker'])) {
-            echo $this->imagePicker();
-            exit;
-        }
-        if ((XH_ADM || $this->getCurrentUser()) && isset($_GET['extedit_upload'])) {
-            $this->handleUpload();
-            exit;
+        if ($this->getCurrentUser()) {
+            if (isset($_GET['extedit_imagepicker'])) {
+                echo $this->imagePicker();
+                exit;
+            }
+            if (isset($_GET['extedit_upload'])) {
+                $this->handleUpload();
+                exit;
+            }
         }
         if (XH_ADM) {
             if (function_exists('XH_registerStandardPluginMenuItems')) {
@@ -232,18 +231,14 @@ class Controller
         global $pth, $plugin_tx, $sn;
 
         $ptx = $plugin_tx['extedit'];
-        if (!$this->getCurrentUser()) {
-            return false;
-        } else {
-            header('Content-type: text/html; charset=utf-8');
-            $bag['images'] = $this->images($this->getImageFolder());
-            $bag['title'] = $ptx['imagepicker_title'];
-            $bag['no_images'] = $ptx['imagepicker_empty'];
-            $bag['tinymce_popup'] = $pth['folder']['plugins']
-                . 'tinymce/tiny_mce/tiny_mce_popup.js';
-            $bag['upload_url'] = "$sn?&extedit_upload";
-            return $this->render('imagepicker', $bag);
-        }
+        header('Content-type: text/html; charset=utf-8');
+        $bag['images'] = $this->images($this->getImageFolder());
+        $bag['title'] = $ptx['imagepicker_title'];
+        $bag['no_images'] = $ptx['imagepicker_empty'];
+        $bag['tinymce_popup'] = $pth['folder']['plugins']
+            . 'tinymce/tiny_mce/tiny_mce_popup.js';
+        $bag['upload_url'] = "$sn?&extedit_upload";
+        return $this->render('imagepicker', $bag);
     }
 
     private function getImageFolder()
