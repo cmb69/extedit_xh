@@ -15,9 +15,6 @@
 
 namespace Extedit;
 
-require_once './vendor/autoload.php';
-require_once './classes/required_classes.php';
-
 use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStream;
