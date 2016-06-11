@@ -42,7 +42,7 @@ class FunctionController extends AbstractController
         if (!isset($_POST["extedit_{$textname}_text"])) {
             $content = $this->read($textname);
         }
-        if ($this->isAdmin() || $this->getCurrentUser() == $username) {
+        if ($this->isAuthorizedToEdit($username)) {
             $mtime = $this->mtime($textname);
             if (isset($_POST["extedit_{$textname}_text"])) {
                 $content = stsl($_POST["extedit_{$textname}_text"]);
@@ -75,6 +75,17 @@ class FunctionController extends AbstractController
             $o = $this->evaluatePlugincall($content);
         }
         return $o;
+    }
+
+    /**
+     * @param string $username
+     * @return bool
+     */
+    private function isAuthorizedToEdit($username)
+    {
+        return $this->isAdmin()
+            || $username == '*' && $this->getCurrentUser()
+            || $this->getCurrentUser() == $username;
     }
 
     /**
