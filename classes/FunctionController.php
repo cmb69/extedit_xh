@@ -30,7 +30,7 @@ class FunctionController extends AbstractController
      */
     public function handle($username, $textname = '')
     {
-        global $s, $e, $plugin_tx;
+        global $s, $e, $plugin_tx, $su;
 
         $ptx = $plugin_tx['extedit'];
         $textname = $this->textname($textname);
@@ -38,18 +38,20 @@ class FunctionController extends AbstractController
             $content = $this->read($textname);
         }
         if ($this->isAuthorizedToEdit($username)) {
-            $mtime = $this->mtime($textname);
             if (isset($_POST["extedit_{$textname}_text"])) {
                 $content = stsl($_POST["extedit_{$textname}_text"]);
+                $mtime = $this->mtime($textname);
                 if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
                     $this->write($textname, $content);
-                    $mtime = time(); // to avoid calling clearstatcache()
+                    header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
+                    exit;
                 } else {
                     $e .= '<li>' . sprintf($ptx['err_changed'], $textname)
                         . '</li>';
                 }
             }
             if (isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit') {
+                $mtime = $this->mtime($textname);
                 $o = a($s, '') . $ptx['mode_view'] . '</a>'
                     . '<form action="" method="POST">'
                     . '<textarea name="extedit_' . $textname . '_text" cols="80"'

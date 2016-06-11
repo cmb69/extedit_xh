@@ -65,7 +65,12 @@ class ImagePicker extends AbstractController
                 $message = $plugin_tx['extedit']["imagepicker_err_mimetype"];
             }
         }
-        echo $this->show($message);
+        if (!$message) {
+            header('Location: ' . CMSIMPLE_URL . '?extedit_imagepicker');
+            exit;
+        } else {
+            echo $this->show($message);
+        }
     }
 
     /**
