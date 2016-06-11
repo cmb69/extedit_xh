@@ -40,6 +40,10 @@ class Controller
             echo $this->imagePicker();
             exit;
         }
+        if ((XH_ADM || $this->getCurrentUser()) && isset($_GET['extedit_upload'])) {
+            $this->handleUpload();
+            exit;
+        }
         if (XH_ADM) {
             if (function_exists('XH_registerStandardPluginMenuItems')) {
                 XH_registerStandardPluginMenuItems(false);
@@ -48,6 +52,28 @@ class Controller
                 $this->handleAdministration();
             }
         }
+    }
+
+    private function handleUpload()
+    {
+        $file = $_FILES['extedit_file'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            echo '<p>general upload error</p>';
+        } else {
+            $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($file['name']));
+            $filename = $this->getImageFolder() . $basename;
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->file($file['tmp_name']);
+            if (strpos($mimeType, 'image/') === 0) {
+                // TODO: process image with GD to avoid dangerous images?
+                if (!move_uploaded_file($file['tmp_name'], $filename)) {
+                    echo '<p>upload error: can\'t move</p>';
+                }
+            } else {
+                echo '<p>upload error: wrong mimetype</p>';
+            }
+        }
+        echo $this->imagePicker();
     }
 
     /**
@@ -90,23 +116,18 @@ class Controller
     }
 
     /**
-     * Returns the accessible images in the images folder or a subfolder thereof.
+     * Returns the accessible images.
      *
-     * @param string $subfolder A subfolder path.
+     * @param string $folder
      *
      * @return array
-     *
-     * @global array The paths of system files and folders.
      */
-    protected function images($subfolder = '')
+    protected function images($folder)
     {
-        global $pth;
-
-        $dn = rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
         $images = array();
-        if (($dh = opendir($dn)) !== false) {
+        if (($dh = opendir($folder)) !== false) {
             while (($entry = readdir($dh)) !== false) {
-                if ($entry[0] != '.' && is_file($ffn = $dn . $entry)
+                if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
                     && is_readable($ffn) && getimagesize($ffn) !== false
                 ) {
                     $images[$entry] = $ffn;
@@ -203,29 +224,36 @@ class Controller
      * @return string
      *
      * @global array  The paths of system files and folders.
-     * @global array  The configuration of the plugins.
      * @global array  The localization of the plugins.
+     * @global string The site name.
      */
     protected function imagePicker()
     {
-        global $pth, $plugin_cf, $plugin_tx;
+        global $pth, $plugin_tx, $sn;
 
-        $pcf = $plugin_cf['extedit'];
         $ptx = $plugin_tx['extedit'];
         if (!$this->getCurrentUser()) {
             return false;
         } else {
             header('Content-type: text/html; charset=utf-8');
-            $images = $pcf['images_subfolder']
-                ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
-                : '';
-            $bag['images'] = $this->images($images);
+            $bag['images'] = $this->images($this->getImageFolder());
             $bag['title'] = $ptx['imagepicker_title'];
             $bag['no_images'] = $ptx['imagepicker_empty'];
             $bag['tinymce_popup'] = $pth['folder']['plugins']
                 . 'tinymce/tiny_mce/tiny_mce_popup.js';
+            $bag['upload_url'] = "$sn?&extedit_upload";
             return $this->render('imagepicker', $bag);
         }
+    }
+
+    private function getImageFolder()
+    {
+        global $pth, $plugin_cf;
+        
+        $subfolder = $plugin_cf['extedit']['images_subfolder']
+            ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
+            : '';
+        return rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
     }
 
     /**

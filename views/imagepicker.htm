@@ -11,6 +11,9 @@
                 margin: 10px;
                 cursor: pointer
             }
+            #upload {
+                clear: both;
+            }
         </style>
         <script type="text/javascript" src="<?php echo $tinymce_popup?>">
         </script>
@@ -56,5 +59,9 @@
 <?php endforeach?>
 <?php endif?>
         </div>
+        <form id="upload" action="<?php echo $upload_url?>" method="POST" enctype="multipart/form-data">
+            <input name="extedit_file" type="file">
+            <button>Upload</button>
+        </form>
     </body>
 </html>
