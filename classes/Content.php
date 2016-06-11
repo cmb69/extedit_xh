@@ -46,7 +46,8 @@ class Extedit_Content
 
         $foldername = $pth['folder']['content'] . 'extedit/';
         if (!file_exists($foldername)) {
-            mkdir($foldername); // TODO: set permissions; call chmod()
+            mkdir($foldername);
+            chmod($foldername, 0777);
         }
         return $foldername;
     }
