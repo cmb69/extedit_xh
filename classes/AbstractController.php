@@ -24,6 +24,14 @@ namespace Extedit;
 abstract class AbstractController
 {
     /**
+     * @return bool
+     */
+    protected function isAdmin()
+    {
+        return defined('XH_ADM') && XH_ADM;
+    }
+
+    /**
      * @return string
      */
     protected function getCurrentUser()

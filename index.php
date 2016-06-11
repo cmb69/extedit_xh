@@ -21,11 +21,8 @@ along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
 
 const EXTEDIT_VERSION = '@EXTEDIT_VERSION@';
 
-/**
- * @var Extedit\Controller
- */
-$_Extedit_controller = new Extedit\Controller();
-$_Extedit_controller->dispatch();
+$temp = new Extedit\Controller();
+$temp->dispatch();
 
 /**
  * @param string $username
@@ -34,7 +31,6 @@ $_Extedit_controller->dispatch();
  */
 function extedit($username, $textname = '')
 {
-    global $_Extedit_controller;
-
-    return $_Extedit_controller->main($username, $textname);
+    $controller = new Extedit\FunctionController();
+    return $controller->handle($username, $textname);
 }

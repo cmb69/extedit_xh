@@ -53,15 +53,7 @@ class Controller extends AbstractController
     /**
      * @return bool
      */
-    private function isAdmin()
-    {
-        return defined('XH_ADM') && XH_ADM;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isAdministrationRequested()
+    private function isAdministrationRequested()
     {
         global $extedit;
 
@@ -73,7 +65,7 @@ class Controller extends AbstractController
     /**
      * @return void
      */
-    protected function handleAdministration()
+    private function handleAdministration()
     {
         global $admin, $action, $o;
 
@@ -88,154 +80,9 @@ class Controller extends AbstractController
     }
 
     /**
-     * @param string $textname
-     * @return int
-     */
-    protected function mtime($textname)
-    {
-        $filename = Content::getFilename($textname);
-        if (file_exists($filename)) {
-            return filemtime($filename);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * @param string $textname
-     * @return string
-     */
-    protected function read($textname)
-    {
-        $content = Content::find($textname);
-        if ($content->getHtml() !== null) {
-            return $content->getHtml();
-        } else {
-            e('cntopen', 'content', Content::getFilename($textname));
-        }
-    }
-
-    /**
-     * @param string $textname
-     * @param string $contents
-     * @return void
-     */
-    protected function write($textname, $contents)
-    {
-        $filename = Content::getFilename($textname);
-        if (file_put_contents($filename, $contents) === false) {
-            e('cntsave', 'content', $filename);
-        }
-    }
-
-    /**
-     * @param string $textname
-     * @return string
-     */
-    protected function textname($textname)
-    {
-        global $h, $s;
-
-        // TODO: check that $s is valid?
-        if (empty($textname)) {
-            $textname = $h[max($s, 0)];
-        }
-        $textname = preg_replace('/[^a-z0-9-]/i', '', $textname);
-        return $textname;
-    }
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    protected function evaluatePlugincall($content)
-    {
-        global $plugin_cf;
-
-        if ($plugin_cf['extedit']['allow_scripting']) {
-            $content = evaluate_plugincall($content);
-        }
-        return $content;
-    }
-
-    /**
-     * @return void
-     * @todo Image picker for other editors
-     */
-    protected function initEditor()
-    {
-        global $pth, $hjs, $cf;
-        static $again = false;
-
-        if ($again) {
-            return;
-        }
-        $again = true;
-        $plugins = $pth['folder']['plugins'];
-        $editor = $cf['editor']['external'];
-        if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
-            include_once "{$plugins}extedit/connectors/$editor.php";
-            $hjs .= extedit_tinymce_init() . "\n";
-            $config = file_get_contents("${plugins}extedit/inits/$editor.js");
-        } else {
-            $config = false;
-        }
-        init_editor(array('xh-editor'), $config);
-    }
-
-    /**
-     * @param string $username
-     * @param string $textname
      * @return string (X)HTML
      */
-    public function main($username, $textname = '')
-    {
-        global $s, $e, $plugin_tx;
-
-        $ptx = $plugin_tx['extedit'];
-        $textname = $this->textname($textname);
-        if (!isset($_POST["extedit_${textname}_text"])) {
-            $content = $this->read($textname);
-        }
-        if ($this->isAdmin() || $this->getCurrentUser() == $username) {
-            $mtime = $this->mtime($textname);
-            if (isset($_POST["extedit_${textname}_text"])) {
-                $content = stsl($_POST["extedit_${textname}_text"]);
-                if ($_POST["extedit_${textname}_mtime"] >= $mtime) {
-                    $this->write($textname, $content);
-                    $mtime = time(); // to avoid calling clearstatcache()
-                } else {
-                    $e .= '<li>' . sprintf($ptx['err_changed'], $textname)
-                        . '</li>';
-                }
-            }
-            if (isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit') {
-                $o = a($s, '') . $ptx['mode_view'] . '</a>'
-                    . '<form action="" method="POST">'
-                    . '<textarea name="extedit_' . $textname . '_text" cols="80"'
-                    . ' rows="25" class="xh-editor" style="width: 100%">'
-                    . XH_hsc($content)
-                    . '</textarea>'
-                    . tag(
-                        'input type="hidden" name="extedit_' . $textname . '_mtime"'
-                        . ' value="' . $mtime . '"'
-                    )
-                    . '</form>';
-                $this->initEditor();
-            } else {
-                $o = a($s, '&amp;extedit_mode=edit') . $ptx['mode_edit'] . '</a>'
-                    . $this->evaluatePlugincall($content);
-            }
-        } else {
-            $o = $this->evaluatePlugincall($content);
-        }
-        return $o;
-    }
-
-    /**
-     * @return string (X)HTML
-     */
-    protected function renderInfo()
+    private function renderInfo()
     {
         global $pth, $plugin_tx;
 
@@ -255,7 +102,7 @@ class Controller extends AbstractController
     /**
      * @return array
      */
-    protected function systemChecks()
+    private function systemChecks()
     {
         global $pth, $tx, $plugin_tx;
 
