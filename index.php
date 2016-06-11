@@ -49,7 +49,7 @@ define('EXTEDIT_VERSION', '@EXTEDIT_VERSION@');
  *
  * @var Extedit_Controller
  */
-$_Extedit_controller = new Extedit_Controller();
+$_Extedit_controller = new Extedit\Controller();
 $_Extedit_controller->dispatch();
 
 /**

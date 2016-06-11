@@ -13,6 +13,8 @@
  * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
 
+namespace Extedit;
+
 /**
  * The contents.
  *
@@ -22,7 +24,7 @@
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
-class Extedit_Content
+class Content
 {
     /**
      * The (X)HTML.

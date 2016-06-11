@@ -13,6 +13,8 @@
  * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
 
+namespace Extedit;
+
 require_once './vendor/autoload.php';
 require_once './classes/Content.php';
 
@@ -29,7 +31,7 @@ use org\bovigo\vfs\vfsStream;
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
-class ContentTest extends PHPUnit_Framework_TestCase
+class ContentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Sets up the test fixture.
@@ -54,7 +56,7 @@ class ContentTest extends PHPUnit_Framework_TestCase
      */
     public function testReadingFoldernameCreatesContentFolder()
     {
-        $foldername = Extedit_Content::getFoldername();
+        $foldername = Content::getFoldername();
         $this->assertFileExists($foldername);
     }
 
@@ -67,7 +69,7 @@ class ContentTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             vfsStream::url('test/extedit/foo.htm'),
-            Extedit_Content::getFilename('foo')
+            Content::getFilename('foo')
         );
     }
 
@@ -82,7 +84,7 @@ class ContentTest extends PHPUnit_Framework_TestCase
         $filename = vfsStream::url('test/extedit/foo.htm');
         mkdir(dirname($filename));
         file_put_contents($filename, $html);
-        $content = Extedit_Content::find('foo');
+        $content = Content::find('foo');
         $this->assertEquals($html, $content->getHtml());
     }
 
@@ -93,7 +95,7 @@ class ContentTest extends PHPUnit_Framework_TestCase
      */
     public function testNonExistingContentIsEmpty()
     {
-        $content = Extedit_Content::find('foo');
+        $content = Content::find('foo');
         $this->assertEquals('', $content->getHtml());
     }
 }

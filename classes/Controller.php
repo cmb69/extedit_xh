@@ -13,6 +13,8 @@
  * @link      http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
 
+namespace Extedit;
+
 /**
  * The extedit controllers.
  *
@@ -22,7 +24,7 @@
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
-class Extedit_Controller
+class Controller
 {
     /**
      * Dispatches on plugin related requests.
@@ -123,7 +125,7 @@ class Extedit_Controller
      */
     protected function mtime($textname)
     {
-        $filename = Extedit_Content::getFilename($textname);
+        $filename = Content::getFilename($textname);
         if (file_exists($filename)) {
             return filemtime($filename);
         } else {
@@ -141,11 +143,11 @@ class Extedit_Controller
      */
     protected function read($textname)
     {
-        $content = Extedit_Content::find($textname);
+        $content = Content::find($textname);
         if ($content->getHtml() !== null) {
             return $content->getHtml();
         } else {
-            e('cntopen', 'content', Extedit_Content::getFilename($textname));
+            e('cntopen', 'content', Content::getFilename($textname));
         }
     }
 
@@ -159,7 +161,7 @@ class Extedit_Controller
      */
     protected function write($textname, $contents)
     {
-        $filename = Extedit_Content::getFilename($textname);
+        $filename = Content::getFilename($textname);
         if (file_put_contents($filename, $contents) === false) {
             e('cntsave', 'content', $filename);
         }
@@ -200,10 +202,10 @@ class Extedit_Controller
      *
      * @return string
      *
-     * @global array              The paths of system files and folders.
-     * @global array              The configuration of the plugins.
-     * @global array              The localization of the plugins.
-     * @global Extedit_Controller The plugin controller.
+     * @global array      The paths of system files and folders.
+     * @global array      The configuration of the plugins.
+     * @global array      The localization of the plugins.
+     * @global Controller The plugin controller.
      */
     protected function imagePicker()
     {
@@ -412,7 +414,7 @@ class Extedit_Controller
         foreach (array('config/', 'languages/') as $folder) {
             $folders[] = $pth['folder']['plugins'] . 'extedit/' . $folder;
         }
-        $folders[] = Extedit_Content::getFoldername();
+        $folders[] = Content::getFoldername();
         foreach ($folders as $folder) {
             $checks[sprintf($ptx['syscheck_writable'], $folder)]
                 = is_writable($folder) ? 'ok' : 'warn';
