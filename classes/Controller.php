@@ -40,7 +40,7 @@ class Controller extends AbstractController
                 exit;
             }
         }
-        if (XH_ADM) {
+        if ($this->isAdmin()) {
             if (function_exists('XH_registerStandardPluginMenuItems')) {
                 XH_registerStandardPluginMenuItems(false);
             }
@@ -48,6 +48,14 @@ class Controller extends AbstractController
                 $this->handleAdministration();
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAdmin()
+    {
+        return defined('XH_ADM') && XH_ADM;
     }
 
     /**
@@ -165,7 +173,7 @@ class Controller extends AbstractController
         $again = true;
         $plugins = $pth['folder']['plugins'];
         $editor = $cf['editor']['external'];
-        if (!XH_ADM && in_array($editor, array('tinymce'))) {
+        if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
             include_once "{$plugins}extedit/connectors/$editor.php";
             $hjs .= extedit_tinymce_init() . "\n";
             $config = file_get_contents("${plugins}extedit/inits/$editor.js");
@@ -189,7 +197,7 @@ class Controller extends AbstractController
         if (!isset($_POST["extedit_${textname}_text"])) {
             $content = $this->read($textname);
         }
-        if (XH_ADM || $this->getCurrentUser() == $username) {
+        if ($this->isAdmin() || $this->getCurrentUser() == $username) {
             $mtime = $this->mtime($textname);
             if (isset($_POST["extedit_${textname}_text"])) {
                 $content = stsl($_POST["extedit_${textname}_text"]);
