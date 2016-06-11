@@ -69,6 +69,3 @@ function extedit($username, $textname = '')
 
     return $_Extedit_controller->main($username, $textname);
 }
-
-
-?>

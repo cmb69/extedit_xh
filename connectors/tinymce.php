@@ -52,5 +52,3 @@ function extedit_imagepicker(field_name, url, type, win) {
 </script>
 EOS;
 }
-
-?>

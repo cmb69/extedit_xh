@@ -96,5 +96,3 @@ class Extedit_Content
         return $this->html;
     }
 }
-
-?>

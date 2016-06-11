@@ -80,11 +80,11 @@ class Extedit_Controller
 
         $o .= print_plugin_admin('off');
         switch ($admin) {
-        case '':
-            $o .= $this->renderInfo();
-            break;
-        default:
-            $o .= plugin_admin_common($action, $admin, 'extedit');
+            case '':
+                $o .= $this->renderInfo();
+                break;
+            default:
+                $o .= plugin_admin_common($action, $admin, 'extedit');
         }
     }
 
@@ -436,5 +436,3 @@ class Extedit_Controller
             : '';
     }
 }
-
-?>
