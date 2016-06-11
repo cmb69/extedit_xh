@@ -202,8 +202,7 @@ class Controller
     {
         global $pth, $cf;
 
-        $_template = $pth['folder']['plugins'] . 'extedit/views/' . $_template
-            . '.htm';
+        $_template = "{$pth['folder']['plugins']}extedit/views/$_template.php";
         $_xhtml = strtolower($cf['xhtml']['endtags']) == 'true';
         unset($pth, $cf);
         extract($_bag);
@@ -214,6 +213,11 @@ class Controller
             $view = str_replace(' />', '>', $view);
         }
         return $view;
+    }
+
+    private function preventAccess()
+    {
+        // do nothing!
     }
 
     /**

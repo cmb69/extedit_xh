@@ -1,3 +1,4 @@
+<?php $this->preventAccess()?>
 <!DOCTYPE html>
 <html>
     <head>

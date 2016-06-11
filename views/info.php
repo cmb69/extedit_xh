@@ -1,3 +1,4 @@
+<?php $this->preventAccess()?>
 <!-- Extedit: info -->
 <h1>Extedit &ndash; <?php echo $ptx['label_info']?></h1>
 <img src="<?php echo $icon?>" class="extedit_logo" alt="<?php echo
