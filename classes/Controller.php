@@ -403,7 +403,7 @@ class Controller
         $checks = array();
         $checks[sprintf($ptx['syscheck_phpversion'], $phpVersion)]
             = version_compare(PHP_VERSION, $phpVersion) >= 0 ? 'ok' : 'fail';
-        foreach (array('pcre', 'session') as $ext) {
+        foreach (array('session') as $ext) {
             $checks[sprintf($ptx['syscheck_extension'], $ext)]
                 = extension_loaded($ext) ? 'ok' : 'fail';
         }
