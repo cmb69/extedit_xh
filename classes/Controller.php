@@ -202,14 +202,13 @@ class Controller
      *
      * @return string
      *
-     * @global array      The paths of system files and folders.
-     * @global array      The configuration of the plugins.
-     * @global array      The localization of the plugins.
-     * @global Controller The plugin controller.
+     * @global array  The paths of system files and folders.
+     * @global array  The configuration of the plugins.
+     * @global array  The localization of the plugins.
      */
     protected function imagePicker()
     {
-        global $pth, $plugin_cf, $plugin_tx, $_Extedit_controller;
+        global $pth, $plugin_cf, $plugin_tx;
 
         $pcf = $plugin_cf['extedit'];
         $ptx = $plugin_tx['extedit'];
@@ -239,11 +238,10 @@ class Controller
      *
      * @global array The headings of the pages.
      * @global int   The current page index.
-     * @global int   The number of pages.
      */
     protected function textname($textname)
     {
-        global $h, $s, $cl;
+        global $h, $s;
 
         // TODO: check that $s is valid?
         if (empty($textname)) {
@@ -295,7 +293,7 @@ class Controller
         $plugins = $pth['folder']['plugins'];
         $editor = $cf['editor']['external'];
         if (!XH_ADM && in_array($editor, array('tinymce'))) {
-            include_once "${plugins}extedit/connectors/$editor.php";
+            include_once "{$plugins}extedit/connectors/$editor.php";
             $hjs .= extedit_tinymce_init() . "\n";
             $config = file_get_contents("${plugins}extedit/inits/$editor.js");
         } else {
