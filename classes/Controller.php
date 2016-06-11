@@ -24,7 +24,7 @@ namespace Extedit;
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link     http://3-magi.net/?CMSimple_XH/Extedit_XH
  */
-class Controller
+class Controller extends AbstractController
 {
     /**
      * Dispatches on plugin related requests.
@@ -35,11 +35,13 @@ class Controller
     {
         if ($this->getCurrentUser()) {
             if (isset($_GET['extedit_imagepicker'])) {
-                echo $this->imagePicker();
+                $imagePicker = new ImagePicker();
+                echo $imagePicker->show();
                 exit;
             }
             if (isset($_GET['extedit_upload'])) {
-                $this->handleUpload();
+                $imagePicker = new ImagePicker();
+                $imagePicker->handleUpload();
                 exit;
             }
         }
@@ -50,53 +52,6 @@ class Controller
             if ($this->isAdministrationRequested()) {
                 $this->handleAdministration();
             }
-        }
-    }
-
-    private function handleUpload()
-    {
-        global $plugin_tx;
-
-        $file = $_FILES['extedit_file'];
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            $key = $this->getUploadErrorKey($file['error']);
-            echo $plugin_tx['extedit']["imagepicker_err_$key"];
-        } else {
-            $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($file['name']));
-            $filename = $this->getImageFolder() . $basename;
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
-            $mimeType = $finfo->file($file['tmp_name']);
-            if (strpos($mimeType, 'image/') === 0) {
-                // TODO: process image with GD to avoid dangerous images?
-                if (!move_uploaded_file($file['tmp_name'], $filename)) {
-                    echo $plugin_tx['extedit']["imagepicker_err_cantwrite"];
-                }
-            } else {
-                echo $plugin_tx['extedit']["imagepicker_err_mimetype"];
-            }
-        }
-        echo $this->imagePicker();
-    }
-
-    private function getUploadErrorKey($error)
-    {
-        switch ($error) {
-            case UPLOAD_ERR_INI_SIZE:
-                return 'inisize';
-            case UPLOAD_ERR_FORM_SIZE:
-                return 'formsize';
-            case UPLOAD_ERR_PARTIAL:
-                return 'partial';
-            case UPLOAD_ERR_NO_FILE:
-                return 'nofile';
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return 'notmpdir';
-            case UPLOAD_ERR_CANT_WRITE:
-                return 'cantwrite';
-            case UPLOAD_ERR_EXTENSION:
-                return 'extension';
-            default:
-                return 'unknown';
         }
     }
 
@@ -137,28 +92,6 @@ class Controller
             default:
                 $o .= plugin_admin_common($action, $admin, 'extedit');
         }
-    }
-
-    /**
-     * Returns the accessible images.
-     *
-     * @param string $folder
-     *
-     * @return array
-     */
-    protected function images($folder)
-    {
-        $images = array();
-        if (($dh = opendir($folder)) !== false) {
-            while (($entry = readdir($dh)) !== false) {
-                if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
-                    && is_readable($ffn) && getimagesize($ffn) !== false
-                ) {
-                    $images[$entry] = $ffn;
-                }
-            }
-        }
-        return $images;
     }
 
     /**
@@ -210,75 +143,6 @@ class Controller
         if (file_put_contents($filename, $contents) === false) {
             e('cntsave', 'content', $filename);
         }
-    }
-
-    /**
-     * Returns an instantiated view template.
-     *
-     * @param string $_template The path of the template file.
-     * @param array  $_bag      The variables.
-     *
-     * @return string
-     *
-     * @global array The paths of system files and folders.
-     * @global array The configuration of the core.
-     */
-    protected function render($_template, $_bag)
-    {
-        global $pth, $cf;
-
-        $_template = "{$pth['folder']['plugins']}extedit/views/$_template.php";
-        $_xhtml = strtolower($cf['xhtml']['endtags']) == 'true';
-        unset($pth, $cf);
-        extract($_bag);
-        ob_start();
-        include $_template;
-        $view = ob_get_clean();
-        if (!$_xhtml) {
-            $view = str_replace(' />', '>', $view);
-        }
-        return $view;
-    }
-
-    private function preventAccess()
-    {
-        // do nothing!
-    }
-
-    /**
-     * Returns the (X)HTML document constituting the image picker.
-     * If user is not logged in as member, returns FALSE.
-     *
-     * @return string
-     *
-     * @global array  The paths of system files and folders.
-     * @global array  The localization of the plugins.
-     * @global string The site name.
-     */
-    protected function imagePicker()
-    {
-        global $pth, $plugin_tx, $sn;
-
-        $ptx = $plugin_tx['extedit'];
-        header('Content-type: text/html; charset=utf-8');
-        $bag['images'] = $this->images($this->getImageFolder());
-        $bag['title'] = $ptx['imagepicker_title'];
-        $bag['no_images'] = $ptx['imagepicker_empty'];
-        $bag['tinymce_popup'] = $pth['folder']['plugins']
-            . 'tinymce/tiny_mce/tiny_mce_popup.js';
-        $bag['upload_url'] = "$sn?&extedit_upload";
-        $bag['upload'] = $ptx['imagepicker_upload'];
-        return $this->render('imagepicker', $bag);
-    }
-
-    private function getImageFolder()
-    {
-        global $pth, $plugin_cf;
-        
-        $subfolder = $plugin_cf['extedit']['images_subfolder']
-            ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
-            : '';
-        return rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
     }
 
     /**
@@ -471,20 +335,5 @@ class Controller
                 = is_writable($folder) ? 'ok' : 'warn';
         }
         return $checks;
-    }
-
-    /**
-     * Returns the current user.
-     *
-     * @return string
-     */
-    protected function getCurrentUser()
-    {
-        if (session_id() == '') {
-            session_start();
-        }
-        return isset($_SESSION['username'])
-            ? $_SESSION['username']
-            : '';
     }
 }
