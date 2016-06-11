@@ -29,8 +29,8 @@ $temp->dispatch();
  * @param string $textname
  * @return string (X)HTML
  */
-function extedit($username, $textname = '')
+function extedit($username, $textname = null)
 {
-    $controller = new Extedit\FunctionController();
-    return $controller->handle($username, $textname);
+    $controller = new Extedit\FunctionController($username, $textname);
+    return $controller->handle();
 }

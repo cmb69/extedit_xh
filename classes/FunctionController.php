@@ -24,92 +24,154 @@ namespace Extedit;
 class FunctionController extends AbstractController
 {
     /**
+     * @var string
+     */
+    private $username;
+
+    /**
+     * @var string
+     */
+    private $textname;
+
+    /**
+     * @var content
+     */
+    private $content;
+
+    /**
      * @param string $username
      * @param string $textname
+     */
+    public function __construct($username, $textname = null)
+    {
+        $this->username = $username;
+        $this->textname = $textname;
+        $this->sanitizeTextname();
+    }
+
+    /**
      * @return string (X)HTML
      */
-    public function handle($username, $textname = '')
+    public function handle()
     {
-        global $s, $plugin_tx, $su;
-
-        $ptx = $plugin_tx['extedit'];
-        $textname = $this->textname($textname);
-        if (!isset($_POST["extedit_{$textname}_text"])) {
-            $content = $this->read($textname);
-        }
         $o = '';
-        if ($this->isAuthorizedToEdit($username)) {
-            if (isset($_POST["extedit_{$textname}_text"])) {
-                $content = stsl($_POST["extedit_{$textname}_text"]);
-                $mtime = $this->mtime($textname);
-                if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
-                    if ($this->write($textname, $content)) {
-                        header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
-                        exit;
-                    } else {
-                        $o .= XH_message('fail', $ptx['err_save'], Content::getFilename($textname));
-                    }
-                } else {
-                    $o .= XH_message('fail', $ptx['err_changed'], $textname);
-                }
+        if ($this->isAuthorizedToEdit($this->username)) {
+            if (isset($_POST["extedit_{$this->textname}_text"])) {
+                $o .= $this->handleSave();
+            } else {
+                $this->content = $this->read();
             }
-            if (isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit') {
-                $mtime = $this->mtime($textname);
-                $o .= a($s, '') . $ptx['mode_view'] . '</a>'
-                    . '<form action="" method="POST">'
-                    . '<textarea name="extedit_' . $textname . '_text" cols="80"'
-                    . ' rows="25" class="xh-editor" style="width: 100%">'
-                    . XH_hsc($content)
-                    . '</textarea>'
-                    . tag(
-                        'input type="hidden" name="extedit_' . $textname . '_mtime"'
-                        . ' value="' . $mtime . '"'
-                    )
-                    . '</form>';
+            if ($this->isEditModeRequested()) {
+                $o .= $this->getViewLink() . $this->getEditForm();
                 $this->initEditor();
             } else {
-                $o .= a($s, '&amp;extedit_mode=edit') . $ptx['mode_edit'] . '</a>'
-                    . $this->evaluatePlugincall($content);
+                $o .= $this->getEditLink() . $this->evaluatePlugincall();
             }
         } else {
-            $o .= $this->evaluatePlugincall($content);
+            $o .= $this->evaluatePlugincall();
         }
         return $o;
     }
 
     /**
-     * @param string $textname
-     * @return string
+     * @return string (X)HTML
      */
-    private function textname($textname)
+    private function handleSave()
+    {
+        global $su, $plugin_tx;
+
+        $this->content = stsl($_POST["extedit_{$this->textname}_text"]);
+        $mtime = $this->mtime();
+        if ($_POST["extedit_{$this->textname}_mtime"] >= $mtime) {
+            if ($this->write()) {
+                header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
+                exit;
+            } else {
+                return XH_message(
+                    'fail',
+                    $plugin_tx['extedit']['err_save'],
+                    Content::getFilename($this->textname)
+                );
+            }
+        } else {
+            return XH_message('fail', $plugin_tx['extedit']['err_changed'], $this->textname);
+        }
+    }
+
+    /**
+     * @return string (X)HTML
+     */
+    private function getEditForm()
+    {
+        return '<form action="" method="POST">'
+            . '<textarea name="extedit_' . $this->textname . '_text" cols="80"'
+            . ' rows="25" class="xh-editor" style="width: 100%">'
+            . XH_hsc($this->content)
+            . '</textarea>'
+            . tag(
+                'input type="hidden" name="extedit_' . $this->textname . '_mtime"'
+                . ' value="' . $this->mtime() . '"'
+            )
+            . '</form>';
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEditModeRequested()
+    {
+        return isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit';
+    }
+
+    /**
+     * @return string (X)HTML
+     */
+    private function getEditLink()
+    {
+        global $s, $plugin_tx;
+
+        return a($s, '&amp;extedit_mode=edit') . $plugin_tx['extedit']['mode_edit'] . '</a>';
+    }
+
+    /**
+     * @return string (X)HTML
+     */
+    private function getViewLink()
+    {
+        global $s, $plugin_tx;
+
+        return a($s, '') . $plugin_tx['extedit']['mode_view'] . '</a>';
+    }
+
+    /**
+     * @return void
+     */
+    private function sanitizeTextname()
     {
         global $h, $s;
 
         // TODO: check that $s is valid?
-        if (empty($textname)) {
-            $textname = $h[max($s, 0)];
+        if (!isset($this->textname)) {
+            $this->textname = $h[max($s, 0)];
         }
-        $textname = preg_replace('/[^a-z0-9-]/i', '', $textname);
-        return $textname;
+        $this->textname = preg_replace('/[^a-z0-9-]/i', '', $this->textname);
     }
 
     /**
-     * @param string $textname
      * @return ?string
      */
-    private function read($textname)
+    private function read()
     {
-        $content = Content::find($textname);
+        $content = Content::find($this->textname);
         return $content->getHtml();
     }
 
     /**
-     * @param string $textname
      * @return int
      */
-    private function mtime($textname)
+    private function mtime()
     {
-        $filename = Content::getFilename($textname);
+        $filename = Content::getFilename($this->textname);
         if (file_exists($filename)) {
             return filemtime($filename);
         } else {
@@ -118,28 +180,25 @@ class FunctionController extends AbstractController
     }
 
     /**
-     * @param string $textname
-     * @param string $contents
      * @return bool
      */
-    private function write($textname, $contents)
+    private function write()
     {
-        $filename = Content::getFilename($textname);
-        return is_writable($filename)
-            && file_put_contents($filename, $contents) !== false;
+        $filename = Content::getFilename($this->textname);
+        return (!file_exists($filename) || is_writable($filename))
+            && file_put_contents($filename, $this->content) !== false;
     }
 
     /**
-     * @param string $content
      * @return string
      */
-    private function evaluatePlugincall($content)
+    private function evaluatePlugincall()
     {
         global $plugin_cf;
 
         if ($plugin_cf['extedit']['allow_scripting']) {
-            $content = evaluate_plugincall($content);
+            return evaluate_plugincall($this->content);
         }
-        return $content;
+        return $this->content;
     }
 }
