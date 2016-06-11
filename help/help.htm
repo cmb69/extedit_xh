@@ -91,6 +91,10 @@ or customize them according to your needs.</p>
 <h2 id="usage">Usage</h2>
 <p>To embed an "extedit" on a page, insert the following:</p>
 <pre>{{{extedit('USERNAME', 'TEXTNAME');}}}</pre>
+<p>To embed an "extedit" in the template, insert the following:</p>
+<pre>&lt;?php echo extedit('USERNAME', 'TEXTNAME')?&gt;</pre>
+<p>Note: if "extedits" are embedded in the template or a newsbox, the configuration
+option Allow→Template has to be enabled.</p>
 <p>The parameters have the following meaning:</p>
 <dl>
     <dt>USERNAME</dt>
@@ -151,7 +155,6 @@ image folder.</p>
     <li>The image picker is currently available only for tinyMCE.</li>
     <li>The management of the "extedit" files (e.g. deleting and renaming) has
     to be done via FTP.</li>
-    <li>extedit() can't be called from the template.</li>
 </ul>
 <div class="toplink"><a href="#">back to top</a></div>
 </section>

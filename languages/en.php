@@ -39,5 +39,6 @@ $plugin_tx['extedit']['alt_logo']="Bust with highlighter";
 
 $plugin_tx['extedit']['cf_images_subfolder']="Shall the editor have access to his personal image folder only?";
 $plugin_tx['extedit']['cf_allow_scripting']="Shall plugin calls be evaluated in the \"extedits\"?";
+$plugin_tx['extedit']['cf_allow_template']="Whether \"extedits\" are embedded in the template or in newsboxes.";
 
 ?>

@@ -24,6 +24,46 @@ namespace Extedit;
 abstract class AbstractController
 {
     /**
+     * @var bool
+     */
+    private static $isEditorInitialized = false;
+
+    /**
+     * @param string $username
+     * @return bool
+     */
+    protected function isAuthorizedToEdit($username)
+    {
+        return $this->isAdmin()
+            || $username == '*' && $this->getCurrentUser()
+            || in_array($this->getCurrentUser(), explode(',', $username));
+    }
+
+    /**
+     * @return void
+     * @todo Image picker for other editors
+     */
+    protected function initEditor()
+    {
+        global $pth, $hjs, $cf;
+
+        if (self::$isEditorInitialized) {
+            return;
+        }
+        self::$isEditorInitialized = true;
+        $plugins = $pth['folder']['plugins'];
+        $editor = $cf['editor']['external'];
+        if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
+            include_once "{$plugins}extedit/connectors/$editor.php";
+            $hjs .= extedit_tinymce_init() . "\n";
+            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
+        } else {
+            $config = false;
+        }
+        init_editor(array('xh-editor'), $config);
+    }
+
+    /**
      * @return bool
      */
     protected function isAdmin()

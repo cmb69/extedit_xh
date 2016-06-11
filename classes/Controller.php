@@ -28,6 +28,9 @@ class Controller extends AbstractController
      */
     public function dispatch()
     {
+        if ($this->isTemplateEdit()) {
+            $this->initEditor();
+        }
         if ($this->getCurrentUser()) {
             if (isset($_GET['extedit_imagepicker'])) {
                 $imagePicker = new ImagePicker();
@@ -48,6 +51,15 @@ class Controller extends AbstractController
                 $this->handleAdministration();
             }
         }
+    }
+    
+    private function isTemplateEdit()
+    {
+        global $plugin_cf;
+
+        return $plugin_cf['extedit']['allow_template']
+            && isset($_GET['extedit_mode'])
+            && $_GET['extedit_mode'] === 'edit';
     }
 
     /**

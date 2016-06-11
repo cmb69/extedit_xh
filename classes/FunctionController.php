@@ -24,11 +24,6 @@ namespace Extedit;
 class FunctionController extends AbstractController
 {
     /**
-     * @var bool
-     */
-    private static $isEditorInitialized = false;
-
-    /**
      * @param string $username
      * @param string $textname
      * @return string (X)HTML
@@ -75,17 +70,6 @@ class FunctionController extends AbstractController
             $o = $this->evaluatePlugincall($content);
         }
         return $o;
-    }
-
-    /**
-     * @param string $username
-     * @return bool
-     */
-    private function isAuthorizedToEdit($username)
-    {
-        return $this->isAdmin()
-            || $username == '*' && $this->getCurrentUser()
-            || in_array($this->getCurrentUser(), explode(',', $username));
     }
 
     /**
@@ -143,30 +127,6 @@ class FunctionController extends AbstractController
         if (file_put_contents($filename, $contents) === false) {
             e('cntsave', 'content', $filename);
         }
-    }
-
-    /**
-     * @return void
-     * @todo Image picker for other editors
-     */
-    private function initEditor()
-    {
-        global $pth, $hjs, $cf;
-
-        if (self::$isEditorInitialized) {
-            return;
-        }
-        self::$isEditorInitialized = true;
-        $plugins = $pth['folder']['plugins'];
-        $editor = $cf['editor']['external'];
-        if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
-            include_once "{$plugins}extedit/connectors/$editor.php";
-            $hjs .= extedit_tinymce_init() . "\n";
-            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
-        } else {
-            $config = false;
-        }
-        init_editor(array('xh-editor'), $config);
     }
 
     /**

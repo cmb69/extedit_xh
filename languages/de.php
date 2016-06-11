@@ -39,5 +39,6 @@ $plugin_tx['extedit']['alt_logo']="Büste mit Textmarker";
 
 $plugin_tx['extedit']['cf_images_subfolder']="Soll der Editor nur Zugriff auf seinen eigenen Bilderordner haben?";
 $plugin_tx['extedit']['cf_allow_scripting']="Sollen Plugin-Aufrufe in den \"extedits\" ausgewertet werden?";
+$plugin_tx['extedit']['cf_allow_template']="Ob \"extedits\" im Template oder in Newsboxen eingebunden sind.";
 
 ?>

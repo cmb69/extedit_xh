@@ -95,6 +95,10 @@ Sprachdatei zur Verfügung steht, oder diese Ihren Wünschen gemäß anpassen.</
 <h2 id="usage">Verwendung</h2>
 <p>Um ein "Extedit" auf einer Seite einzubinden, fügen Sie folgendes ein:</p>
 <pre>{{{extedit('BENUTZERNAME', 'TEXTNAME');}}}</pre>
+<p>Um ein "Extedit" im Template einzubinden, fügen Sie folgendes ein:</p>
+<pre>&lt;?php echo extedit('BENUTZERNAME', 'TEXTNAME')?&gt;</pre>
+<p>Hinweis: werden "extedits" im Template oder einer Newsbox eingebunden, muss
+die Konfigurationsoption Allow→Template aktiviert werden.</p>
 <p>Die Parameter haben die folgende Bedeutung:</p>
 <dl>
     <dt>BENUTZERNAME</dt>
@@ -159,7 +163,6 @@ Weiterhin kann er nicht auf Unterordner seines Bilderordners zugreifen.</p>
     <li>Der Bildwähler funktioniert derzeit nur unter TinyMCE.</li>
     <li>Die Verwaltung der "Extedit" Dateien (z.B. Löschen und Umbenennnen) muss
     per FTP vorgenommen werden.</li>
-    <li>extedit() kann nicht aus dem Template heraus aufgerufen werden.</li>
 </ul>
 <div class="toplink"><a href="#">zum Seitenanfang</a></div>
 </section>
