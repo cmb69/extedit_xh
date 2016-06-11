@@ -39,14 +39,14 @@ class FunctionController extends AbstractController
 
         $ptx = $plugin_tx['extedit'];
         $textname = $this->textname($textname);
-        if (!isset($_POST["extedit_${textname}_text"])) {
+        if (!isset($_POST["extedit_{$textname}_text"])) {
             $content = $this->read($textname);
         }
         if ($this->isAdmin() || $this->getCurrentUser() == $username) {
             $mtime = $this->mtime($textname);
-            if (isset($_POST["extedit_${textname}_text"])) {
-                $content = stsl($_POST["extedit_${textname}_text"]);
-                if ($_POST["extedit_${textname}_mtime"] >= $mtime) {
+            if (isset($_POST["extedit_{$textname}_text"])) {
+                $content = stsl($_POST["extedit_{$textname}_text"]);
+                if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
                     $this->write($textname, $content);
                     $mtime = time(); // to avoid calling clearstatcache()
                 } else {
@@ -151,7 +151,7 @@ class FunctionController extends AbstractController
         if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
             include_once "{$plugins}extedit/connectors/$editor.php";
             $hjs .= extedit_tinymce_init() . "\n";
-            $config = file_get_contents("${plugins}extedit/inits/$editor.js");
+            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
         } else {
             $config = false;
         }
