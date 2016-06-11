@@ -85,7 +85,7 @@ class FunctionController extends AbstractController
     {
         return $this->isAdmin()
             || $username == '*' && $this->getCurrentUser()
-            || $this->getCurrentUser() == $username;
+            || in_array($this->getCurrentUser(), explode(',', $username));
     }
 
     /**
