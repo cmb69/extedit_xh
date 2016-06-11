@@ -62,7 +62,7 @@
         </div>
         <form id="upload" action="<?php echo $upload_url?>" method="POST" enctype="multipart/form-data">
             <input name="extedit_file" type="file">
-            <button>Upload</button>
+            <button><?php echo $upload?></button>
         </form>
     </body>
 </html>

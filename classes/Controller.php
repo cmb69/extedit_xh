@@ -55,9 +55,12 @@ class Controller
 
     private function handleUpload()
     {
+        global $plugin_tx;
+
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            echo '<p>general upload error</p>';
+            $key = $this->getUploadErrorKey($file['error']);
+            echo $plugin_tx['extedit']["imagepicker_err_$key"];
         } else {
             $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($file['name']));
             $filename = $this->getImageFolder() . $basename;
@@ -66,13 +69,35 @@ class Controller
             if (strpos($mimeType, 'image/') === 0) {
                 // TODO: process image with GD to avoid dangerous images?
                 if (!move_uploaded_file($file['tmp_name'], $filename)) {
-                    echo '<p>upload error: can\'t move</p>';
+                    echo $plugin_tx['extedit']["imagepicker_err_cantwrite"];
                 }
             } else {
-                echo '<p>upload error: wrong mimetype</p>';
+                echo $plugin_tx['extedit']["imagepicker_err_mimetype"];
             }
         }
         echo $this->imagePicker();
+    }
+
+    private function getUploadErrorKey($error)
+    {
+        switch ($error) {
+            case UPLOAD_ERR_INI_SIZE:
+                return 'inisize';
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'formsize';
+            case UPLOAD_ERR_PARTIAL:
+                return 'partial';
+            case UPLOAD_ERR_NO_FILE:
+                return 'nofile';
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return 'notmpdir';
+            case UPLOAD_ERR_CANT_WRITE:
+                return 'cantwrite';
+            case UPLOAD_ERR_EXTENSION:
+                return 'extension';
+            default:
+                return 'unknown';
+        }
     }
 
     /**
@@ -242,6 +267,7 @@ class Controller
         $bag['tinymce_popup'] = $pth['folder']['plugins']
             . 'tinymce/tiny_mce/tiny_mce_popup.js';
         $bag['upload_url'] = "$sn?&extedit_upload";
+        $bag['upload'] = $ptx['imagepicker_upload'];
         return $this->render('imagepicker', $bag);
     }
 
