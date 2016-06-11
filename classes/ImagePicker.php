@@ -33,7 +33,7 @@ class ImagePicker extends AbstractController
      * @global array  The localization of the plugins.
      * @global string The site name.
      */
-    public function show()
+    public function show($message = '')
     {
         global $pth, $plugin_tx, $sn;
 
@@ -46,6 +46,7 @@ class ImagePicker extends AbstractController
             . 'tinymce/tiny_mce/tiny_mce_popup.js';
         $bag['upload_url'] = "$sn?&extedit_upload";
         $bag['upload'] = $ptx['imagepicker_upload'];
+        $bag['message'] = $message;
         return $this->render('imagepicker', $bag);
     }
 
@@ -53,10 +54,11 @@ class ImagePicker extends AbstractController
     {
         global $plugin_tx;
 
+        $message = '';
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
             $key = $this->getUploadErrorKey($file['error']);
-            echo $plugin_tx['extedit']["imagepicker_err_$key"];
+            $message = $plugin_tx['extedit']["imagepicker_err_$key"];
         } else {
             $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($file['name']));
             $filename = $this->getImageFolder() . $basename;
@@ -65,13 +67,13 @@ class ImagePicker extends AbstractController
             if (strpos($mimeType, 'image/') === 0) {
                 // TODO: process image with GD to avoid dangerous images?
                 if (!move_uploaded_file($file['tmp_name'], $filename)) {
-                    echo $plugin_tx['extedit']["imagepicker_err_cantwrite"];
+                    $message = $plugin_tx['extedit']["imagepicker_err_cantwrite"];
                 }
             } else {
-                echo $plugin_tx['extedit']["imagepicker_err_mimetype"];
+                $message = $plugin_tx['extedit']["imagepicker_err_mimetype"];
             }
         }
-        echo $this->show();
+        echo $this->show($message);
     }
 
     /**

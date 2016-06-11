@@ -5,12 +5,15 @@
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
         <title><?php echo $title?></title>
         <style type="text/css">
+            #message {
+                background: #ffa7a7;
+            }
             #imagepicker {}
             #imagepicker img {
                 float: left;
                 height: 200px;
                 margin: 10px;
-                cursor: pointer
+                cursor: pointer;
             }
             #upload {
                 clear: both;
@@ -50,6 +53,7 @@
         </script>
     </head>
     <body onload="init()">
+        <div id="message"><p><?php echo $message?></p></div>
         <div id="imagepicker">
 <?php if (empty($images)):?>
             <p><?php echo $no_images?></p>
