@@ -19,26 +19,27 @@
                 clear: both;
             }
         </style>
-        <script type="text/javascript" src="<?=$tinymce_popup?>">
-        </script>
+        <script type="text/javascript" src="<?=$tinymce_popup?>"></script>
         <script type="text/javascript">
             function init() {
                 var picker = document.getElementById("imagepicker"),
                     images = picker.getElementsByTagName("img"),
-                    i, len, image;
+                    i, len;
+
+                function onclick(image) {
+                    return function() {
+                        pick(image);
+                    };
+                }
 
                 for (i = 0, len = images.length; i < len; i++) {
-                    image = images[i];
-                    image.onclick = (function (image) {
-                        return function() {
-                            pick(image);
-                        };
-                    })(image);
+                    images[i].onclick = onclick(images[i]);
                 }
             }
+
             function pick(image) {
-                var re = new RegExp('^' + location.protocol + "//"
-                                    + location.host + location.pathname),
+                var re = new RegExp('^' + location.protocol + "//" +
+                                    location.host + location.pathname),
                     path = image.src.replace(re, "./"),
                     win = tinyMCEPopup.getWindowArg("window"),
                     inputId = tinyMCEPopup.getWindowArg("input"),
@@ -52,7 +53,7 @@
             }
         </script>
     </head>
-    <body onload="init()">
+    <body onload="init();">
         <div id="message"><p><?=$message?></p></div>
         <div id="imagepicker">
 <?php if (empty($images)):?>
