@@ -35,7 +35,7 @@ EOT
     );
 }
 
-define('EXTEDIT_VERSION', '@EXTEDIT_VERSION@');
+const EXTEDIT_VERSION = '@EXTEDIT_VERSION@';
 
 /**
  * @var Extedit\Controller
