@@ -23,6 +23,16 @@ namespace Extedit;
 
 class FunctionController extends AbstractController
 {
+    /**
+     * @var bool
+     */
+    private static $isEditorInitialized = false;
+
+    /**
+     * @param string $username
+     * @param string $textname
+     * @return string (X)HTML
+     */
     public function handle($username, $textname = '')
     {
         global $s, $e, $plugin_tx;
@@ -131,12 +141,11 @@ class FunctionController extends AbstractController
     private function initEditor()
     {
         global $pth, $hjs, $cf;
-        static $again = false;
 
-        if ($again) {
+        if (self::$isEditorInitialized) {
             return;
         }
-        $again = true;
+        self::$isEditorInitialized = true;
         $plugins = $pth['folder']['plugins'];
         $editor = $cf['editor']['external'];
         if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
