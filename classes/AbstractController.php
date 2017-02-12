@@ -53,9 +53,10 @@ abstract class AbstractController
         self::$isEditorInitialized = true;
         $plugins = $pth['folder']['plugins'];
         $editor = $cf['editor']['external'];
-        if (!$this->isAdmin() && in_array($editor, array('tinymce'))) {
+        if (!$this->isAdmin() && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
             include_once "{$plugins}extedit/connectors/$editor.php";
-            $hjs .= extedit_tinymce_init() . "\n";
+            $func = "extedit_{$editor}_init";
+            $hjs .= $func() . "\n";
             $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
         } else {
             $config = false;

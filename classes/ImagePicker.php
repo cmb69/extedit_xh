@@ -29,15 +29,15 @@ class ImagePicker extends AbstractController
      */
     public function show($message = '')
     {
-        global $pth, $plugin_tx, $sn;
+        global $pth, $cf, $plugin_tx, $sn;
 
         $ptx = $plugin_tx['extedit'];
         header('Content-type: text/html; charset=utf-8');
         $bag['images'] = $this->images($this->getImageFolder());
         $bag['title'] = $ptx['imagepicker_title'];
         $bag['no_images'] = $ptx['imagepicker_empty'];
-        $bag['tinymce_popup'] = $pth['folder']['plugins']
-            . 'tinymce/tiny_mce/tiny_mce_popup.js';
+        $bag['baseFolder'] = $pth['folder']['base'];
+        $bag['editorhook'] = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
         $bag['upload_url'] = "$sn?&extedit_upload";
         $bag['upload'] = $ptx['imagepicker_upload'];
         $bag['message'] = $message;

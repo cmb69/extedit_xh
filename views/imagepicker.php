@@ -19,8 +19,8 @@
                 clear: both;
             }
         </style>
-        <script type="text/javascript" src="<?=$tinymce_popup?>"></script>
         <script type="text/javascript">
+            var baseFolder = "<?=$baseFolder?>";
             function init() {
                 var picker = document.getElementById("imagepicker"),
                     images = picker.getElementsByTagName("img"),
@@ -40,18 +40,12 @@
             function pick(image) {
                 var re = new RegExp('^' + location.protocol + "//" +
                                     location.host + location.pathname),
-                    path = image.src.replace(re, "./"),
-                    win = tinyMCEPopup.getWindowArg("window"),
-                    inputId = tinyMCEPopup.getWindowArg("input"),
-                    input = win.document.getElementById(inputId);
-
-                input.value = path;
-                if (input.onchange) {
-                    input.onchange();
-                }
-                tinyMCEPopup.close();
+                    path = image.src.replace(re, "./");
+                
+                setUrl(path);
             }
         </script>
+        <script type="text/javascript" src="<?=$editorhook?>"></script>
     </head>
     <body onload="init();">
         <div id="message"><p><?=$message?></p></div>

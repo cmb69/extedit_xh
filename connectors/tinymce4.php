@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Extedit_Tinymce_init()
+function Extedit_Tinymce4_init()
 {
     if (session_id() == '') {
         session_start();
@@ -32,15 +32,12 @@ function extedit_imagepicker(field_name, url, type, win) {
     if (type != "image") {
         return false;
     };
-    tinyMCE.activeEditor.windowManager.open({
+    tinymce.activeEditor.windowManager.open({
+        title: "hallo",
         url: "$url",
         width: 640,
         height: 480,
-        resizable: "yes",
-        inline: "yes",
-        close_previous: "no",
-        popup_css : false,
-        scrollbars : "yes"
+        inline: 1,
     }, {
         window: win,
         input: field_name

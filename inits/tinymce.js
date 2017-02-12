@@ -18,7 +18,7 @@
     "content_css": "%STYLESHEET%",
     "external_image_list_url": "%TINY_FOLDER%cms_image_list.js",
     "external_link_list_url": "%TINY_FOLDER%cms_link_list.js",
-    "file_browser_callback": "extedit_imagepicker" ,
+    "file_browser_callback": "extedit_imagepicker",
 
     "plugin_insertdate_dateFormat": "%d-%m-%Y",
     "plugin_insertdate_timeFormat": "%H:%M:%S",
