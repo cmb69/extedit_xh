@@ -1,7 +1,7 @@
 <?php
 
 /*
-Copyright 2013-2016 Christoph M. Becker
+Copyright 2013-2017 Christoph M. Becker
 
 This file is part of Extedit_XH.
 

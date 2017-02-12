@@ -3,7 +3,7 @@
 <h1>Extedit &ndash; <?=$ptx['label_info']?></h1>
 <img src="<?=$icon?>" class="extedit_logo" alt="<?=$ptx['alt_logo']?>" />
 <p>Version: <?=$version?></p>
-<p>Copyright &copy; 2013-2016 <a href="http://3-magi.net/">Christoph M.
+<p>Copyright &copy; 2013-2017 <a href="http://3-magi.net/">Christoph M.
 Becker</a></p>
 <p class="extedit_license">This program is free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License as
