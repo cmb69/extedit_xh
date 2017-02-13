@@ -31,18 +31,6 @@ class Controller extends AbstractController
         if ($this->isTemplateEdit()) {
             $this->initEditor();
         }
-        if ($this->getCurrentUser()) {
-            if (isset($_GET['extedit_imagepicker'])) {
-                $imagePicker = new ImagePicker();
-                echo $imagePicker->show();
-                exit;
-            }
-            if (isset($_GET['extedit_upload'])) {
-                $imagePicker = new ImagePicker();
-                $imagePicker->handleUpload();
-                exit;
-            }
-        }
         if ($this->isAdmin()) {
             if (function_exists('XH_registerStandardPluginMenuItems')) {
                 XH_registerStandardPluginMenuItems(false);

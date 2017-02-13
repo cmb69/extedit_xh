@@ -21,11 +21,13 @@
 
 function Extedit_Tinymce_init()
 {
+    global $sn, $su;
+
     if (session_id() == '') {
         session_start();
     }
     $_SESSION['tinymce_fb_callback'] = 'extedit_imagepicker';
-    $url = CMSIMPLE_ROOT . '?extedit_imagepicker';
+    $url = "$sn?$su&extedit_imagepicker";
     return <<<EOS
 <script type="text/javascript">
 function extedit_imagepicker(field_name, url, type, win) {

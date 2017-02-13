@@ -21,7 +21,9 @@
 
 function Extedit_Ckeditor_init()
 {
-    $url = CMSIMPLE_ROOT . '?extedit_imagepicker';
+    global $sn, $su;
+
+    $url = "$sn?$su&extedit_imagepicker";
     return <<<SCRIPT
 <script type="text/javascript">
 var extedit_filepicker_url = "$url";

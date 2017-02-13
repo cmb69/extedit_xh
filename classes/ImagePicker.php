@@ -46,13 +46,13 @@ class ImagePicker extends AbstractController
      */
     public function show($message = '')
     {
-        global $pth, $cf, $sn;
+        global $pth, $cf, $sn, $su;
 
         $view = new View('imagepicker');
         $view->images = $this->images($this->getImageFolder());
         $view->baseFolder = $pth['folder']['base'];
         $view->editorHook = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
-        $view->uploadUrl = "$sn?&extedit_upload";
+        $view->uploadUrl = "$sn?$su&extedit_upload";
         $view->message = $message;
         $view->csrfTokenInput = new HtmlString($this->csrfProtection->tokenInput());
 
@@ -65,7 +65,7 @@ class ImagePicker extends AbstractController
      */
     public function handleUpload()
     {
-        global $plugin_tx;
+        global $su, $plugin_tx;
 
         $this->csrfProtection->check();
         $message = '';
@@ -83,7 +83,7 @@ class ImagePicker extends AbstractController
             }
         }
         if (!$message) {
-            header('Location: ' . CMSIMPLE_URL . '?extedit_imagepicker');
+            header('Location: ' . CMSIMPLE_URL . "?$su&extedit_imagepicker");
             exit;
         } else {
             echo $this->show($message);

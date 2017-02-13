@@ -56,6 +56,17 @@ class FunctionController extends AbstractController
     {
         $o = '';
         if ($this->isAuthorizedToEdit($this->username)) {
+            if (isset($_GET['extedit_imagepicker'])) {
+                ob_end_clean(); // necessary if called from template
+                $imagePicker = new ImagePicker();
+                echo $imagePicker->show();
+                exit;
+            }
+            if (isset($_GET['extedit_upload'])) {
+                $imagePicker = new ImagePicker();
+                $imagePicker->handleUpload();
+                exit;
+            }
             if (isset($_POST["extedit_{$this->textname}_text"])) {
                 $o .= $this->handleSave();
             } else {
