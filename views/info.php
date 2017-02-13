@@ -1,8 +1,7 @@
-<?php $this->preventAccess()?>
 <!-- Extedit: info -->
-<h1>Extedit &ndash; <?=$ptx['label_info']?></h1>
-<img src="<?=$icon?>" class="extedit_logo" alt="<?=$ptx['alt_logo']?>" />
-<p>Version: <?=$version?></p>
+<h1>Extedit &ndash; <?=$this->text('label_info')?></h1>
+<img src="<?=$this->icon?>" class="extedit_logo" alt="<?=$this->text('alt_logo')?>" />
+<p>Version: <?=$this->version?></p>
 <p>Copyright &copy; 2013-2017 <a href="http://3-magi.net/">Christoph M.
 Becker</a></p>
 <p class="extedit_license">This program is free software: you can redistribute
@@ -17,20 +16,20 @@ the GNU General Public License for more details.</p>
 Public License along with this program. If not, see <a
 href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <hr />
-<h4><?=$ptx['synopsis'];?></h4>
-<p>{{{extedit('<?=$ptx['synopsis_username']?>', '<?=$ptx['synopsis_textname']?>');}}}</p>
+<h4><?=$this->text('synopsis');?></h4>
+<p>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</p>
 <dl>
-    <dt><?=$ptx['synopsis_username']?>:</dt>
-    <dd><?=$ptx['synopsis_username_desc']?></dd>
-    <dt><?=$ptx['synopsis_textname']?>:</dt>
-    <dd><?=$ptx['synopsis_textname_desc']?></dd>
+    <dt><?=$this->text('synopsis_username')?>:</dt>
+    <dd><?=$this->text('synopsis_username_desc')?></dd>
+    <dt><?=$this->text('synopsis_textname')?>:</dt>
+    <dd><?=$this->text('synopsis_textname_desc')?></dd>
 </dl>
 <hr />
-<h4><?=$ptx['syscheck'];?></h4>
+<h4><?=$this->text('syscheck');?></h4>
 <ul style="list-style: none">
-<?php foreach ($checks as $check => $state):?>
+<?php foreach ($this->checks as $check => $state):?>
     <li>
-        <img src="<?=$images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
+        <img src="<?=$this->images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
         <?=$check;?>
     </li>
 <?php endforeach?>

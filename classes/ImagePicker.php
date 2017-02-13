@@ -29,19 +29,17 @@ class ImagePicker extends AbstractController
      */
     public function show($message = '')
     {
-        global $pth, $cf, $plugin_tx, $sn;
+        global $pth, $cf, $sn;
 
-        $ptx = $plugin_tx['extedit'];
+        $view = new View('imagepicker');
+        $view->images = $this->images($this->getImageFolder());
+        $view->baseFolder = $pth['folder']['base'];
+        $view->editorHook = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
+        $view->uploadUrl = "$sn?&extedit_upload";
+        $view->message = $message;
+
         header('Content-type: text/html; charset=utf-8');
-        $bag['images'] = $this->images($this->getImageFolder());
-        $bag['title'] = $ptx['imagepicker_title'];
-        $bag['no_images'] = $ptx['imagepicker_empty'];
-        $bag['baseFolder'] = $pth['folder']['base'];
-        $bag['editorhook'] = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
-        $bag['upload_url'] = "$sn?&extedit_upload";
-        $bag['upload'] = $ptx['imagepicker_upload'];
-        $bag['message'] = $message;
-        return $this->render('imagepicker', $bag);
+        return $view->render();
     }
 
     /**

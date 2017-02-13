@@ -1,9 +1,8 @@
-<?php $this->preventAccess()?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-        <title><?=$title?></title>
+        <title><?=$this->text('imagepicker_title')?></title>
         <style type="text/css">
             #message {
                 background: #ffa7a7;
@@ -20,7 +19,7 @@
             }
         </style>
         <script type="text/javascript">
-            var baseFolder = "<?=$baseFolder?>";
+            var baseFolder = "<?=$this->baseFolder?>";
             function init() {
                 var picker = document.getElementById("imagepicker"),
                     images = picker.getElementsByTagName("img"),
@@ -45,22 +44,22 @@
                 setUrl(path);
             }
         </script>
-        <script type="text/javascript" src="<?=$editorhook?>"></script>
+        <script type="text/javascript" src="<?=$this->editorHook?>"></script>
     </head>
     <body onload="init();">
-        <div id="message"><p><?=$message?></p></div>
+        <div id="message"><p><?=$this->message?></p></div>
         <div id="imagepicker">
-<?php if (empty($images)):?>
-            <p><?=$no_images?></p>
+<?php if (empty($this->images)):?>
+            <p><?=$this->text('imagepicker_empty')?></p>
 <?php else:?>
-<?php foreach ($images as $image => $url):?>
-            <img src="<?=$url?>" alt="<?=$image?>" title="<?=$image?>"/>
+<?php foreach ($this->images as $image => $url):?>
+            <img src="<?=$this->escape($url)?>" alt="<?=$this->escape($image)?>" title="<?=$this->escape($image)?>"/>
 <?php endforeach?>
 <?php endif?>
         </div>
-        <form id="upload" action="<?=$upload_url?>" method="POST" enctype="multipart/form-data">
+        <form id="upload" action="<?=$this->uploadUrl?>" method="POST" enctype="multipart/form-data">
             <input name="extedit_file" type="file">
-            <button><?=$upload?></button>
+            <button><?=$this->text('imagepicker_upload')?></button>
         </form>
     </body>
 </html>

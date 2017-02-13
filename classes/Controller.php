@@ -96,19 +96,17 @@ class Controller extends AbstractController
      */
     private function renderInfo()
     {
-        global $pth, $plugin_tx;
+        global $pth;
 
         foreach (array('ok', 'warn', 'fail') as $state) {
             $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
         }
-        $bag = array(
-            'ptx' => $plugin_tx['extedit'],
-            'images' => $images,
-            'checks' => $this->systemChecks(),
-            'icon' => $pth['folder']['plugins'] . 'extedit/extedit.png',
-            'version' => EXTEDIT_VERSION
-        );
-        return $this->render('info', $bag);
+        $view = new View('info');
+        $view->images = $images;
+        $view->checks = $this->systemChecks();
+        $view->icon = "{$pth['folder']['plugins']}extedit/extedit.png";
+        $view->version = EXTEDIT_VERSION;
+        return $view->render();
     }
 
     /**

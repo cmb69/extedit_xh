@@ -84,34 +84,4 @@ abstract class AbstractController
             ? $_SESSION['username']
             : '';
     }
-
-    /**
-     * @param string $_template
-     * @param array  $_bag
-     * @return string
-     */
-    protected function render($_template, $_bag)
-    {
-        global $pth, $cf;
-
-        $_template = "{$pth['folder']['plugins']}extedit/views/$_template.php";
-        $_xhtml = strtolower($cf['xhtml']['endtags']) == 'true';
-        unset($pth, $cf);
-        extract($_bag);
-        ob_start();
-        include $_template;
-        $view = ob_get_clean();
-        if (!$_xhtml) {
-            $view = str_replace(' />', '>', $view);
-        }
-        return $view;
-    }
-
-    /**
-     * @return void
-     */
-    protected function preventAccess()
-    {
-        // do nothing!
-    }
 }
