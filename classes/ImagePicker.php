@@ -96,17 +96,7 @@ class ImagePicker extends AbstractController
      */
     private function isImage($filename)
     {
-        return strpos($this->getMimeTypeOf($filename), 'image/') === 0;
-    }
-
-    /**
-     * @param string $filename
-     * @return string
-     */
-    private function getMimeTypeOf($filename)
-    {
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        return $finfo->file($filename);
+        return strpos(mime_content_type($filename), 'image/') === 0;
     }
 
     /**
