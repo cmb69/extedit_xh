@@ -58,6 +58,7 @@
 <?php endif?>
         </div>
         <form id="upload" action="<?=$this->uploadUrl?>" method="POST" enctype="multipart/form-data">
+            <?=$this->csrfTokenInput?>
             <input name="extedit_file" type="file">
             <button><?=$this->text('imagepicker_upload')?></button>
         </form>

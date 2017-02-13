@@ -21,8 +21,25 @@
 
 namespace Extedit;
 
+use XH_CSRFProtection;
+
 class ImagePicker extends AbstractController
 {
+    /**
+     * @var XH_CSRFProtection
+     */
+    private $csrfProtection;
+
+    public function __construct()
+    {
+        $this->csrfProtection = new XH_CSRFProtection('extedit_csrf_token');
+    }
+
+    public function __destruct()
+    {
+        $this->csrfProtection->store();
+    }
+
     /**
      * @param string $message
      * @return string
@@ -37,6 +54,7 @@ class ImagePicker extends AbstractController
         $view->editorHook = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
         $view->uploadUrl = "$sn?&extedit_upload";
         $view->message = $message;
+        $view->csrfTokenInput = new HtmlString($this->csrfProtection->tokenInput());
 
         header('Content-type: text/html; charset=utf-8');
         return $view->render();
@@ -49,6 +67,7 @@ class ImagePicker extends AbstractController
     {
         global $plugin_tx;
 
+        $this->csrfProtection->check();
         $message = '';
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
