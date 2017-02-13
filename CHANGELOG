@@ -1,3 +1,6 @@
+Version 1.0rc1 - released 2017-02-13
+see <https://github.com/cmb69/extedit_xh/issues?q=is%3Aissue+milestone%3A1.0rc1+is%3Aclosed>
+
 Version 1.0beta1 - released 2014-10-11
 * lifted requirements to CMSimple_XH >= 1.6 and PHP >= 5.0.0
 * added support for CMSimple_XH 1.6 APIs
