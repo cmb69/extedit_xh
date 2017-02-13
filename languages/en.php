@@ -9,6 +9,7 @@ $plugin_tx['extedit']['err_save']="The file %s couldn't be saved.";
 $plugin_tx['extedit']['imagepicker_title']="Choose an Image";
 $plugin_tx['extedit']['imagepicker_empty']="There are no images in the image folder.";
 $plugin_tx['extedit']['imagepicker_upload']="Upload";
+$plugin_tx['extedit']['imagepicker_dimensions']=" (%1\$d × %2\$d px)";
 $plugin_tx['extedit']['imagepicker_err_inisize']="The uploaded file exceeds the upload_max_filesize directive in php.ini.";
 $plugin_tx['extedit']['imagepicker_err_formsize']="The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.";
 $plugin_tx['extedit']['imagepicker_err_partial']="The uploaded file was only partially uploaded.";

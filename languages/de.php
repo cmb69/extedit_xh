@@ -9,6 +9,7 @@ $plugin_tx['extedit']['err_save']="Die Datei %s konnte nicht gespeichert werden.
 $plugin_tx['extedit']['imagepicker_title']="Bild auswählen";
 $plugin_tx['extedit']['imagepicker_empty']="Es befinden sich keine Bilder im Bilderordner.";
 $plugin_tx['extedit']['imagepicker_upload']="Hoch laden";
+$plugin_tx['extedit']['imagepicker_dimensions']=" (%1\$d × %2\$d px)";
 $plugin_tx['extedit']['imagepicker_err_inisize']="Die hoch geladene Datei überschreitet die upload_max_filesize Direktive in php.ini.";
 $plugin_tx['extedit']['imagepicker_err_formsize']="Die hoch geladene Datei überschreitet die MAX_FILE_SIZE Direktive, die im HTML-Formular angegeben wurde.";
 $plugin_tx['extedit']['imagepicker_err_partial']="Die hoch geladene Datei wurde nur teilweise hoch geladen.";

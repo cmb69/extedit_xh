@@ -117,12 +117,19 @@ class ImagePicker extends AbstractController
      */
     private function images($folder)
     {
+        global $plugin_tx;
+
         $images = array();
         if (($dh = opendir($folder)) !== false) {
             while (($entry = readdir($dh)) !== false) {
                 if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
                     && is_readable($ffn) && getimagesize($ffn) !== false
                 ) {
+                    $info = getimagesize($ffn);
+                    if ($info) {
+                        list($width, $height) = $info;
+                        $entry .= sprintf($plugin_tx['extedit']['imagepicker_dimensions'], $width, $height);
+                    }
                     $images[$entry] = $ffn;
                 }
             }
