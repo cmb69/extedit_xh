@@ -79,6 +79,7 @@ class FunctionController extends AbstractController
                 $o .= $this->getEditLink() . $this->evaluatePlugincall();
             }
         } else {
+            $this->content = $this->read();
             $o .= $this->evaluatePlugincall();
         }
         return $o;
