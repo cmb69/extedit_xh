@@ -1,7 +1,7 @@
 Extedit_XH – a CMSimple_XH plugin
 ====================================
 
-[![Version: 1.0rc1](https://img.shields.io/badge/RC-1.0rc1-yellow.svg)](https://github.com/cmb69/extedit_xh/releases/tag/1.0rc1)
+[![Version: 1.0rc2](https://img.shields.io/badge/RC-1.0rc2-yellow.svg)](https://github.com/cmb69/extedit_xh/releases/tag/1.0rc2)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 Copyright (C) 2013-2017 Christoph M. Becker
