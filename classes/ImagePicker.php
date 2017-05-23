@@ -106,9 +106,16 @@ class ImagePicker extends AbstractController
     private function moveUpload($upload)
     {
         $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload['name']));
+        if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
+            return false;
+        }
         $filename = $this->getImageFolder() . $basename;
-        // TODO: process image with GD to avoid dangerous images?
-        return move_uploaded_file($upload['tmp_name'], $filename);
+        if (file_exists($filename)) {
+            return false;
+        } else {
+            // TODO: process image with GD to avoid dangerous images?
+            return move_uploaded_file($upload['tmp_name'], $filename);
+        }
     }
 
     /**
