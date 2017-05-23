@@ -74,7 +74,7 @@ class ImagePicker extends AbstractController
             $key = $this->getUploadErrorKey($file['error']);
             $message = $plugin_tx['extedit']["imagepicker_err_$key"];
         } else {
-            if ($this->isImage($file['tmp_name'])) {
+            if ($this->hasAllowedExtension($file['name']) && $this->isImage($file['tmp_name'])) {
                 if (!$this->moveUpload($file)) {
                     $message = $plugin_tx['extedit']["imagepicker_err_cantwrite"];
                 }
@@ -94,6 +94,18 @@ class ImagePicker extends AbstractController
      * @param string $filename
      * @return bool
      */
+    private function hasAllowedExtension($filename)
+    {
+        global $plugin_cf;
+
+        $allowedExtensions = array_map('trim', explode(',', $plugin_cf['extedit']['images_extensions']));
+        return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
+    }
+
+    /**
+     * @param string $filename
+     * @return bool
+     */
     private function isImage($filename)
     {
         return strpos(mime_content_type($filename), 'image/') === 0;
@@ -106,9 +118,16 @@ class ImagePicker extends AbstractController
     private function moveUpload($upload)
     {
         $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload['name']));
+        if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
+            return false;
+        }
         $filename = $this->getImageFolder() . $basename;
-        // TODO: process image with GD to avoid dangerous images?
-        return move_uploaded_file($upload['tmp_name'], $filename);
+        if (file_exists($filename)) {
+            return false;
+        } else {
+            // TODO: process image with GD to avoid dangerous images?
+            return move_uploaded_file($upload['tmp_name'], $filename);
+        }
     }
 
     /**
