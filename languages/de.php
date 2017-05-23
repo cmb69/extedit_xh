@@ -40,6 +40,7 @@ $plugin_tx['extedit']['about']="Über Extedit_XH";
 $plugin_tx['extedit']['alt_logo']="Büste mit Textmarker";
 
 $plugin_tx['extedit']['cf_images_subfolder']="Soll der Editor nur Zugriff auf seinen eigenen Bilderordner haben?";
+$plugin_tx['extedit']['cf_images_extensions']="Eine durch Komma getrennte Liste von erlaubten Dateinamen-Erweiterungen für den Upload.";
 $plugin_tx['extedit']['cf_allow_scripting']="Sollen Plugin-Aufrufe in den \"extedits\" ausgewertet werden?";
 $plugin_tx['extedit']['cf_allow_template']="Ob \"extedits\" im Template oder in Newsboxen eingebunden sind.";
 

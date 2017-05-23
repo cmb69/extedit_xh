@@ -74,7 +74,7 @@ class ImagePicker extends AbstractController
             $key = $this->getUploadErrorKey($file['error']);
             $message = $plugin_tx['extedit']["imagepicker_err_$key"];
         } else {
-            if ($this->isImage($file['tmp_name'])) {
+            if ($this->hasAllowedExtension($file['name']) && $this->isImage($file['tmp_name'])) {
                 if (!$this->moveUpload($file)) {
                     $message = $plugin_tx['extedit']["imagepicker_err_cantwrite"];
                 }
@@ -88,6 +88,18 @@ class ImagePicker extends AbstractController
         } else {
             echo $this->show($message);
         }
+    }
+
+    /**
+     * @param string $filename
+     * @return bool
+     */
+    private function hasAllowedExtension($filename)
+    {
+        global $plugin_cf;
+
+        $allowedExtensions = array_map('trim', explode(',', $plugin_cf['extedit']['images_extensions']));
+        return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
     }
 
     /**
