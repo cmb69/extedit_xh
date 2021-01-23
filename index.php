@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const EXTEDIT_VERSION = '@EXTEDIT_VERSION@';
+const EXTEDIT_VERSION = '1.1';
 
 $temp = new Extedit\Controller();
 $temp->dispatch();
