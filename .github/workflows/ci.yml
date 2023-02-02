@@ -26,5 +26,5 @@ jobs:
         run: cd cmsimplexh/plugins/extedit && PATH=vendor/bin:$PATH phing sniff
       - name: phing mess
         run: cd cmsimplexh/plugins/extedit && PATH=vendor/bin:$PATH phing mess
-      - name: phing test
-        run: cd cmsimplexh/plugins/extedit && PATH=vendor/bin:$PATH phing test
+      - name: phing unit-test
+        run: cd cmsimplexh/plugins/extedit && PATH=vendor/bin:$PATH phing unit-test
