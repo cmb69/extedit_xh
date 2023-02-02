@@ -19,18 +19,18 @@ href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <h4><?=$this->text('synopsis');?></h4>
 <p>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</p>
 <dl>
-    <dt><?=$this->text('synopsis_username')?>:</dt>
-    <dd><?=$this->text('synopsis_username_desc')?></dd>
-    <dt><?=$this->text('synopsis_textname')?>:</dt>
-    <dd><?=$this->text('synopsis_textname_desc')?></dd>
+  <dt><?=$this->text('synopsis_username')?>:</dt>
+  <dd><?=$this->text('synopsis_username_desc')?></dd>
+  <dt><?=$this->text('synopsis_textname')?>:</dt>
+  <dd><?=$this->text('synopsis_textname_desc')?></dd>
 </dl>
 <hr />
 <h4><?=$this->text('syscheck');?></h4>
 <ul style="list-style: none">
 <?php foreach ($this->checks as $check => $state):?>
-    <li>
-        <img src="<?=$this->images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
-        <?=$check;?>
-    </li>
+  <li>
+    <img src="<?=$this->images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
+    <?=$check;?>
+  </li>
 <?php endforeach?>
 </ul>

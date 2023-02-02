@@ -2,118 +2,118 @@
 
 <project name="Extedit" default="help">
 
-    <fileset id="php-sources" dir=".">
-        <include name="classes/*.php"/>
-        <include name="index.php"/>
-        <include name="connectors/*.php"/>
-    </fileset>
+  <fileset id="php-sources" dir=".">
+    <include name="classes/*.php"/>
+    <include name="index.php"/>
+    <include name="connectors/*.php"/>
+  </fileset>
 
-    <fileset id="js-sources" dir=".">
+  <fileset id="js-sources" dir=".">
+    <include name="*.js"/>
+  </fileset>
+
+  <fileset id="unit-tests" dir="tests/unit">
+    <include name="*Test.php"/>
+  </fileset>
+
+  <target name="help" description="lists available targets">
+    <exec command="phing -l" outputProperty="help"/>
+    <echo>${help}</echo>
+  </target>
+
+  <target name="sniff" description="checks adherence to PSR-2 CS">
+    <phpcodesniffer standard="PSR2" format="full">
+      <fileset refid="php-sources"/>
+      <fileset refid="unit-tests"/>
+    </phpcodesniffer>
+  </target>
+
+  <target name="mess" description="detects code flaws">
+    <phpmd>
+      <fileset refid="php-sources"/>
+      <fileset refid="unit-tests"/>
+     </phpmd>
+  </target>
+
+  <target name="compat" description="checks compatibility with PHP_CompatInfo">
+    <exec command="phpcompatinfo analyser:run classes" passthru="true" checkreturn="true"/>
+  </target>
+
+  <target name="unit-tests" description="runs all unit tests">
+    <phpunit bootstrap="tests/unit/bootstrap.php" haltonerror="true" haltonfailure="true">
+      <formatter type="plain" usefile="false"/>
+      <batchtest>
+        <fileset refid="unit-tests"/>
+      </batchtest>
+    </phpunit>
+  </target>
+
+  <target name="coverage" description="generates coverage report">
+    <exec command="phpunit --configuration coverage.xml" logoutput="true"/>
+  </target>
+
+  <target name="build" description="builds a distributable ZIP archive">
+    <fail unless="version" message="version is not defined!"/>
+    <exec command="git archive -o export.tar HEAD" checkreturn="true"/>
+    <untar file="export.tar" todir="export"/>
+    <delete file="export.tar"/>
+    <move todir="dist">
+      <fileset dir="export">
+        <include name="views/*.php"/>
+      </fileset>
+      <filterchain>
+        <replaceregexp>
+          <regexp pattern="\?=" replace="?php echo "/>
+        </replaceregexp>
+      </filterchain>
+    </move>
+    <jsMin targetDir="dist" suffix="" failOnError="false">
+      <fileset dir="export">
         <include name="*.js"/>
-    </fileset>
+        <include name="connectors/*.js"/>
+      </fileset>
+    </jsMin>
+    <move todir="dist">
+      <fileset dir="export">
+        <exclude name="build.xml"/>
+        <exclude name="composer.*"/>
+        <exclude name="coverage.xml"/>
+        <exclude name="pax_global_header"/>
+        <exclude name="README.md"/>
+        <exclude name="tests/**"/>
+      </fileset>
+    </move>
+    <delete dir="export"/>
+    <copy file="dist/config/config.php"
+        tofile="dist/config/defaultconfig.php"/>
+    <copy file="dist/languages/en.php" tofile="dist/languages/default.php"/>
+    <zip destfile="Extedit_XH-2.0-dev.zip" basedir="dist"
+       prefix="extedit/"/>
+    <delete dir="dist"/>
+  </target>
 
-    <fileset id="unit-tests" dir="tests/unit">
-        <include name="*Test.php"/>
-    </fileset>
-
-    <target name="help" description="lists available targets">
-        <exec command="phing -l" outputProperty="help"/>
-        <echo>${help}</echo>
-    </target>
-
-    <target name="sniff" description="checks adherence to PSR-2 CS">
-        <phpcodesniffer standard="PSR2" format="full">
-            <fileset refid="php-sources"/>
-            <fileset refid="unit-tests"/>
-        </phpcodesniffer>
-    </target>
-
-    <target name="mess" description="detects code flaws">
-        <phpmd>
-            <fileset refid="php-sources"/>
-            <fileset refid="unit-tests"/>
-         </phpmd>
-    </target>
-
-    <target name="compat" description="checks compatibility with PHP_CompatInfo">
-        <exec command="phpcompatinfo analyser:run classes" passthru="true" checkreturn="true"/>
-    </target>
-
-    <target name="unit-tests" description="runs all unit tests">
-        <phpunit bootstrap="tests/unit/bootstrap.php" haltonerror="true" haltonfailure="true">
-            <formatter type="plain" usefile="false"/>
-            <batchtest>
-                <fileset refid="unit-tests"/>
-            </batchtest>
-        </phpunit>
-    </target>
-
-    <target name="coverage" description="generates coverage report">
-        <exec command="phpunit --configuration coverage.xml" logoutput="true"/>
-    </target>
-
-    <target name="build" description="builds a distributable ZIP archive">
-        <fail unless="version" message="version is not defined!"/>
-        <exec command="git archive -o export.tar HEAD" checkreturn="true"/>
-        <untar file="export.tar" todir="export"/>
-        <delete file="export.tar"/>
-        <move todir="dist">
-            <fileset dir="export">
-                <include name="views/*.php"/>
-            </fileset>
-            <filterchain>
-                <replaceregexp>
-                    <regexp pattern="\?=" replace="?php echo "/>
-                </replaceregexp>
-            </filterchain>
-        </move>
-        <jsMin targetDir="dist" suffix="" failOnError="false">
-            <fileset dir="export">
-                <include name="*.js"/>
-                <include name="connectors/*.js"/>
-            </fileset>
-        </jsMin>
-        <move todir="dist">
-            <fileset dir="export">
-                <exclude name="build.xml"/>
-                <exclude name="composer.*"/>
-                <exclude name="coverage.xml"/>
-                <exclude name="pax_global_header"/>
-                <exclude name="README.md"/>
-                <exclude name="tests/**"/>
-            </fileset>
-        </move>
-        <delete dir="export"/>
-        <copy file="dist/config/config.php"
-              tofile="dist/config/defaultconfig.php"/>
-        <copy file="dist/languages/en.php" tofile="dist/languages/default.php"/>
-        <zip destfile="Extedit_XH-2.0-dev.zip" basedir="dist"
-             prefix="extedit/"/>
-        <delete dir="dist"/>
-    </target>
-
-    <target name="build-patch" description="builds a distributable update package">
-        <fail unless="patchee" message="patchee is not defined!"/>
-        <fail unless="version" message="version is not defined!"/>
-        <unzip file="Extedit_XH-2.0-dev.zip" todir="current"/>
-        <unzip file="${patchee}" todir="patchee"/>
-        <copy todir="dist">
-            <fileset dir="current">
-                <different targetdir="patchee" ignoreFileTimes="true"/>
-            </fileset>
-        </copy>
-        <delete>
-            <fileset dir="dist/extedit">
-                <include name="config/config.php"/>
-                <include name="languages/??.php"/>
-                <include name="css/stylesheet.css"/>
-            </fileset>
-        </delete>
-        <zip destfile="Extedit_XH-2.0-dev-PATCH.zip" basedir="dist"
-             includeemptydirs="false"/>
-        <delete dir="patchee" quiet="true"/>
-        <delete dir="current" quiet="true"/>
-        <delete dir="dist" quiet="true"/>
-    </target>
+  <target name="build-patch" description="builds a distributable update package">
+    <fail unless="patchee" message="patchee is not defined!"/>
+    <fail unless="version" message="version is not defined!"/>
+    <unzip file="Extedit_XH-2.0-dev.zip" todir="current"/>
+    <unzip file="${patchee}" todir="patchee"/>
+    <copy todir="dist">
+      <fileset dir="current">
+        <different targetdir="patchee" ignoreFileTimes="true"/>
+      </fileset>
+    </copy>
+    <delete>
+      <fileset dir="dist/extedit">
+        <include name="config/config.php"/>
+        <include name="languages/??.php"/>
+        <include name="css/stylesheet.css"/>
+      </fileset>
+    </delete>
+    <zip destfile="Extedit_XH-2.0-dev-PATCH.zip" basedir="dist"
+       includeemptydirs="false"/>
+    <delete dir="patchee" quiet="true"/>
+    <delete dir="current" quiet="true"/>
+    <delete dir="dist" quiet="true"/>
+  </target>
 
 </project>
