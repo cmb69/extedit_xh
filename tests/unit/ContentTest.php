@@ -24,13 +24,14 @@ namespace Extedit;
 use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
-class ContentTest extends \PHPUnit_Framework_TestCase
+class ContentTest extends TestCase
 {
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         global $pth;
 
