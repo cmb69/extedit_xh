@@ -20,3 +20,4 @@
  */
 
 require_once "./classes/Content.php";
+require_once "./classes/ContentRepo.php";
