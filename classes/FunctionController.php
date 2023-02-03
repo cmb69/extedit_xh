@@ -113,7 +113,7 @@ class FunctionController
                     new ImageFinder($this->lang['imagepicker_dimensions']),
                     new CsrfProtector('extedit_csrf_token')
                 );
-                echo $imagePicker->show();
+                echo $imagePicker->show()->trigger();
                 exit;
             }
             if (isset($_GET['extedit_upload'])) {

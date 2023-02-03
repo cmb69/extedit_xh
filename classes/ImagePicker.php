@@ -90,13 +90,12 @@ class ImagePicker
         $this->csrfProtector->store();
     }
 
-    /**
-     * @return string
-     */
-    public function show()
+    public function show(): Response
     {
-        header('Content-type: text/html; charset=utf-8');
-        return $this->doShow("");
+        $response = new Response();
+        $response->setHeader("Content-Type", "text/html; charset=utf-8");
+        $response->addOuput($this->doShow(""));
+        return $response;
     }
 
     /**
