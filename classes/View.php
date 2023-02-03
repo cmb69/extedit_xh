@@ -49,13 +49,14 @@ class View
         extract($_data);
         ob_start();
         include "{$this->templateFolder}{$_template}.php";
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
-    public function escape($value)
+    /** @param string|int|HtmlString $value */
+    public function escape($value): string
     {
         if (is_scalar($value)) {
-            return XH_hsc($value);
+            return XH_hsc((string) $value);
         } else {
             return $value;
         }

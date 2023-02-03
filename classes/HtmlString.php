@@ -23,14 +23,15 @@ namespace Extedit;
 
 class HtmlString
 {
+    /** @var string */
     private $value;
 
-    public function __construct($string)
+    public function __construct(string $string)
     {
         $this->value = $string;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

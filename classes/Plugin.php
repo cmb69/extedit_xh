@@ -70,6 +70,7 @@ class Plugin
         if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
             include_once "{$plugins}extedit/connectors/$editor.php";
             $func = "extedit_{$editor}_init";
+            assert(is_callable($func));
             $hjs .= $func() . "\n";
             $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
         } else {

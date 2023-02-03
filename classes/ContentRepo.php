@@ -48,6 +48,6 @@ class ContentRepo
             return null;
         }
         $content = file_get_contents($filename);
-        return $content;
+        return (string) $content;
     }
 }

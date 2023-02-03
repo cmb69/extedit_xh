@@ -238,6 +238,7 @@ class FunctionController
         if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
             include_once "{$this->pluginFolder}connectors/$editor.php";
             $func = "extedit_{$editor}_init";
+            assert(is_callable($func));
             $hjs .= $func() . "\n";
             $config = file_get_contents("{$this->pluginFolder}inits/$editor.js");
         } else {
@@ -296,7 +297,7 @@ class FunctionController
     {
         $filename = Content::getFilename($this->textname);
         if (file_exists($filename)) {
-            return filemtime($filename);
+            return (int) filemtime($filename);
         } else {
             return 0;
         }
