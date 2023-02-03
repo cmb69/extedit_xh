@@ -52,15 +52,4 @@ abstract class AbstractController
         }
         init_editor(array('xh-editor'), $config);
     }
-
-    /**
-     * @return string
-     */
-    protected function getCurrentUser()
-    {
-        XH_startSession();
-        return isset($_SESSION['username'])
-            ? $_SESSION['username']
-            : '';
-    }
 }

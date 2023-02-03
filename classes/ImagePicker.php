@@ -195,4 +195,15 @@ class ImagePicker extends AbstractController
                 return 'unknown';
         }
     }
+
+    /**
+     * @return string
+     */
+    private function getCurrentUser()
+    {
+        XH_startSession();
+        return isset($_SESSION['username'])
+            ? $_SESSION['username']
+            : '';
+    }
 }
