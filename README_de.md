@@ -169,7 +169,7 @@ bestimmten Zweck*. Details finden Sie in der GNU General Public License.
 Sie sollten ein Exemplar der GNU General Public License zusammen mit
 Extedit_XH erhalten haben. Falls nicht, siehe <https://www.gnu.org/licenses/>.
 
-© 2013-2017 Christoph M. Becker
+© 2013-2023 Christoph M. Becker
 
 Dänische Übersetzung © 2013 Jens Maegaard
 

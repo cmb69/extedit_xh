@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Christoph M. Becker
+ * Copyright 2017-2023 Christoph M. Becker
  *
  * This file is part of Extedit_XH.
  *
