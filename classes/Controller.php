@@ -31,7 +31,7 @@ class Controller extends AbstractController
         if ($this->isTemplateEdit()) {
             $this->initEditor();
         }
-        if ($this->isAdmin()) {
+        if (defined('XH_ADM') && XH_ADM) {
             if (function_exists('XH_registerStandardPluginMenuItems')) {
                 XH_registerStandardPluginMenuItems(false);
             }

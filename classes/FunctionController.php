@@ -91,7 +91,7 @@ class FunctionController extends AbstractController
      */
     private function isAuthorizedToEdit($username)
     {
-        return $this->isAdmin()
+        return (defined('XH_ADM') && XH_ADM)
             || $username == '*' && $this->getCurrentUser()
             || in_array($this->getCurrentUser(), explode(',', $username));
     }
