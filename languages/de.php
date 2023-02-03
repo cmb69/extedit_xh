@@ -27,7 +27,7 @@ $plugin_tx['extedit']['synopsis_textname']="%%TEXTNAME%%";
 $plugin_tx['extedit']['synopsis_textname_desc']="Der eindeutige Name des \"Extedits\". Lassen Sie diesen Parameter aus, um die Überschrift der enthaltenden Seite zu verwenden.";
 
 $plugin_tx['extedit']['syscheck']="Systemprüfung";
-$plugin_tx['extedit']['syscheck_phpversion']="PHP-Version &ge; %s";
+$plugin_tx['extedit']['syscheck_phpversion']="PHP-Version ≥ %s";
 $plugin_tx['extedit']['syscheck_extension']="Erweiterung '%s' geladen";
 $plugin_tx['extedit']['syscheck_encoding']="UTF-8-Kodierung eingestellt";
 $plugin_tx['extedit']['syscheck_writable']="Ordner '%s' beschreibbar";

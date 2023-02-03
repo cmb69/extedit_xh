@@ -15,7 +15,7 @@ $plugin_tx['extedit']['synopsis_textname']="%%TEKSTNAVN%%";
 $plugin_tx['extedit']['synopsis_textname_desc']="Navnet på extedit. Navnet anvendes som Heading på siden.";
 
 $plugin_tx['extedit']['syscheck']="System check";
-$plugin_tx['extedit']['syscheck_phpversion']="PHP version &ge; %s";
+$plugin_tx['extedit']['syscheck_phpversion']="PHP version ≥ %s";
 $plugin_tx['extedit']['syscheck_extension']="Extension '%s' loaded";
 $plugin_tx['extedit']['syscheck_encoding']="Encoding 'UTF-8' configured";
 $plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
