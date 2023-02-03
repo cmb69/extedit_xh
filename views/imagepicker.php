@@ -1,3 +1,16 @@
+<?php
+
+use Extedit\View;
+
+/**
+ * @var View $this
+ * @var string $baseFolder
+ * @var string $editorHook
+ * @var string $message
+ * @var string $uploadUrl
+ * @var string $csrfTokenInput
+ */
+?>
 <!DOCTYPE html>
 <html>
   <head>

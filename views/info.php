@@ -1,3 +1,14 @@
+<?php
+
+use Extedit\View;
+
+/**
+ * @var View $this
+ * @var string $version
+ * @var array $checks
+ * @var array $images
+ */
+?>
 <!-- Extedit: info -->
 <h1>Extedit <?=$this->escape($version)?></h1>
 <h2><?=$this->text('synopsis');?></h2>

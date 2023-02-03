@@ -3,7 +3,7 @@ parameters:
   paths:
     - classes/
     - connectors/
-#    - views/
+    - views/
     - index.php
   bootstrapFiles:
     - phpstan.php
