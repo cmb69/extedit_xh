@@ -35,14 +35,14 @@ class View
         $this->lang = $lang;
     }
 
-    protected function text($key)
+    public function text($key)
     {
         $args = func_get_args();
         array_shift($args);
         return vsprintf($this->lang[$key], $args);
     }
 
-    protected function plural($key, $count)
+    public function plural($key, $count)
     {
         if ($count == 0) {
             $key .= '_0';
@@ -62,7 +62,7 @@ class View
         return ob_get_clean();
     }
 
-    protected function escape($value)
+    public function escape($value)
     {
         if (is_scalar($value)) {
             return XH_hsc($value);
