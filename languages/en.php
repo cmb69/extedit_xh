@@ -29,7 +29,6 @@ $plugin_tx['extedit']['synopsis_textname_desc']="The unique name of the \"extedi
 $plugin_tx['extedit']['syscheck']="System check";
 $plugin_tx['extedit']['syscheck_phpversion']="PHP version ≥ %s";
 $plugin_tx['extedit']['syscheck_extension']="Extension '%s' loaded";
-$plugin_tx['extedit']['syscheck_encoding']="Encoding 'UTF-8' configured";
 $plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
 
 $plugin_tx['extedit']['about']="About Extedit_XH";
