@@ -102,43 +102,6 @@ class Plugin
     {
         global $pth, $plugin_tx;
 
-        foreach (array('ok', 'warn', 'fail') as $state) {
-            $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
-        }
-        $view = new View("{$pth['folder']['plugins']}extedit/views/", $plugin_tx['extedit']);
-        $data = [
-            'images' => $images,
-            'checks' => $this->systemChecks(),
-            'version' => EXTEDIT_VERSION,
-        ];
-        return $view->render('info', $data);
-    }
-
-    /**
-     * @return array
-     */
-    private function systemChecks()
-    {
-        global $pth, $plugin_tx;
-
-        $systemChecker = new SystemChecker();
-        $ptx = $plugin_tx['extedit'];
-        $phpVersion = '7.1.0';
-        $checks = array();
-        $checks[sprintf($ptx['syscheck_phpversion'], $phpVersion)]
-            = $systemChecker->checkVersion(PHP_VERSION, $phpVersion) ? 'ok' : 'fail';
-        foreach (array('fileinfo', 'session') as $ext) {
-            $checks[sprintf($ptx['syscheck_extension'], $ext)]
-                = $systemChecker->checkExtension($ext) ? 'ok' : 'fail';
-        }
-        foreach (array('config/', 'languages/') as $folder) {
-            $folders[] = $pth['folder']['plugins'] . 'extedit/' . $folder;
-        }
-        $folders[] = Content::getFoldername();
-        foreach ($folders as $folder) {
-            $checks[sprintf($ptx['syscheck_writable'], $folder)]
-                = $systemChecker->checkWritability($folder) ? 'ok' : 'warn';
-        }
-        return $checks;
+        return (new PluginInfo("{$pth['folder']['plugins']}extedit/", $plugin_tx['extedit']))();
     }
 }
