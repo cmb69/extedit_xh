@@ -46,4 +46,9 @@ class Response
         }
         return $this->output;
     }
+
+    public function output(): string
+    {
+        return $this->output;
+    }
 }
