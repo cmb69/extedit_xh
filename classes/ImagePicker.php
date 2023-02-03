@@ -92,7 +92,7 @@ class ImagePicker
     {
         $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
-            'images' => $this->images($this->getImageFolder()),
+            'images' => $this->images($this->imageFolder),
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_upload",
@@ -160,7 +160,7 @@ class ImagePicker
         if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
             return false;
         }
-        $filename = $this->getImageFolder() . $basename;
+        $filename = $this->imageFolder . $basename;
         if (file_exists($filename)) {
             return false;
         } else {
@@ -194,17 +194,6 @@ class ImagePicker
     }
 
     /**
-     * @return string
-     */
-    private function getImageFolder()
-    {
-        $subfolder = $this->conf['images_subfolder']
-            ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
-            : '';
-        return rtrim($this->imageFolder . $subfolder, '/') . '/';
-    }
-
-    /**
      * @param int $error
      * @return string
      */
@@ -228,16 +217,5 @@ class ImagePicker
             default:
                 return 'unknown';
         }
-    }
-
-    /**
-     * @return string
-     */
-    private function getCurrentUser()
-    {
-        XH_startSession();
-        return isset($_SESSION['username'])
-            ? $_SESSION['username']
-            : '';
     }
 }

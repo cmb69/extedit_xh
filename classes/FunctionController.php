@@ -35,6 +35,9 @@ class FunctionController
     private $baseFolder;
 
     /** @var string */
+    private $imageFolder;
+
+    /** @var string */
     private $configuredEditor;
 
     /** @var array<string,string> */
@@ -67,6 +70,7 @@ class FunctionController
     public function __construct(
         string $pluginFolder,
         string $baseFolder,
+        string $imageFolder,
         string $configuredEditor,
         array $conf,
         array $lang,
@@ -75,6 +79,7 @@ class FunctionController
     ) {
         $this->pluginFolder = $pluginFolder;
         $this->baseFolder = $baseFolder;
+        $this->imageFolder = $imageFolder;
         $this->configuredEditor = $configuredEditor;
         $this->conf = $conf;
         $this->lang = $lang;
@@ -97,7 +102,7 @@ class FunctionController
                 $imagePicker = new ImagePicker(
                     $this->pluginFolder,
                     $this->baseFolder,
-                    $pth['folder']['images'],
+                    $this->getImageFolder(),
                     $sn,
                     $su,
                     $this->conf,
@@ -111,7 +116,7 @@ class FunctionController
                 $imagePicker = new ImagePicker(
                     $this->pluginFolder,
                     $this->baseFolder,
-                    $pth['folder']['images'],
+                    $this->getImageFolder(),
                     $sn,
                     $su,
                     $this->conf,
@@ -148,6 +153,17 @@ class FunctionController
         return (defined('XH_ADM') && XH_ADM)
             || $username == '*' && $this->getCurrentUser()
             || in_array($this->getCurrentUser(), explode(',', $username));
+    }
+
+    /**
+     * @return string
+     */
+    private function getImageFolder()
+    {
+        $subfolder = $this->conf['images_subfolder']
+            ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
+            : '';
+        return rtrim($this->imageFolder . $subfolder, '/') . '/';
     }
 
     /**

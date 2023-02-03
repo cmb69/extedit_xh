@@ -36,6 +36,7 @@ function extedit($username, $textname = null)
     $controller = new Extedit\FunctionController(
         "{$pth['folder']['plugins']}extedit/",
         $pth['folder']['base'],
+        $pth['folder']['images'],
         $cf['editor']['external'],
         $plugin_cf['extedit'],
         $plugin_tx['extedit'],
