@@ -107,7 +107,8 @@ class FunctionController
                     $su,
                     $this->conf,
                     $this->lang,
-                    $this->configuredEditor
+                    $this->configuredEditor,
+                    new ImageFinder($this->lang['imagepicker_dimensions'])
                 );
                 echo $imagePicker->show();
                 exit;
@@ -121,7 +122,8 @@ class FunctionController
                     $su,
                     $this->conf,
                     $this->lang,
-                    $this->configuredEditor
+                    $this->configuredEditor,
+                    new ImageFinder($this->lang['imagepicker_dimensions'])
                 );
                 $imagePicker->handleUpload();
                 exit;

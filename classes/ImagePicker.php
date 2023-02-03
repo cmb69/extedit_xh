@@ -49,6 +49,9 @@ class ImagePicker
     /** @var string */
     private $configuredEditor;
 
+    /** @var ImageFinder */
+    private $imageFinder;
+
     /**
      * @var CsrfProtector
      */
@@ -66,7 +69,8 @@ class ImagePicker
         string $selectedUrl,
         array $conf,
         array $lang,
-        string $configuredEditor
+        string $configuredEditor,
+        ImageFinder $imageFinder
     ) {
         $this->pluginFolder = $pluginFolder;
         $this->baseFolder = $baseFolder;
@@ -76,6 +80,7 @@ class ImagePicker
         $this->conf = $conf;
         $this->lang = $lang;
         $this->configuredEditor = $configuredEditor;
+        $this->imageFinder = $imageFinder;
         $this->csrfProtection = new CsrfProtector('extedit_csrf_token');
     }
 
@@ -92,7 +97,7 @@ class ImagePicker
     {
         $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
-            'images' => $this->images($this->imageFolder),
+            'images' => $this->imageFinder->findAll($this->imageFolder),
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_upload",
@@ -167,30 +172,6 @@ class ImagePicker
             // TODO: process image with GD to avoid dangerous images?
             return move_uploaded_file($upload['tmp_name'], $filename);
         }
-    }
-
-    /**
-     * @param string $folder
-     * @return array
-     */
-    private function images($folder)
-    {
-        $images = array();
-        if (($dh = opendir($folder)) !== false) {
-            while (($entry = readdir($dh)) !== false) {
-                if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
-                    && is_readable($ffn) && getimagesize($ffn) !== false
-                ) {
-                    $info = getimagesize($ffn);
-                    if ($info) {
-                        list($width, $height) = $info;
-                        $entry .= sprintf($this->lang['imagepicker_dimensions'], $width, $height);
-                    }
-                    $images[$entry] = $ffn;
-                }
-            }
-        }
-        return $images;
     }
 
     /**
