@@ -55,7 +55,7 @@ class ImagePicker
     /**
      * @var CsrfProtector
      */
-    private $csrfProtection;
+    private $csrfProtector;
 
     /**
      * @param array<string,string> $conf
@@ -70,7 +70,8 @@ class ImagePicker
         array $conf,
         array $lang,
         string $configuredEditor,
-        ImageFinder $imageFinder
+        ImageFinder $imageFinder,
+        CsrfProtector $csrfProtector
     ) {
         $this->pluginFolder = $pluginFolder;
         $this->baseFolder = $baseFolder;
@@ -81,12 +82,12 @@ class ImagePicker
         $this->lang = $lang;
         $this->configuredEditor = $configuredEditor;
         $this->imageFinder = $imageFinder;
-        $this->csrfProtection = new CsrfProtector('extedit_csrf_token');
+        $this->csrfProtector = $csrfProtector;
     }
 
     public function __destruct()
     {
-        $this->csrfProtection->store();
+        $this->csrfProtector->store();
     }
 
     /**
@@ -102,7 +103,7 @@ class ImagePicker
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_upload",
             'message' => $message,
-            'csrfTokenInput' => new HtmlString($this->csrfProtection->tokenInput()),
+            'csrfTokenInput' => new HtmlString($this->csrfProtector->tokenInput()),
         ];
         header('Content-type: text/html; charset=utf-8');
         return $view->render('imagepicker', $data);
@@ -113,7 +114,7 @@ class ImagePicker
      */
     public function handleUpload()
     {
-        $this->csrfProtection->check();
+        $this->csrfProtector->check();
         $message = '';
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {

@@ -21,6 +21,8 @@
 
 namespace Extedit;
 
+use XH\CSRFProtection as CsrfProtector;
+
 class FunctionController
 {
     /**
@@ -108,7 +110,8 @@ class FunctionController
                     $this->conf,
                     $this->lang,
                     $this->configuredEditor,
-                    new ImageFinder($this->lang['imagepicker_dimensions'])
+                    new ImageFinder($this->lang['imagepicker_dimensions']),
+                    new CsrfProtector('extedit_csrf_token')
                 );
                 echo $imagePicker->show();
                 exit;
@@ -123,7 +126,8 @@ class FunctionController
                     $this->conf,
                     $this->lang,
                     $this->configuredEditor,
-                    new ImageFinder($this->lang['imagepicker_dimensions'])
+                    new ImageFinder($this->lang['imagepicker_dimensions']),
+                    new CsrfProtector('extedit_csrf_token')
                 );
                 $imagePicker->handleUpload();
                 exit;
