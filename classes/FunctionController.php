@@ -138,7 +138,7 @@ class FunctionController
                 $this->content = $this->read();
             }
             if ($this->isEditModeRequested()) {
-                $o .= $this->getViewLink() . $this->getEditForm();
+                $o .= $this->renderEditForm();
                 $this->initEditor();
             } else {
                 $o .= $this->getEditLink() . $this->evaluatePlugincall();
@@ -200,18 +200,18 @@ class FunctionController
     /**
      * @return string (X)HTML
      */
-    private function getEditForm()
+    private function renderEditForm(): string
     {
-        return '<form action="" method="POST">'
-            . '<textarea name="extedit_' . $this->textname . '_text" cols="80"'
-            . ' rows="25" class="xh-editor" style="width: 100%">'
-            . XH_hsc($this->content)
-            . '</textarea>'
-            . tag(
-                'input type="hidden" name="extedit_' . $this->textname . '_mtime"'
-                . ' value="' . $this->mtime() . '"'
-            )
-            . '</form>';
+        global $sn, $su;
+
+        $view = new View("{$this->pluginFolder}views/", $this->lang);
+        return $view->render('edit_form', [
+            'editUrl' => "$sn?$su",
+            'textareaName' => "extedit_{$this->textname}_text",
+            'content' => $this->content,
+            'mtimeName' => "extedit_{$this->textname}_mtime",
+            'mtime' => $this->mtime(),
+        ]);
     }
 
     /**
@@ -255,16 +255,6 @@ class FunctionController
         global $sn, $su;
 
         return "<a href=\"$sn?$su&amp;extedit_mode=edit\">" . $this->lang['mode_edit'] . '</a>';
-    }
-
-    /**
-     * @return string (X)HTML
-     */
-    private function getViewLink()
-    {
-        global $sn, $su;
-
-        return "<a href=\"$sn?$su\">" . $this->lang['mode_view'] . '</a>';
     }
 
     /**
