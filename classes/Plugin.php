@@ -37,9 +37,7 @@ class Plugin
             $this->initEditor();
         }
         if (defined('XH_ADM') && XH_ADM) {
-            if (function_exists('XH_registerStandardPluginMenuItems')) {
-                XH_registerStandardPluginMenuItems(false);
-            }
+            XH_registerStandardPluginMenuItems(false);
             if ($this->isAdministrationRequested()) {
                 $this->handleAdministration();
             }
@@ -85,11 +83,7 @@ class Plugin
      */
     private function isAdministrationRequested()
     {
-        global $extedit;
-
-        return function_exists('XH_wantsPluginAdministration')
-            && XH_wantsPluginAdministration('extedit')
-            || isset($extedit) && $extedit == 'true';
+        return XH_wantsPluginAdministration('extedit');
     }
 
     /**
