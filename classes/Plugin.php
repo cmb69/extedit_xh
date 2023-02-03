@@ -119,7 +119,7 @@ class Plugin
      */
     private function systemChecks()
     {
-        global $pth, $tx, $plugin_tx;
+        global $pth, $plugin_tx;
 
         $ptx = $plugin_tx['extedit'];
         $phpVersion = '7.1.0';
