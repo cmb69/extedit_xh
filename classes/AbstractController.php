@@ -29,17 +29,6 @@ abstract class AbstractController
     private static $isEditorInitialized = false;
 
     /**
-     * @param string $username
-     * @return bool
-     */
-    protected function isAuthorizedToEdit($username)
-    {
-        return $this->isAdmin()
-            || $username == '*' && $this->getCurrentUser()
-            || in_array($this->getCurrentUser(), explode(',', $username));
-    }
-
-    /**
      * @return void
      * @todo Image picker for other editors
      */

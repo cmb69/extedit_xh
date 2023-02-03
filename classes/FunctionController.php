@@ -86,6 +86,17 @@ class FunctionController extends AbstractController
     }
 
     /**
+     * @param string $username
+     * @return bool
+     */
+    private function isAuthorizedToEdit($username)
+    {
+        return $this->isAdmin()
+            || $username == '*' && $this->getCurrentUser()
+            || in_array($this->getCurrentUser(), explode(',', $username));
+    }
+
+    /**
      * @return string (X)HTML
      */
     private function handleSave()
