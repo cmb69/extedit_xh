@@ -1,7 +1,7 @@
 <!-- Extedit: info -->
 <h1>Extedit &ndash; <?=$this->text('label_info')?></h1>
-<img src="<?=$this->icon?>" class="extedit_logo" alt="<?=$this->text('alt_logo')?>" />
-<p>Version: <?=$this->version?></p>
+<img src="<?=$this->escape($icon)?>" class="extedit_logo" alt="<?=$this->text('alt_logo')?>" />
+<p>Version: <?=$this->escape($version)?></p>
 <p>Copyright &copy; 2013-2017 <a href="http://3-magi.net/">Christoph M.
 Becker</a></p>
 <p class="extedit_license">This program is free software: you can redistribute
@@ -27,10 +27,10 @@ href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <hr />
 <h4><?=$this->text('syscheck');?></h4>
 <ul style="list-style: none">
-<?php foreach ($this->checks as $check => $state):?>
+<?php foreach ($checks as $check => $state):?>
   <li>
-    <img src="<?=$this->images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
-    <?=$check;?>
+    <img src="<?=$this->escape($images[$state])?>" alt="<?=$this->escape($state)?>" style="padding-right: 1em"/>
+    <?=$this->escape($check);?>
   </li>
 <?php endforeach?>
 </ul>

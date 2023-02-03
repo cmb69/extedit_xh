@@ -19,7 +19,7 @@
       }
     </style>
     <script type="text/javascript">
-      var baseFolder = "<?=$this->baseFolder?>";
+      var baseFolder = "<?=$this->escape($baseFolder)?>";
       function init() {
         var picker = document.getElementById("imagepicker"),
           images = picker.getElementsByTagName("img"),
@@ -44,21 +44,21 @@
         setUrl(path);
       }
     </script>
-    <script type="text/javascript" src="<?=$this->editorHook?>"></script>
+    <script type="text/javascript" src="<?=$this->escape($editorHook)?>"></script>
   </head>
   <body onload="init();">
-    <div id="message"><p><?=$this->message?></p></div>
+    <div id="message"><p><?=$this->escape($message)?></p></div>
     <div id="imagepicker">
-<?php if (empty($this->images)):?>
+<?php if (empty($images)):?>
       <p><?=$this->text('imagepicker_empty')?></p>
 <?php else:?>
-<?php foreach ($this->images as $image => $url):?>
+<?php foreach ($images as $image => $url):?>
       <img src="<?=$this->escape($url)?>" alt="<?=$this->escape($image)?>" title="<?=$this->escape($image)?>"/>
 <?php endforeach?>
 <?php endif?>
     </div>
-    <form id="upload" action="<?=$this->uploadUrl?>" method="POST" enctype="multipart/form-data">
-      <?=$this->csrfTokenInput?>
+    <form id="upload" action="<?=$this->escape($uploadUrl)?>" method="POST" enctype="multipart/form-data">
+      <?=$this->escape($csrfTokenInput)?>
       <input name="extedit_file" type="file">
       <button><?=$this->text('imagepicker_upload')?></button>
     </form>

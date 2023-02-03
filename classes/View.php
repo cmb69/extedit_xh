@@ -35,23 +35,6 @@ class View
         $this->lang = $lang;
     }
 
-    private $data = array();
-
-    public function __get($name)
-    {
-        return $this->escape($this->data[$name]);
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->data[$name]);
-    }
-
-    public function __call($name, array $args)
-    {
-        return $this->escape(call_user_func_array($this->data[$name], $args));
-    }
-
     protected function text($key)
     {
         $args = func_get_args();
@@ -73,7 +56,7 @@ class View
 
     public function render(string $_template, array $_data)
     {
-        $this->data = $_data;
+        extract($_data);
         ob_start();
         include "{$this->templateFolder}{$_template}.php";
         return ob_get_clean();
