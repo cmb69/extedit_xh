@@ -100,14 +100,7 @@ class Plugin
      */
     private function renderInfo()
     {
-        global $pth, $plugin_tx;
-
-        $controller = new PluginInfo(
-            "{$pth['folder']['plugins']}extedit/",
-            $plugin_tx['extedit'],
-            new SystemChecker(),
-            new ContentRepo("{$pth['folder']['content']}extedit/")
-        );
+        $controller = Dic::makePluginInfo();
         return $controller();
     }
 }
