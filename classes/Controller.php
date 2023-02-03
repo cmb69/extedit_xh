@@ -115,8 +115,6 @@ class Controller extends AbstractController
             $checks[sprintf($ptx['syscheck_extension'], $ext)]
                 = extension_loaded($ext) ? 'ok' : 'fail';
         }
-        $checks[$ptx['syscheck_magic_quotes']]
-        = !function_exists('get_magic_quotes_runtime') || !get_magic_quotes_runtime() ? 'ok' : 'fail';
         $checks[$ptx['syscheck_encoding']]
             = strtoupper($tx['meta']['codepage']) == 'UTF-8' ? 'ok' : 'warn';
         foreach (array('config/', 'languages/') as $folder) {

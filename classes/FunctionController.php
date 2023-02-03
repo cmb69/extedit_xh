@@ -92,7 +92,7 @@ class FunctionController extends AbstractController
     {
         global $su, $plugin_tx;
 
-        $this->content = stsl($_POST["extedit_{$this->textname}_text"]);
+        $this->content = $_POST["extedit_{$this->textname}_text"];
         $mtime = $this->mtime();
         if ($_POST["extedit_{$this->textname}_mtime"] >= $mtime) {
             if ($this->write()) {
