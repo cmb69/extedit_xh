@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Choose an Image</title>
+    <style type="text/css">
+      #message {
+        background: #ffa7a7;
+      }
+      #imagepicker {}
+      #imagepicker img {
+        float: left;
+        max-height: 200px;
+        margin: 10px;
+        cursor: pointer;
+      }
+      #upload {
+        clear: both;
+      }
+    </style>
+    <script type="text/javascript">
+      var baseFolder = "";
+      function init() {
+        var picker = document.getElementById("imagepicker"),
+          images = picker.getElementsByTagName("img"),
+          i, len;
+
+        function onclick(image) {
+          return function() {
+            pick(image);
+          };
+        }
+
+        for (i = 0, len = images.length; i < len; i++) {
+          images[i].onclick = onclick(images[i]);
+        }
+      }
+
+      function pick(image) {
+        var re = new RegExp('^' + location.protocol + "//" +
+                  location.host + location.pathname),
+          path = image.src.replace(re, "./");
+        
+        setUrl(path);
+      }
+    </script>
+    <script type="text/javascript" src="./connectors/tinymce4.js"></script>
+  </head>
+  <body onload="init();">
+    <div id="message"><p></p></div>
+    <div id="imagepicker">
+      <img src="./userfiles/images/cmb/image.jpg" alt="image.jpg (640 × 480 px)" title="image.jpg (640 × 480 px)"/>
+      <img src="./userfiles/images/cmb/image.png" alt="image.png (480 × 640 px)" title="image.png (480 × 640 px)"/>
+    </div>
+    <form id="upload" action="/?whatever&amp;extedit_upload" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">      <input name="extedit_file" type="file">
+      <button>Upload</button>
+    </form>
+  </body>
+</html>

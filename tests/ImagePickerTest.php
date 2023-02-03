@@ -27,13 +27,33 @@ use XH\CSRFProtection as CsrfProtector;
 
 class ImagePickerTest extends TestCase
 {
-    public function testShowRendersImagePicker(): void
+    public function testShowRendersImagePickerWithNoImages(): void
     {
         $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
         $conf = $plugin_cf['extedit'];
         $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
         $lang = $plugin_tx['extedit'];
         $imageFinder = $this->createStub(ImageFinder::class);
+        $csrfProtector = $this->createStub(CsrfProtector::class);
+        $csrfProtector->method('tokenInput')->willReturn(
+            '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
+        );
+        $sut = new ImagePicker("./", "", "", "/", "whatever", $conf, $lang, "tinymce4", $imageFinder, $csrfProtector);
+        $response = $sut->show();
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testShowRendersImagePickerWithImages(): void
+    {
+        $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
+        $conf = $plugin_cf['extedit'];
+        $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
+        $lang = $plugin_tx['extedit'];
+        $imageFinder = $this->createStub(ImageFinder::class);
+        $imageFinder->method('findAll')->willReturn([
+            "image.jpg (640 × 480 px)" => "./userfiles/images/cmb/image.jpg",
+            "image.png (480 × 640 px)" => "./userfiles/images/cmb/image.png",
+        ]);
         $csrfProtector = $this->createStub(CsrfProtector::class);
         $csrfProtector->method('tokenInput')->willReturn(
             '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
