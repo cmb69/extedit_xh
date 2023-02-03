@@ -28,6 +28,18 @@ class FunctionController
      */
     private static $isEditorInitialized = false;
 
+    /** @var string */
+    private $pluginFolder;
+
+    /** @var string */
+    private $configuredEditor;
+
+    /** @var array<string,string> */
+    private $conf;
+
+    /** @var array<string,string> */
+    private $lang;
+
     /**
      * @var string
      */
@@ -44,11 +56,17 @@ class FunctionController
     private $content;
 
     /**
+     * @param array<string,string> $conf
+     * @param array<string,string> $lang
      * @param string $username
      * @param string|null $textname
      */
-    public function __construct($username, $textname = null)
+    public function __construct(string $pluginFolder, string $configuredEditor, array $conf, array $lang, $username, $textname = null)
     {
+        $this->pluginFolder = $pluginFolder;
+        $this->configuredEditor = $configuredEditor;
+        $this->conf = $conf;
+        $this->lang = $lang;
         $this->username = $username;
         $this->textname = $textname;
         $this->sanitizeTextname();
@@ -106,7 +124,7 @@ class FunctionController
      */
     private function handleSave()
     {
-        global $su, $plugin_tx;
+        global $su;
 
         $this->content = $_POST["extedit_{$this->textname}_text"];
         $mtime = $this->mtime();
@@ -117,12 +135,12 @@ class FunctionController
             } else {
                 return XH_message(
                     'fail',
-                    $plugin_tx['extedit']['err_save'],
+                    $this->lang['err_save'],
                     Content::getFilename($this->textname)
                 );
             }
         } else {
-            return XH_message('fail', $plugin_tx['extedit']['err_changed'], $this->textname);
+            return XH_message('fail', $this->lang['err_changed'], $this->textname);
         }
     }
 
@@ -157,19 +175,18 @@ class FunctionController
      */
     private function initEditor()
     {
-        global $pth, $hjs, $cf;
+        global $hjs;
 
         if (self::$isEditorInitialized) {
             return;
         }
         self::$isEditorInitialized = true;
-        $plugins = $pth['folder']['plugins'];
-        $editor = $cf['editor']['external'];
+        $editor = $this->configuredEditor;
         if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
-            include_once "{$plugins}extedit/connectors/$editor.php";
+            include_once "{$this->pluginFolder}connectors/$editor.php";
             $func = "extedit_{$editor}_init";
             $hjs .= $func() . "\n";
-            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
+            $config = file_get_contents("{$this->pluginFolder}inits/$editor.js");
         } else {
             $config = false;
         }
@@ -181,9 +198,9 @@ class FunctionController
      */
     private function getEditLink()
     {
-        global $s, $plugin_tx;
+        global $s;
 
-        return a($s, '&amp;extedit_mode=edit') . $plugin_tx['extedit']['mode_edit'] . '</a>';
+        return a($s, '&amp;extedit_mode=edit') . $this->lang['mode_edit'] . '</a>';
     }
 
     /**
@@ -191,9 +208,9 @@ class FunctionController
      */
     private function getViewLink()
     {
-        global $s, $plugin_tx;
+        global $s;
 
-        return a($s, '') . $plugin_tx['extedit']['mode_view'] . '</a>';
+        return a($s, '') . $this->lang['mode_view'] . '</a>';
     }
 
     /**
@@ -247,9 +264,7 @@ class FunctionController
      */
     private function evaluatePlugincall()
     {
-        global $plugin_cf;
-
-        if ($plugin_cf['extedit']['allow_scripting']) {
+        if ($this->conf['allow_scripting']) {
             return evaluate_plugincall($this->content);
         }
         return $this->content;

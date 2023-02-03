@@ -31,6 +31,15 @@ $temp->dispatch();
  */
 function extedit($username, $textname = null)
 {
-    $controller = new Extedit\FunctionController($username, $textname);
+    global $pth, $cf, $plugin_cf, $plugin_tx;
+
+    $controller = new Extedit\FunctionController(
+        "{$pth['folder']['plugins']}extedit/",
+        $cf['editor']['external'],
+        $plugin_cf['extedit'],
+        $plugin_tx['extedit'],
+        $username,
+        $textname
+    );
     return $controller->handle();
 }
