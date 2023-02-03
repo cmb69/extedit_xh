@@ -25,6 +25,7 @@ require_once "../../cmsimple/functions.php";
 
 require_once "./classes/Content.php";
 require_once "./classes/ContentRepo.php";
+require_once "./classes/ImageFinder.php";
 require_once "./classes/PluginInfo.php";
 require_once "./classes/SystemChecker.php";
 require_once "./classes/View.php";
