@@ -29,11 +29,15 @@ class PluginInfo
     /** @var array<string,string> */
     private $lang;
 
+    /** @var SystemChecker */
+    private $systemChecker;
+
     /** @param array<string,string> $lang */
-    public function __construct(string $pluginFolder, array $lang)
+    public function __construct(string $pluginFolder, array $lang, SystemChecker $systemChecker)
     {
         $this->pluginFolder = $pluginFolder;
         $this->lang = $lang;
+        $this->systemChecker = $systemChecker;
     }
 
     public function __invoke()
@@ -55,14 +59,13 @@ class PluginInfo
      */
     private function systemChecks()
     {
-        $systemChecker = new SystemChecker();
         $phpVersion = '7.1.0';
         $checks = array();
         $checks[sprintf($this->lang['syscheck_phpversion'], $phpVersion)]
-            = $systemChecker->checkVersion(PHP_VERSION, $phpVersion) ? 'ok' : 'fail';
+            = $this->systemChecker->checkVersion(PHP_VERSION, $phpVersion) ? 'ok' : 'fail';
         foreach (array('fileinfo', 'session') as $ext) {
             $checks[sprintf($this->lang['syscheck_extension'], $ext)]
-                = $systemChecker->checkExtension($ext) ? 'ok' : 'fail';
+                = $this->systemChecker->checkExtension($ext) ? 'ok' : 'fail';
         }
         foreach (array('config/', 'languages/') as $folder) {
             $folders[] = $this->pluginFolder . $folder;
@@ -70,7 +73,7 @@ class PluginInfo
         $folders[] = Content::getFoldername();
         foreach ($folders as $folder) {
             $checks[sprintf($this->lang['syscheck_writable'], $folder)]
-                = $systemChecker->checkWritability($folder) ? 'ok' : 'warn';
+                = $this->systemChecker->checkWritability($folder) ? 'ok' : 'warn';
         }
         return $checks;
     }
