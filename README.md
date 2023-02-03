@@ -135,7 +135,7 @@ image folder.
 
 ## Limitations
 
-- The image picker is currently available only for TinyMCE, TinyMCE4 and CKEditor.
+- The image picker is currently available only for TinyMCE4 and CKEditor.
 - Advanced management of the “extedit” files (e.g. deleting and renaming) has
   to be done via FTP.
 

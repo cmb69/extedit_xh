@@ -144,7 +144,7 @@ Weiterhin kann er nicht auf Unterordner seines Bilderordners zugreifen.
 
 ## Einschränkungen
 
-- Der Bildwähler funktioniert derzeit nur unter TinyMCE, TinyMCE4 und CKEditor.
+- Der Bildwähler funktioniert derzeit nur unter TinyMCE4 und CKEditor.
 - Fortgeschrittene Verwaltung der „Extedit“ Dateien (z.B. Löschen und Umbenennnen) muss
   per FTP vorgenommen werden.
 
