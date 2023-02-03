@@ -128,7 +128,7 @@ class ImagePicker
             $key = $this->getUploadErrorKey($file['error']);
             $message = $this->lang["imagepicker_err_$key"];
         } else {
-            if ($this->hasAllowedExtension($file['name']) && $this->isImage($file['tmp_name'])) {
+            if ($this->hasAllowedExtension($file['name'])) {
                 if (!$this->moveUpload($file)) {
                     $message = $this->lang["imagepicker_err_cantwrite"];
                 }
@@ -152,15 +152,6 @@ class ImagePicker
     {
         $allowedExtensions = array_map('trim', explode(',', $this->conf['images_extensions']));
         return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
-    }
-
-    /**
-     * @param string $filename
-     * @return bool
-     */
-    private function isImage($filename)
-    {
-        return strpos(mime_content_type($filename), 'image/') === 0;
     }
 
     /**
