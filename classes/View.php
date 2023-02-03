@@ -37,11 +37,6 @@ class View
 
     private $data = array();
 
-    public function __set($name, $value)
-    {
-        $this->data[$name] = $value;
-    }
-
     public function __get($name)
     {
         return $this->escape($this->data[$name]);
@@ -76,8 +71,9 @@ class View
         return vsprintf($this->lang[$key], $args);
     }
 
-    public function render(string $_template)
+    public function render(string $_template, array $_data)
     {
+        $this->data = $_data;
         ob_start();
         include "{$this->templateFolder}{$_template}.php";
         return ob_get_clean();

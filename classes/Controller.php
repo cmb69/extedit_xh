@@ -90,11 +90,13 @@ class Controller extends AbstractController
             $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
         }
         $view = new View("{$pth['folder']['plugins']}extedit/views/", $plugin_tx['extedit']);
-        $view->images = $images;
-        $view->checks = $this->systemChecks();
-        $view->icon = "{$pth['folder']['plugins']}extedit/extedit.png";
-        $view->version = EXTEDIT_VERSION;
-        return $view->render('info');
+        $data = [
+            'images' => $images,
+            'checks' => $this->systemChecks(),
+            'icon' => "{$pth['folder']['plugins']}extedit/extedit.png",
+            'version' => EXTEDIT_VERSION,
+        ];
+        return $view->render('info', $data);
     }
 
     /**
