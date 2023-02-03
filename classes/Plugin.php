@@ -88,19 +88,10 @@ class Plugin
         $o .= print_plugin_admin('off');
         switch ($admin) {
             case '':
-                $o .= $this->renderInfo();
+                $o .= Dic::makePluginInfo()();
                 break;
             default:
                 $o .= plugin_admin_common();
         }
-    }
-
-    /**
-     * @return string (X)HTML
-     */
-    private function renderInfo()
-    {
-        $controller = Dic::makePluginInfo();
-        return $controller();
     }
 }
