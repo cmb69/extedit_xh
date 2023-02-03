@@ -58,9 +58,7 @@ abstract class AbstractController
      */
     protected function getCurrentUser()
     {
-        if (session_id() == '') {
-            session_start();
-        }
+        XH_startSession();
         return isset($_SESSION['username'])
             ? $_SESSION['username']
             : '';

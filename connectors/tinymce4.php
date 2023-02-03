@@ -23,9 +23,7 @@ function Extedit_Tinymce4_init()
 {
     global $sn, $su;
 
-    if (session_id() == '') {
-        session_start();
-    }
+    XH_startSession();
     $_SESSION['tinymce_fb_callback'] = 'extedit_imagepicker';
     $url = "$sn?$su&extedit_imagepicker";
     return <<<EOS
