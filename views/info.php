@@ -1,6 +1,6 @@
 <!-- Extedit: info -->
 <h1>Extedit <?=$this->escape($version)?></h1>
-<h4><?=$this->text('synopsis');?></h4>
+<h2><?=$this->text('synopsis');?></h2>
 <p><code>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</code></p>
 <p>
   <code><?=$this->text('synopsis_username')?></code>:
@@ -10,8 +10,7 @@
   <code><?=$this->text('synopsis_textname')?></code>:
   <span><?=$this->text('synopsis_textname_desc')?></span>
 </p>
-<hr />
-<h4><?=$this->text('syscheck');?></h4>
+<h2><?=$this->text('syscheck');?></h2>
 <ul style="list-style: none">
 <?php foreach ($checks as $check => $state):?>
   <li>
