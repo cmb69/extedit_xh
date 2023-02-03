@@ -23,33 +23,4 @@ namespace Extedit;
 
 abstract class AbstractController
 {
-    /**
-     * @var bool
-     */
-    private static $isEditorInitialized = false;
-
-    /**
-     * @return void
-     * @todo Image picker for other editors
-     */
-    protected function initEditor()
-    {
-        global $pth, $hjs, $cf;
-
-        if (self::$isEditorInitialized) {
-            return;
-        }
-        self::$isEditorInitialized = true;
-        $plugins = $pth['folder']['plugins'];
-        $editor = $cf['editor']['external'];
-        if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
-            include_once "{$plugins}extedit/connectors/$editor.php";
-            $func = "extedit_{$editor}_init";
-            $hjs .= $func() . "\n";
-            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
-        } else {
-            $config = false;
-        }
-        init_editor(array('xh-editor'), $config);
-    }
 }
