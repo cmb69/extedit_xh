@@ -2,20 +2,6 @@
 
 <project name="Extedit" default="help">
 
-  <fileset id="php-sources" dir=".">
-    <include name="classes/*.php"/>
-    <include name="index.php"/>
-    <include name="connectors/*.php"/>
-  </fileset>
-
-  <fileset id="js-sources" dir=".">
-    <include name="*.js"/>
-  </fileset>
-
-  <fileset id="unit-tests" dir="tests/unit">
-    <include name="*Test.php"/>
-  </fileset>
-
   <target name="help" description="lists available targets">
     <exec command="phing -l" outputProperty="help"/>
     <echo>${help}</echo>
