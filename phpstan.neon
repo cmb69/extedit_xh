@@ -1,0 +1,14 @@
+parameters:
+  level: 1
+  paths:
+    - classes/
+    - connectors/
+#    - views/
+    - index.php
+  bootstrapFiles:
+    - phpstan.php
+  scanFiles:
+    - ../../cmsimple/classes/CSRFProtection.php
+    - ../../cmsimple/adminfuncs.php
+    - ../../cmsimple/functions.php
+    - ../../cmsimple/utf8.php

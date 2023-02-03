@@ -67,7 +67,7 @@ class Controller extends AbstractController
      */
     private function handleAdministration()
     {
-        global $admin, $action, $o;
+        global $admin, $o;
 
         $o .= print_plugin_admin('off');
         switch ($admin) {
@@ -75,7 +75,7 @@ class Controller extends AbstractController
                 $o .= $this->renderInfo();
                 break;
             default:
-                $o .= plugin_admin_common($action, $admin, 'extedit');
+                $o .= plugin_admin_common();
         }
     }
 

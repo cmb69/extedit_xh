@@ -21,18 +21,18 @@
 
 namespace Extedit;
 
-use XH_CSRFProtection;
+use XH\CSRFProtection as CsrfProtector;
 
 class ImagePicker extends AbstractController
 {
     /**
-     * @var XH_CSRFProtection
+     * @var CsrfProtector
      */
     private $csrfProtection;
 
     public function __construct()
     {
-        $this->csrfProtection = new XH_CSRFProtection('extedit_csrf_token');
+        $this->csrfProtection = new CsrfProtector('extedit_csrf_token');
     }
 
     public function __destruct()
@@ -61,7 +61,7 @@ class ImagePicker extends AbstractController
     }
 
     /**
-     * @return string (X)HTML
+     * @return string|void
      */
     public function handleUpload()
     {

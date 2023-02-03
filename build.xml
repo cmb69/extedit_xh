@@ -33,6 +33,10 @@
     </exec>
   </target>
 
+  <target name="stan" description="run static analysis">
+    <exec executable="phpstan" passthru="true" checkreturn="true"/>
+  </target>
+
   <target name="mess" description="detects code flaws">
     <exec executable="phpmd" passthru="true" checkreturn="true">
       <arg line="classes,connectors,tests,index.php ansi codesize,unusedcode --ignore-violations-on-exit"/>
@@ -79,6 +83,7 @@
         <exclude name="build.xml"/>
         <exclude name="composer.*"/>
         <exclude name="pax_global_header"/>
+        <exclude name="phpstan.*"/>
         <exclude name="phpunit.xml"/>
         <exclude name="README.md"/>
         <exclude name="tests/**"/>
