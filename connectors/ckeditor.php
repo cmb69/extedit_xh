@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Extedit_Ckeditor_init()
+function Extedit_Ckeditor_init(): string
 {
     global $sn, $su;
 

@@ -29,17 +29,19 @@ class Response
     /** @var array<string,string> */
     private $headers = [];
 
+    /** @return void */
     public function addOuput(string $output)
     {
         $this->output .= $output;
     }
 
+    /** @return void */
     public function setHeader(string $key, string $value)
     {
         $this->headers[$key] = $value;
     }
 
-    public function trigger()
+    public function trigger(): string
     {
         foreach ($this->headers as $key => $value) {
             header("{$key}: {$value}");

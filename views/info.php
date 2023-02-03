@@ -5,8 +5,8 @@ use Extedit\View;
 /**
  * @var View $this
  * @var string $version
- * @var array $checks
- * @var array $images
+ * @var array<string,string> $checks
+ * @var array<string,string> $images
  */
 ?>
 <!-- Extedit: info -->

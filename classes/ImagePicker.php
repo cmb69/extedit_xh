@@ -155,7 +155,7 @@ class ImagePicker
     }
 
     /**
-     * @param array $upload
+     * @param array{name:string,tmp_name:string} $upload
      * @return bool
      */
     private function moveUpload($upload)

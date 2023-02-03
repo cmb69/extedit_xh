@@ -48,7 +48,7 @@ class PluginInfo
         $this->contentRepo = $contentRepo;
     }
 
-    public function __invoke()
+    public function __invoke(): string
     {
         foreach (array('ok', 'warn', 'fail') as $state) {
             $images[$state] = "{$this->pluginFolder}images/$state.png";
@@ -63,7 +63,7 @@ class PluginInfo
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
     private function systemChecks()
     {

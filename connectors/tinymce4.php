@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Extedit_Tinymce4_init()
+function Extedit_Tinymce4_init(): string
 {
     global $sn, $su;
 

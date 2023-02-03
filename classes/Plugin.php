@@ -44,7 +44,7 @@ class Plugin
         }
     }
 
-    private function isTemplateEdit()
+    private function isTemplateEdit(): bool
     {
         global $plugin_cf;
 

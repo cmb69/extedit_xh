@@ -29,13 +29,14 @@ class View
     /** @var array<string,string> */
     private $lang;
 
+    /** @param array<string,string> $lang */
     public function __construct(string $templateFolder, array $lang)
     {
         $this->templateFolder = $templateFolder;
         $this->lang = $lang;
     }
 
-    public function text($key)
+    public function text(string $key): string
     {
         $args = func_get_args();
         array_shift($args);
@@ -54,7 +55,8 @@ class View
         return vsprintf($this->lang[$key], $args);
     }
 
-    public function render(string $_template, array $_data)
+    /** @param array<string,mixed> $_data */
+    public function render(string $_template, array $_data): string
     {
         extract($_data);
         ob_start();
