@@ -91,10 +91,19 @@ class ImagePicker
     }
 
     /**
+     * @return string
+     */
+    public function show()
+    {
+        header('Content-type: text/html; charset=utf-8');
+        return $this->doShow("");
+    }
+
+    /**
      * @param string $message
      * @return string
      */
-    public function show($message = '')
+    public function doShow($message)
     {
         $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
@@ -105,7 +114,6 @@ class ImagePicker
             'message' => $message,
             'csrfTokenInput' => new HtmlString($this->csrfProtector->tokenInput()),
         ];
-        header('Content-type: text/html; charset=utf-8');
         return $view->render('imagepicker', $data);
     }
 
@@ -133,7 +141,7 @@ class ImagePicker
             header('Location: ' . CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
             exit;
         } else {
-            echo $this->show($message);
+            echo $this->doShow($message);
         }
     }
 
