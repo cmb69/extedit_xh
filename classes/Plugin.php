@@ -121,14 +121,15 @@ class Plugin
     {
         global $pth, $plugin_tx;
 
+        $systemChecker = new SystemChecker();
         $ptx = $plugin_tx['extedit'];
         $phpVersion = '7.1.0';
         $checks = array();
         $checks[sprintf($ptx['syscheck_phpversion'], $phpVersion)]
-            = version_compare(PHP_VERSION, $phpVersion) >= 0 ? 'ok' : 'fail';
+            = $systemChecker->checkVersion(PHP_VERSION, $phpVersion) ? 'ok' : 'fail';
         foreach (array('fileinfo', 'session') as $ext) {
             $checks[sprintf($ptx['syscheck_extension'], $ext)]
-                = extension_loaded($ext) ? 'ok' : 'fail';
+                = $systemChecker->checkExtension($ext) ? 'ok' : 'fail';
         }
         foreach (array('config/', 'languages/') as $folder) {
             $folders[] = $pth['folder']['plugins'] . 'extedit/' . $folder;
@@ -136,7 +137,7 @@ class Plugin
         $folders[] = Content::getFoldername();
         foreach ($folders as $folder) {
             $checks[sprintf($ptx['syscheck_writable'], $folder)]
-                = is_writable($folder) ? 'ok' : 'warn';
+                = $systemChecker->checkWritability($folder) ? 'ok' : 'warn';
         }
         return $checks;
     }
