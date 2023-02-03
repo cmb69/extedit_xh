@@ -31,8 +31,6 @@ $plugin_tx['extedit']['syscheck_phpversion']="PHP version ≥ %s";
 $plugin_tx['extedit']['syscheck_extension']="Extension '%s' loaded";
 $plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
 
-$plugin_tx['extedit']['about']="About Extedit_XH";
-
 $plugin_tx['extedit']['cf_images_subfolder']="Shall the editor have access to his personal image folder only?";
 $plugin_tx['extedit']['cf_images_extensions']="A comma separated list of allowed image filename extensions for the upload.";
 $plugin_tx['extedit']['cf_allow_scripting']="Shall plugin calls be evaluated in the \"extedits\"?";
