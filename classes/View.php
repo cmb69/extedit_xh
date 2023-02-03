@@ -23,6 +23,18 @@ namespace Extedit;
 
 class View
 {
+    /** @var string */
+    private $templateFolder;
+
+    /** @var array<string,string> */
+    private $lang;
+
+    public function __construct(string $templateFolder, array $lang)
+    {
+        $this->templateFolder = $templateFolder;
+        $this->lang = $lang;
+    }
+
     private $data = array();
 
     public function __set($name, $value)
@@ -47,17 +59,13 @@ class View
 
     protected function text($key)
     {
-        global $plugin_tx;
-
         $args = func_get_args();
         array_shift($args);
-        return vsprintf($plugin_tx['extedit'][$key], $args);
+        return vsprintf($this->lang[$key], $args);
     }
 
     protected function plural($key, $count)
     {
-        global $plugin_tx;
-
         if ($count == 0) {
             $key .= '_0';
         } else {
@@ -65,15 +73,13 @@ class View
         }
         $args = func_get_args();
         array_shift($args);
-        return vsprintf($plugin_tx['extedit'][$key], $args);
+        return vsprintf($this->lang[$key], $args);
     }
 
     public function render(string $_template)
     {
-        global $pth;
-
         ob_start();
-        include "{$pth['folder']['plugins']}extedit/views/{$_template}.php";
+        include "{$this->templateFolder}{$_template}.php";
         return ob_get_clean();
     }
 

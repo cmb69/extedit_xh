@@ -46,9 +46,9 @@ class ImagePicker extends AbstractController
      */
     public function show($message = '')
     {
-        global $pth, $cf, $sn, $su;
+        global $pth, $cf, $plugin_tx, $sn, $su;
 
-        $view = new View();
+        $view = new View("{$pth['folder']['plugins']}extedit/views/", $plugin_tx['extedit']);
         $view->images = $this->images($this->getImageFolder());
         $view->baseFolder = $pth['folder']['base'];
         $view->editorHook = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
