@@ -9,9 +9,9 @@ $plugin_tx['extedit']['imagepicker_title']="Vælg et billede";
 $plugin_tx['extedit']['imagepicker_empty']="Der er ingen billeder i biledemappen.";
 
 $plugin_tx['extedit']['synopsis']="Synopsis";
-$plugin_tx['extedit']['synopsis_username']="BRUGERNAVN";
+$plugin_tx['extedit']['synopsis_username']="%%BRUGERNAVN%%";
 $plugin_tx['extedit']['synopsis_username_desc']="Navnet på Register_XH eller Memberpages_XH brugeren, der må rette indholdet.";
-$plugin_tx['extedit']['synopsis_textname']="TEKSTNAVN";
+$plugin_tx['extedit']['synopsis_textname']="%%TEKSTNAVN%%";
 $plugin_tx['extedit']['synopsis_textname_desc']="Navnet på extedit. Navnet anvendes som Heading på siden.";
 
 $plugin_tx['extedit']['syscheck']="System check";

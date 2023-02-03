@@ -1,13 +1,15 @@
 <!-- Extedit: info -->
 <h1>Extedit <?=$this->escape($version)?></h1>
 <h4><?=$this->text('synopsis');?></h4>
-<p>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</p>
-<dl>
-  <dt><?=$this->text('synopsis_username')?>:</dt>
-  <dd><?=$this->text('synopsis_username_desc')?></dd>
-  <dt><?=$this->text('synopsis_textname')?>:</dt>
-  <dd><?=$this->text('synopsis_textname_desc')?></dd>
-</dl>
+<p><code>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</code></p>
+<p>
+  <code><?=$this->text('synopsis_username')?></code>:
+  <span><?=$this->text('synopsis_username_desc')?></span>
+</p>
+<p>
+  <code><?=$this->text('synopsis_textname')?></code>:
+  <span><?=$this->text('synopsis_textname_desc')?></span>
+</p>
 <hr />
 <h4><?=$this->text('syscheck');?></h4>
 <ul style="list-style: none">
