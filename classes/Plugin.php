@@ -102,6 +102,12 @@ class Plugin
     {
         global $pth, $plugin_tx;
 
-        return (new PluginInfo("{$pth['folder']['plugins']}extedit/", $plugin_tx['extedit'], new SystemChecker()))();
+        $controller = new PluginInfo(
+            "{$pth['folder']['plugins']}extedit/",
+            $plugin_tx['extedit'],
+            new SystemChecker(),
+            new ContentRepo("{$pth['folder']['content']}extedit/")
+        );
+        return $controller();
     }
 }

@@ -32,12 +32,20 @@ class PluginInfo
     /** @var SystemChecker */
     private $systemChecker;
 
+    /** @var ContentRepo */
+    private $contentRepo;
+
     /** @param array<string,string> $lang */
-    public function __construct(string $pluginFolder, array $lang, SystemChecker $systemChecker)
-    {
+    public function __construct(
+        string $pluginFolder,
+        array $lang,
+        SystemChecker $systemChecker,
+        ContentRepo $contentRepo
+    ) {
         $this->pluginFolder = $pluginFolder;
         $this->lang = $lang;
         $this->systemChecker = $systemChecker;
+        $this->contentRepo = $contentRepo;
     }
 
     public function __invoke()
@@ -70,7 +78,7 @@ class PluginInfo
         foreach (array('config/', 'languages/') as $folder) {
             $folders[] = $this->pluginFolder . $folder;
         }
-        $folders[] = Content::getFoldername();
+        $folders[] = $this->contentRepo->foldername();
         foreach ($folders as $folder) {
             $checks[sprintf($this->lang['syscheck_writable'], $folder)]
                 = $this->systemChecker->checkWritability($folder) ? 'ok' : 'warn';
