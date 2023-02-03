@@ -198,9 +198,9 @@ class FunctionController
      */
     private function getEditLink()
     {
-        global $s;
+        global $sn, $su;
 
-        return a($s, '&amp;extedit_mode=edit') . $this->lang['mode_edit'] . '</a>';
+        return "<a href=\"$sn?$su&amp;extedit_mode=edit\">" . $this->lang['mode_edit'] . '</a>';
     }
 
     /**
@@ -208,9 +208,9 @@ class FunctionController
      */
     private function getViewLink()
     {
-        global $s;
+        global $sn, $su;
 
-        return a($s, '') . $this->lang['mode_view'] . '</a>';
+        return "<a href=\"$sn?$su\">" . $this->lang['mode_view'] . '</a>';
     }
 
     /**
