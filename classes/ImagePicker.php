@@ -25,13 +25,57 @@ use XH\CSRFProtection as CsrfProtector;
 
 class ImagePicker
 {
+    /** @var string */
+    private $pluginFolder;
+
+    /** @var string */
+    private $baseFolder;
+
+    /** @var string */
+    private $imageFolder;
+
+    /** @var string */
+    private $scriptName;
+
+    /** @var string */
+    private $selectedUrl;
+
+    /** @var array<string,string> */
+    private $conf;
+
+    /** @var array<string,string> */
+    private $lang;
+
+    /** @var string */
+    private $configuredEditor;
+
     /**
      * @var CsrfProtector
      */
     private $csrfProtection;
 
-    public function __construct()
-    {
+    /**
+     * @param array<string,string> $conf
+     * @param array<string,string> $lang
+     */
+    public function __construct(
+        string $pluginFolder,
+        string $baseFolder,
+        string $imageFolder,
+        string $scriptName,
+        string $selectedUrl,
+        array $conf,
+        array $lang,
+        string $configuredEditor
+    ) {
+        $this->pluginFolder = $pluginFolder;
+        $this->baseFolder = $baseFolder;
+        $this->imageFolder = $imageFolder;
+        $this->scriptName = $scriptName;
+        $this->selectedUrl = $selectedUrl;
+        $this->conf = $conf;
+        $this->lang = $lang;
+        $this->configuredEditor = $configuredEditor;
         $this->csrfProtection = new CsrfProtector('extedit_csrf_token');
     }
 
@@ -46,14 +90,12 @@ class ImagePicker
      */
     public function show($message = '')
     {
-        global $pth, $cf, $plugin_tx, $sn, $su;
-
-        $view = new View("{$pth['folder']['plugins']}extedit/views/", $plugin_tx['extedit']);
+        $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
             'images' => $this->images($this->getImageFolder()),
-            'baseFolder' => $pth['folder']['base'],
-            'editorHook' => "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js",
-            'uploadUrl' => "$sn?$su&extedit_upload",
+            'baseFolder' => $this->baseFolder,
+            'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
+            'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_upload",
             'message' => $message,
             'csrfTokenInput' => new HtmlString($this->csrfProtection->tokenInput()),
         ];
@@ -66,25 +108,23 @@ class ImagePicker
      */
     public function handleUpload()
     {
-        global $su, $plugin_tx;
-
         $this->csrfProtection->check();
         $message = '';
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
             $key = $this->getUploadErrorKey($file['error']);
-            $message = $plugin_tx['extedit']["imagepicker_err_$key"];
+            $message = $this->lang["imagepicker_err_$key"];
         } else {
             if ($this->hasAllowedExtension($file['name']) && $this->isImage($file['tmp_name'])) {
                 if (!$this->moveUpload($file)) {
-                    $message = $plugin_tx['extedit']["imagepicker_err_cantwrite"];
+                    $message = $this->lang["imagepicker_err_cantwrite"];
                 }
             } else {
-                $message = $plugin_tx['extedit']["imagepicker_err_mimetype"];
+                $message = $this->lang["imagepicker_err_mimetype"];
             }
         }
         if (!$message) {
-            header('Location: ' . CMSIMPLE_URL . "?$su&extedit_imagepicker");
+            header('Location: ' . CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
             exit;
         } else {
             echo $this->show($message);
@@ -97,9 +137,7 @@ class ImagePicker
      */
     private function hasAllowedExtension($filename)
     {
-        global $plugin_cf;
-
-        $allowedExtensions = array_map('trim', explode(',', $plugin_cf['extedit']['images_extensions']));
+        $allowedExtensions = array_map('trim', explode(',', $this->conf['images_extensions']));
         return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
     }
 
@@ -137,8 +175,6 @@ class ImagePicker
      */
     private function images($folder)
     {
-        global $plugin_tx;
-
         $images = array();
         if (($dh = opendir($folder)) !== false) {
             while (($entry = readdir($dh)) !== false) {
@@ -148,7 +184,7 @@ class ImagePicker
                     $info = getimagesize($ffn);
                     if ($info) {
                         list($width, $height) = $info;
-                        $entry .= sprintf($plugin_tx['extedit']['imagepicker_dimensions'], $width, $height);
+                        $entry .= sprintf($this->lang['imagepicker_dimensions'], $width, $height);
                     }
                     $images[$entry] = $ffn;
                 }
@@ -162,12 +198,10 @@ class ImagePicker
      */
     private function getImageFolder()
     {
-        global $pth, $plugin_cf;
-
-        $subfolder = $plugin_cf['extedit']['images_subfolder']
+        $subfolder = $this->conf['images_subfolder']
             ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
             : '';
-        return rtrim($pth['folder']['images'] . $subfolder, '/') . '/';
+        return rtrim($this->imageFolder . $subfolder, '/') . '/';
     }
 
     /**

@@ -32,6 +32,9 @@ class FunctionController
     private $pluginFolder;
 
     /** @var string */
+    private $baseFolder;
+
+    /** @var string */
     private $configuredEditor;
 
     /** @var array<string,string> */
@@ -61,9 +64,17 @@ class FunctionController
      * @param string $username
      * @param string|null $textname
      */
-    public function __construct(string $pluginFolder, string $configuredEditor, array $conf, array $lang, $username, $textname = null)
-    {
+    public function __construct(
+        string $pluginFolder,
+        string $baseFolder,
+        string $configuredEditor,
+        array $conf,
+        array $lang,
+        $username,
+        $textname = null
+    ) {
         $this->pluginFolder = $pluginFolder;
+        $this->baseFolder = $baseFolder;
         $this->configuredEditor = $configuredEditor;
         $this->conf = $conf;
         $this->lang = $lang;
@@ -77,16 +88,36 @@ class FunctionController
      */
     public function handle()
     {
+        global $pth, $sn, $su;
+
         $o = '';
         if ($this->isAuthorizedToEdit($this->username)) {
             if (isset($_GET['extedit_imagepicker'])) {
                 ob_end_clean(); // necessary if called from template
-                $imagePicker = new ImagePicker();
+                $imagePicker = new ImagePicker(
+                    $this->pluginFolder,
+                    $this->baseFolder,
+                    $pth['folder']['images'],
+                    $sn,
+                    $su,
+                    $this->conf,
+                    $this->lang,
+                    $this->configuredEditor
+                );
                 echo $imagePicker->show();
                 exit;
             }
             if (isset($_GET['extedit_upload'])) {
-                $imagePicker = new ImagePicker();
+                $imagePicker = new ImagePicker(
+                    $this->pluginFolder,
+                    $this->baseFolder,
+                    $pth['folder']['images'],
+                    $sn,
+                    $su,
+                    $this->conf,
+                    $this->lang,
+                    $this->configuredEditor
+                );
                 $imagePicker->handleUpload();
                 exit;
             }
