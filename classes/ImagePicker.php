@@ -171,7 +171,7 @@ class ImagePicker extends AbstractController
     }
 
     /**
-     * @param int
+     * @param int $error
      * @return string
      */
     private function getUploadErrorKey($error)

@@ -29,18 +29,18 @@ class FunctionController extends AbstractController
     private $username;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $textname;
 
     /**
-     * @var content
+     * @var string
      */
     private $content;
 
     /**
      * @param string $username
-     * @param string $textname
+     * @param string|null $textname
      */
     public function __construct($username, $textname = null)
     {
@@ -170,7 +170,7 @@ class FunctionController extends AbstractController
     }
 
     /**
-     * @return ?string
+     * @return string
      */
     private function read()
     {

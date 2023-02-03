@@ -54,7 +54,7 @@ class Content
 
     /**
      * @param string $name
-     * @return string
+     * @return self
      */
     public static function find($name)
     {
