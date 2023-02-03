@@ -38,12 +38,12 @@ class Plugin
         }
         if (defined('XH_ADM') && XH_ADM) {
             XH_registerStandardPluginMenuItems(false);
-            if ($this->isAdministrationRequested()) {
+            if (XH_wantsPluginAdministration('extedit')) {
                 $this->handleAdministration();
             }
         }
     }
-    
+
     private function isTemplateEdit()
     {
         global $plugin_cf;
@@ -76,14 +76,6 @@ class Plugin
             $config = false;
         }
         init_editor(array('xh-editor'), $config);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAdministrationRequested()
-    {
-        return XH_wantsPluginAdministration('extedit');
     }
 
     /**
