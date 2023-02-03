@@ -89,12 +89,12 @@ class Controller extends AbstractController
         foreach (array('ok', 'warn', 'fail') as $state) {
             $images[$state] = "{$pth['folder']['plugins']}extedit/images/$state.png";
         }
-        $view = new View('info');
+        $view = new View();
         $view->images = $images;
         $view->checks = $this->systemChecks();
         $view->icon = "{$pth['folder']['plugins']}extedit/extedit.png";
         $view->version = EXTEDIT_VERSION;
-        return $view->render();
+        return $view->render('info');
     }
 
     /**

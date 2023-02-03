@@ -48,7 +48,7 @@ class ImagePicker extends AbstractController
     {
         global $pth, $cf, $sn, $su;
 
-        $view = new View('imagepicker');
+        $view = new View();
         $view->images = $this->images($this->getImageFolder());
         $view->baseFolder = $pth['folder']['base'];
         $view->editorHook = "{$pth['folder']['plugins']}extedit/connectors/{$cf['editor']['external']}.js";
@@ -57,7 +57,7 @@ class ImagePicker extends AbstractController
         $view->csrfTokenInput = new HtmlString($this->csrfProtection->tokenInput());
 
         header('Content-type: text/html; charset=utf-8');
-        return $view->render();
+        return $view->render('imagepicker');
     }
 
     /**

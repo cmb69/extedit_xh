@@ -23,14 +23,7 @@ namespace Extedit;
 
 class View
 {
-    private $template;
-
     private $data = array();
-
-    public function __construct($template)
-    {
-        $this->template = $template;
-    }
 
     public function __set($name, $value)
     {
@@ -75,12 +68,12 @@ class View
         return vsprintf($plugin_tx['extedit'][$key], $args);
     }
 
-    public function render()
+    public function render(string $_template)
     {
         global $pth;
 
         ob_start();
-        include "{$pth['folder']['plugins']}extedit/views/{$this->template}.php";
+        include "{$pth['folder']['plugins']}extedit/views/{$_template}.php";
         return ob_get_clean();
     }
 
