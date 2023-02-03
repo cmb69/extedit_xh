@@ -21,7 +21,7 @@
 
 namespace Extedit;
 
-class Controller
+class Plugin
 {
     /**
      * @var bool

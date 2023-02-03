@@ -21,7 +21,7 @@
 
 const EXTEDIT_VERSION = '2.0-dev';
 
-$temp = new Extedit\Controller();
+$temp = new Extedit\Plugin();
 $temp->dispatch();
 
 /**
