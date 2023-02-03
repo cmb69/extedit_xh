@@ -19,6 +19,8 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Extedit\ContentRepo;
+
 const EXTEDIT_VERSION = '2.0-dev';
 
 $temp = new Extedit\Plugin();
@@ -40,6 +42,7 @@ function extedit($username, $textname = null)
         $cf['editor']['external'],
         $plugin_cf['extedit'],
         $plugin_tx['extedit'],
+        new ContentRepo("{$pth['folder']['content']}extedit/"),
         $username,
         $textname
     );

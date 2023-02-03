@@ -48,6 +48,9 @@ class FunctionController
     /** @var array<string,string> */
     private $lang;
 
+    /** @var ContentRepo */
+    private $contentRepo;
+
     /**
      * @var string
      */
@@ -76,6 +79,7 @@ class FunctionController
         string $configuredEditor,
         array $conf,
         array $lang,
+        ContentRepo $contentRepo,
         $username,
         $textname = null
     ) {
@@ -85,6 +89,7 @@ class FunctionController
         $this->configuredEditor = $configuredEditor;
         $this->conf = $conf;
         $this->lang = $lang;
+        $this->contentRepo = $contentRepo;
         $this->username = $username;
         $this->textname = $textname;
         $this->sanitizeTextname();
@@ -135,7 +140,7 @@ class FunctionController
             if (isset($_POST["extedit_{$this->textname}_text"])) {
                 $o .= $this->handleSave();
             } else {
-                $this->content = $this->read();
+                $this->content = $this->contentRepo->findByName($this->textname);
             }
             if ($this->isEditModeRequested()) {
                 $o .= $this->renderEditForm();
@@ -144,7 +149,7 @@ class FunctionController
                 $o .= $this->getEditLink() . $this->evaluatePlugincall();
             }
         } else {
-            $this->content = $this->read();
+            $this->content = $this->contentRepo->findByName($this->textname);
             $o .= $this->evaluatePlugincall();
         }
         return $o;
@@ -180,16 +185,16 @@ class FunctionController
         global $su;
 
         $this->content = $_POST["extedit_{$this->textname}_text"];
-        $mtime = $this->mtime();
+        $mtime = $this->contentRepo->findLastModification($this->textname);
         if ($_POST["extedit_{$this->textname}_mtime"] >= $mtime) {
-            if ($this->write()) {
+            if ($this->contentRepo->save($this->textname, $this->content)) {
                 header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
                 exit;
             } else {
                 return XH_message(
                     'fail',
                     $this->lang['err_save'],
-                    Content::getFilename($this->textname)
+                    $this->contentRepo->filename($this->textname)
                 );
             }
         } else {
@@ -210,7 +215,7 @@ class FunctionController
             'textareaName' => "extedit_{$this->textname}_text",
             'content' => $this->content,
             'mtimeName' => "extedit_{$this->textname}_mtime",
-            'mtime' => $this->mtime(),
+            'mtime' => $this->contentRepo->findLastModification($this->textname),
         ]);
     }
 
@@ -269,38 +274,6 @@ class FunctionController
             $this->textname = $h[max($s, 0)];
         }
         $this->textname = preg_replace('/[^a-z0-9-]/i', '', $this->textname);
-    }
-
-    /**
-     * @return string
-     */
-    private function read()
-    {
-        $content = Content::find($this->textname);
-        return $content->getHtml();
-    }
-
-    /**
-     * @return int
-     */
-    private function mtime()
-    {
-        $filename = Content::getFilename($this->textname);
-        if (file_exists($filename)) {
-            return (int) filemtime($filename);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    private function write()
-    {
-        $filename = Content::getFilename($this->textname);
-        return (!file_exists($filename) || is_writable($filename))
-            && file_put_contents($filename, $this->content) !== false;
     }
 
     /**

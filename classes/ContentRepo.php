@@ -40,6 +40,11 @@ class ContentRepo
         return $this->foldername;
     }
 
+    public function filename(string $name): string
+    {
+        return "{$this->foldername()}{$name}.htm";
+    }
+
     /** @return string|null */
     public function findByName(string $name)
     {
@@ -49,5 +54,23 @@ class ContentRepo
         }
         $content = file_get_contents($filename);
         return (string) $content;
+    }
+
+    public function save(string $name, string $content): bool
+    {
+        $filename = "{$this->foldername()}{$name}.htm";
+        if (is_file($filename) && !is_writable($filename)) {
+            return false;
+        }
+        return file_put_contents($filename, $content) !== false;
+    }
+
+    public function findLastModification(string $name): int
+    {
+        $filename = "{$this->foldername()}{$name}.htm";
+        if (!is_file($filename)) {
+            return 0;
+        }
+        return (int) filemtime($filename);
     }
 }

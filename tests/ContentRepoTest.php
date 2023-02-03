@@ -55,4 +55,56 @@ class ContentRepoTest extends TestCase
         $this->assertEquals("vfs://root/extedit/", $foldername);
         $this->assertFileExists(vfsStream::url('root/extedit/'));
     }
+
+    public function testSavesContent(): void
+    {
+        vfsStream::setup('root/');
+        $folder = vfsStream::url('root/extedit/');
+        $sut = new ContentRepo($folder);
+        $result = $sut->save('test', '<p>Some HTML</p>');
+        $this->assertTrue($result);
+        $this->assertStringEqualsFile(vfsStream::url('root/extedit/test.htm'), "<p>Some HTML</p>");
+    }
+
+    public function testFailsToSaveIfFileNotWritable(): void
+    {
+        vfsStream::setup('root/');
+        $folder = vfsStream::url('root/extedit/');
+        mkdir($folder, 0777, true);
+        touch("{$folder}test.htm");
+        chmod("{$folder}test.htm", 0444);
+        $sut = new ContentRepo($folder);
+        $result = $sut->save('test', '<p>Some HTML</p>');
+        $this->assertFalse($result);
+        $this->assertStringEqualsFile(vfsStream::url('root/extedit/test.htm'), "");
+    }
+
+    public function testReportsLastModificationTimestamp(): void
+    {
+        vfsStream::setup('root/');
+        $folder = vfsStream::url('root/extedit/');
+        mkdir($folder, 0777, true);
+        touch("{$folder}test.htm", 1675465089);
+        $sut = new ContentRepo($folder);
+        $result = $sut->findLastModification('test');
+        $this->assertEquals(1675465089, $result);
+    }
+
+    public function testReportsLastModificationTimestampAsZeroForMissingFile(): void
+    {
+        vfsStream::setup('root/');
+        $folder = vfsStream::url('root/extedit/');
+        $sut = new ContentRepo($folder);
+        $result = $sut->findLastModification('test');
+        $this->assertEquals(0, $result);
+    }
+
+    public function testReportsCorrectFilename(): void
+    {
+        vfsStream::setup('root/');
+        $folder = vfsStream::url('root/extedit/');
+        $sut = new ContentRepo($folder);
+        $result = $sut->filename('test');
+        $this->assertEquals("vfs://root/extedit/test.htm", $result);
+    }
 }
