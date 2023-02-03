@@ -23,7 +23,7 @@ namespace Extedit;
 
 use XH\CSRFProtection as CsrfProtector;
 
-class ImagePicker extends AbstractController
+class ImagePicker
 {
     /**
      * @var CsrfProtector

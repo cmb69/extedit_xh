@@ -21,7 +21,7 @@
 
 namespace Extedit;
 
-class FunctionController extends AbstractController
+class FunctionController
 {
     /**
      * @var bool
