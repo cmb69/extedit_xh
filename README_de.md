@@ -45,7 +45,7 @@ finden Sie weitere Informationen.
 1. Entpacken Sie die ZIP-Datei auf Ihrem Rechner.
 1. Laden Sie das ganze Verzeichnis `extedit/` auf Ihren Server in das `plugins/`
    Verzeichnis von CMSimple_XH hoch.
-1. Machen Sie die Unterverzeichnisse `config/`, `css/` und `languages/`
+1. Machen Sie die Unterverzeichnisse `config/` und `languages/`
    beschreibbar.
 1. Navigieren Sie zu `Plugins` → `Extedit` im Administrationsbereich,
    um zu prüfen, ob alle Voraussetzungen erfüllt sind.
@@ -62,8 +62,6 @@ angezeigt.
 Die Lokalisierung wird unter `Sprache` vorgenommen. Sie können die
 Sprachtexte in Ihre eigene Sprache übersetzen, falls keine entsprechende
 Sprachdatei zur Verfügung steht, oder diese Ihren Wünschen gemäß anpassen.
-
-Das Aussehen von Extedit_XH kann unter `Stylesheet` angepasst werden.
 
 <!-- TODO: customization of the editor -->
 

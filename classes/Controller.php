@@ -93,7 +93,6 @@ class Controller extends AbstractController
         $data = [
             'images' => $images,
             'checks' => $this->systemChecks(),
-            'icon' => "{$pth['folder']['plugins']}extedit/extedit.png",
             'version' => EXTEDIT_VERSION,
         ];
         return $view->render('info', $data);
