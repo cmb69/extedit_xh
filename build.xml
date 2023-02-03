@@ -14,7 +14,7 @@
       <arg line="--extensions=php"/>
       <arg file="classes"/>
       <arg file="connectors"/>
-      <arg file="tests/unit"/>
+      <arg file="tests"/>
       <arg file="index.php"/>
     </exec>
   </target>
@@ -33,7 +33,7 @@
     <exec command="phpcompatinfo analyser:run classes" passthru="true" checkreturn="true"/>
   </target>
 
-  <target name="unit-tests" description="runs all unit tests">
+  <target name="test" description="runs all developer tests">
     <exec executable="phpunit" passthru="true" checkreturn="true"/>
   </target>
 
