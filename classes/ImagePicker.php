@@ -117,31 +117,31 @@ class ImagePicker
     }
 
     /**
-     * @return string|void
+     * @return Response
      */
     public function handleUpload()
     {
         $this->csrfProtector->check();
-        $message = '';
+        $response = new Response();
         $file = $_FILES['extedit_file'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
             $key = $this->getUploadErrorKey($file['error']);
             $message = $this->lang["imagepicker_err_$key"];
-        } else {
-            if ($this->hasAllowedExtension($file['name'])) {
-                if (!$this->moveUpload($file)) {
-                    $message = $this->lang["imagepicker_err_cantwrite"];
-                }
-            } else {
-                $message = $this->lang["imagepicker_err_mimetype"];
-            }
+            $response->addOuput($this->doShow($message));
+            return $response;
         }
-        if (!$message) {
-            header('Location: ' . CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
-            exit;
-        } else {
-            echo $this->doShow($message);
+        if (!$this->hasAllowedExtension($file['name'])) {
+            $message = $this->lang["imagepicker_err_mimetype"];
+            $response->addOuput($this->doShow($message));
+            return $response;
         }
+        if (!$this->moveUpload($file)) {
+            $message = $this->lang["imagepicker_err_cantwrite"];
+            $response->addOuput($this->doShow($message));
+            return $response;
+        }
+        $response->redirect(CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
+        return $response;
     }
 
     /**

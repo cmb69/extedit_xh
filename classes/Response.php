@@ -29,6 +29,9 @@ class Response
     /** @var array<string,string> */
     private $headers = [];
 
+    /** @var string|null */
+    private $location = null;
+
     /** @return void */
     public function addOuput(string $output)
     {
@@ -41,8 +44,19 @@ class Response
         $this->headers[$key] = $value;
     }
 
-    public function trigger(): string
+    /** @return void */
+    public function redirect(string $location)
     {
+        $this->location = $location;
+    }
+
+    /** @return string|never */
+    public function trigger()
+    {
+        if ($this->location !== null) {
+            header("Location: $this->location");
+            exit;
+        }
         foreach ($this->headers as $key => $value) {
             header("{$key}: {$value}");
         }
