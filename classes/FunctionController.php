@@ -110,7 +110,6 @@ class FunctionController
         $o = '';
         if ($this->isAuthorizedToEdit($this->username)) {
             if (isset($_GET['extedit_imagepicker'])) {
-                ob_end_clean(); // necessary if called from template
                 $imagePicker = new ImagePicker(
                     $this->pluginFolder,
                     $this->baseFolder,
@@ -123,24 +122,15 @@ class FunctionController
                     new ImageFinder($this->lang['imagepicker_dimensions']),
                     new CsrfProtector('extedit_csrf_token')
                 );
-                echo $imagePicker->show()->trigger();
-                exit;
-            }
-            if (isset($_GET['extedit_upload'])) {
-                $imagePicker = new ImagePicker(
-                    $this->pluginFolder,
-                    $this->baseFolder,
-                    $this->getImageFolder(),
-                    $sn,
-                    $su,
-                    $this->conf,
-                    $this->lang,
-                    $this->configuredEditor,
-                    new ImageFinder($this->lang['imagepicker_dimensions']),
-                    new CsrfProtector('extedit_csrf_token')
-                );
-                echo $imagePicker->handleUpload(new Upload($_FILES['extedit_file']))->trigger();
-                exit;
+                if ($_GET['extedit_imagepicker'] !== "upload") {
+                    ob_end_clean(); // necessary if called from template
+                    echo $imagePicker->show()->trigger();
+                    exit;
+                }
+                if ($_GET['extedit_imagepicker'] === "upload") {
+                    echo $imagePicker->handleUpload(new Upload($_FILES['extedit_file']))->trigger();
+                    exit;
+                }
             }
             if (isset($_POST["extedit_{$this->textname}_text"])) {
                 $o .= $this->handleSave();

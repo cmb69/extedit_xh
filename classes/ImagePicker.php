@@ -109,7 +109,7 @@ class ImagePicker
             'images' => $this->imageFinder->findAll($this->imageFolder),
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
-            'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_upload",
+            'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_imagepicker=upload",
             'message' => $message,
             'csrfTokenInput' => new HtmlString($this->csrfProtector->tokenInput()),
         ];
