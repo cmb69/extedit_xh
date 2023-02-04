@@ -24,17 +24,12 @@ namespace Extedit;
 class Plugin
 {
     /**
-     * @var bool
-     */
-    private static $isEditorInitialized = false;
-
-    /**
      * @return void
      */
     public function dispatch()
     {
         if ($this->isTemplateEdit()) {
-            $this->initEditor();
+            Dic::makeEditor()->init();
         }
         if (defined('XH_ADM') && XH_ADM) {
             XH_registerStandardPluginMenuItems(false);
@@ -51,32 +46,6 @@ class Plugin
         return $plugin_cf['extedit']['allow_template']
             && isset($_GET['extedit_mode'])
             && $_GET['extedit_mode'] === 'edit';
-    }
-
-    /**
-     * @return void
-     * @todo Image picker for other editors
-     */
-    private function initEditor()
-    {
-        global $pth, $hjs, $cf;
-
-        if (self::$isEditorInitialized) {
-            return;
-        }
-        self::$isEditorInitialized = true;
-        $plugins = $pth['folder']['plugins'];
-        $editor = $cf['editor']['external'];
-        if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
-            include_once "{$plugins}extedit/connectors/$editor.php";
-            $func = "extedit_{$editor}_init";
-            assert(is_callable($func));
-            $hjs .= $func() . "\n";
-            $config = file_get_contents("{$plugins}extedit/inits/$editor.js");
-        } else {
-            $config = false;
-        }
-        init_editor(array('xh-editor'), $config);
     }
 
     /**

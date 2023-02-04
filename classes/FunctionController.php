@@ -25,11 +25,6 @@ use XH\CSRFProtection as CsrfProtector;
 
 class FunctionController
 {
-    /**
-     * @var bool
-     */
-    private static $isEditorInitialized = false;
-
     /** @var string */
     private $pluginFolder;
 
@@ -53,6 +48,9 @@ class FunctionController
 
     /** @var Session */
     private $session;
+
+    /** @var Editor */
+    private $editor;
 
     /**
      * @var string
@@ -84,6 +82,7 @@ class FunctionController
         array $lang,
         ContentRepo $contentRepo,
         Session $session,
+        Editor $editor,
         $username,
         $textname = null
     ) {
@@ -95,6 +94,7 @@ class FunctionController
         $this->lang = $lang;
         $this->contentRepo = $contentRepo;
         $this->session = $session;
+        $this->editor = $editor;
         $this->username = $username;
         $this->textname = $textname;
         $this->sanitizeTextname();
@@ -105,7 +105,7 @@ class FunctionController
      */
     public function handle()
     {
-        global $pth, $sn, $su;
+        global $sn, $su;
 
         $o = '';
         if ($this->isAuthorizedToEdit($this->username)) {
@@ -149,7 +149,7 @@ class FunctionController
             }
             if ($this->isEditModeRequested()) {
                 $o .= $this->renderEditForm();
-                $this->initEditor();
+                $this->editor->init();
             } else {
                 $o .= $this->getEditLink() . $this->evaluatePlugincall();
             }
@@ -230,31 +230,6 @@ class FunctionController
     private function isEditModeRequested()
     {
         return isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit';
-    }
-
-    /**
-     * @return void
-     * @todo Image picker for other editors
-     */
-    private function initEditor()
-    {
-        global $hjs;
-
-        if (self::$isEditorInitialized) {
-            return;
-        }
-        self::$isEditorInitialized = true;
-        $editor = $this->configuredEditor;
-        if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
-            include_once "{$this->pluginFolder}connectors/$editor.php";
-            $func = "extedit_{$editor}_init";
-            assert(is_callable($func));
-            $hjs .= $func() . "\n";
-            $config = file_get_contents("{$this->pluginFolder}inits/$editor.js");
-        } else {
-            $config = false;
-        }
-        init_editor(array('xh-editor'), $config);
     }
 
     /**

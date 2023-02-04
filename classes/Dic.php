@@ -34,4 +34,15 @@ class Dic
             new ContentRepo("{$pth['folder']['content']}extedit/")
         );
     }
+
+    public static function makeEditor(): Editor
+    {
+        global $pth, $cf;
+        static $instance;
+
+        if (!isset($instance)) {
+            $instance = new Editor("{$pth['folder']['plugins']}extedit/", $cf['editor']['external']);
+        }
+        return $instance;
+    }
 }

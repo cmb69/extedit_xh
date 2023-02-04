@@ -20,6 +20,7 @@
  */
 
 use Extedit\ContentRepo;
+use Extedit\Dic;
 use Extedit\Session;
 
 const EXTEDIT_VERSION = '2.0-dev';
@@ -45,6 +46,7 @@ function extedit($username, $textname = null)
         $plugin_tx['extedit'],
         new ContentRepo("{$pth['folder']['content']}extedit/"),
         new Session(),
+        Dic::makeEditor(),
         $username,
         $textname
     );
