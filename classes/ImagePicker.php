@@ -102,7 +102,7 @@ class ImagePicker
      * @param string $message
      * @return string
      */
-    public function doShow($message)
+    private function doShow($message)
     {
         $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
