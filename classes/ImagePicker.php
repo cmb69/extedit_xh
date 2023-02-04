@@ -123,19 +123,25 @@ class ImagePicker
     {
         $this->csrfProtector->check();
         $response = new Response();
-        $file = $_FILES['extedit_file'];
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            $key = $this->getUploadErrorKey($file['error']);
+        $upload = new Upload($_FILES['extedit_file']);
+        if ($upload->error()) {
+            $key = $this->getUploadErrorKey($upload->error());
             $message = $this->lang["imagepicker_err_$key"];
             $response->addOuput($this->doShow($message));
             return $response;
         }
-        if (!$this->hasAllowedExtension($file['name'])) {
+        if (!$this->hasAllowedExtension($upload->name())) {
             $message = $this->lang["imagepicker_err_mimetype"];
             $response->addOuput($this->doShow($message));
             return $response;
         }
-        if (!$this->moveUpload($file)) {
+        $destination = $this->sanitizedName($upload);
+        if ($destination === "") {
+            $message = $this->lang["imagepicker_err_cantwrite"];
+            $response->addOuput($this->doShow($message));
+            return $response;
+        }
+        if (!$upload->moveTo($destination)) {
             $message = $this->lang["imagepicker_err_cantwrite"];
             $response->addOuput($this->doShow($message));
             return $response;
@@ -154,23 +160,13 @@ class ImagePicker
         return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
     }
 
-    /**
-     * @param array{name:string,tmp_name:string} $upload
-     * @return bool
-     */
-    private function moveUpload($upload)
+    private function sanitizedName(Upload $upload): string
     {
-        $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload['name']));
+        $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload->name()));
         if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
-            return false;
+            return "";
         }
-        $filename = $this->imageFolder . $basename;
-        if (file_exists($filename)) {
-            return false;
-        } else {
-            // TODO: process image with GD to avoid dangerous images?
-            return move_uploaded_file($upload['tmp_name'], $filename);
-        }
+        return $this->imageFolder . $basename;
     }
 
     /**
