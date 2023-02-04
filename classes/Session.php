@@ -19,32 +19,27 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Extedit\Session;
+namespace Extedit;
 
-function Extedit_Tinymce4_init(): string
+class Session
 {
-    global $sn, $su;
+    /**
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get(string $key, $default = null)
+    {
+        XH_startSession();
+        return $_SESSION[$key] ?? $default;
+    }
 
-    (new Session())->set('tinymce_fb_callback', 'extedit_imagepicker');
-    $url = "$sn?$su&extedit_imagepicker";
-    return <<<EOS
-<script type="text/javascript">
-function extedit_imagepicker(field_name, url, type, win) {
-    if (type != "image") {
-        return false;
-    };
-    tinymce.activeEditor.windowManager.open({
-        title: "hallo",
-        url: "$url",
-        width: 640,
-        height: 480,
-        inline: 1,
-    }, {
-        window: win,
-        input: field_name
-    });
-    return false;
-}
-</script>
-EOS;
+    /**
+     * @param mixed $value
+     * @return void
+     */
+    public function set(string $key, $value)
+    {
+        XH_startSession();
+        $_SESSION[$key] = $value;
+    }
 }

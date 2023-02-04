@@ -51,6 +51,9 @@ class FunctionController
     /** @var ContentRepo */
     private $contentRepo;
 
+    /** @var Session */
+    private $session;
+
     /**
      * @var string
      */
@@ -80,6 +83,7 @@ class FunctionController
         array $conf,
         array $lang,
         ContentRepo $contentRepo,
+        Session $session,
         $username,
         $textname = null
     ) {
@@ -90,6 +94,7 @@ class FunctionController
         $this->conf = $conf;
         $this->lang = $lang;
         $this->contentRepo = $contentRepo;
+        $this->session = $session;
         $this->username = $username;
         $this->textname = $textname;
         $this->sanitizeTextname();
@@ -162,8 +167,8 @@ class FunctionController
     private function isAuthorizedToEdit($username)
     {
         return (defined('XH_ADM') && XH_ADM)
-            || $username == '*' && $this->getCurrentUser()
-            || in_array($this->getCurrentUser(), explode(',', $username));
+            || $username == '*' && $this->session->get('username', '')
+            || in_array($this->session->get('username', ''), explode(',', $username));
     }
 
     /**
@@ -172,7 +177,7 @@ class FunctionController
     private function getImageFolder()
     {
         $subfolder = $this->conf['images_subfolder']
-            ? preg_replace('/[^a-z0-9-]/i', '', $this->getCurrentUser())
+            ? preg_replace('/[^a-z0-9-]/i', '', $this->session->get('username', ''))
             : '';
         return rtrim($this->imageFolder . $subfolder, '/') . '/';
     }
@@ -285,16 +290,5 @@ class FunctionController
             return evaluate_plugincall($this->content);
         }
         return $this->content;
-    }
-
-    /**
-     * @return string
-     */
-    private function getCurrentUser()
-    {
-        XH_startSession();
-        return isset($_SESSION['username'])
-            ? $_SESSION['username']
-            : '';
     }
 }
