@@ -139,7 +139,7 @@ class FunctionController
                     new ImageFinder($this->lang['imagepicker_dimensions']),
                     new CsrfProtector('extedit_csrf_token')
                 );
-                echo $imagePicker->handleUpload()->trigger();
+                echo $imagePicker->handleUpload(new Upload($_FILES['extedit_file']))->trigger();
                 exit;
             }
             if (isset($_POST["extedit_{$this->textname}_text"])) {

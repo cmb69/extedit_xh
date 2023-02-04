@@ -22,44 +22,100 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
 use XH\CSRFProtection as CsrfProtector;
 
 class ImagePickerTest extends TestCase
 {
-    public function testShowRendersImagePickerWithNoImages(): void
+    /** @var ImagePicker */
+    private $sut;
+
+    /** @var ImageFinder&MockObject */
+    private $imageFinder;
+
+    /** @var CsrfProtector&MockObject */
+    private $csrfProtector;
+
+    public function setUp(): void
     {
         $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
         $conf = $plugin_cf['extedit'];
         $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
         $lang = $plugin_tx['extedit'];
-        $imageFinder = $this->createStub(ImageFinder::class);
-        $csrfProtector = $this->createStub(CsrfProtector::class);
-        $csrfProtector->method('tokenInput')->willReturn(
+        $this->imageFinder = $this->createStub(ImageFinder::class);
+        $this->csrfProtector = $this->createStub(CsrfProtector::class);
+        $this->csrfProtector->method('tokenInput')->willReturn(
             '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
         );
-        $sut = new ImagePicker("./", "", "", "/", "whatever", $conf, $lang, "tinymce4", $imageFinder, $csrfProtector);
-        $response = $sut->show();
+        $this->sut = new ImagePicker(
+            "./",
+            "",
+            "",
+            "/",
+            "whatever",
+            $conf,
+            $lang,
+            "tinymce4",
+            $this->imageFinder,
+            $this->csrfProtector
+        );
+    }
+
+    public function testShowRendersImagePickerWithNoImages(): void
+    {
+        $response = $this->sut->show();
         Approvals::verifyHtml($response->output());
     }
 
     public function testShowRendersImagePickerWithImages(): void
     {
-        $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
-        $conf = $plugin_cf['extedit'];
-        $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
-        $lang = $plugin_tx['extedit'];
-        $imageFinder = $this->createStub(ImageFinder::class);
-        $imageFinder->method('findAll')->willReturn([
+        $this->imageFinder->method('findAll')->willReturn([
             "image.jpg (640 × 480 px)" => "./userfiles/images/cmb/image.jpg",
             "image.png (480 × 640 px)" => "./userfiles/images/cmb/image.png",
         ]);
-        $csrfProtector = $this->createStub(CsrfProtector::class);
-        $csrfProtector->method('tokenInput')->willReturn(
-            '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
-        );
-        $sut = new ImagePicker("./", "", "", "/", "whatever", $conf, $lang, "tinymce4", $imageFinder, $csrfProtector);
-        $response = $sut->show();
+        $response = $this->sut->show();
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testSuccessfulUploadRedirects(): void
+    {
+        $upload = $this->createStub(Upload::class);
+        $upload->method('name')->willReturn('image.jpg');
+        $upload->method('error')->willReturn(0);
+        $upload->method('moveTo')->willReturn(true);
+        $response = $this->sut->handleUpload($upload);
+        $this->assertNotNull($response->location());
+    }
+
+    public function testUploadFailureShowsError(): void
+    {
+        $upload = new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1]);
+        $response = $this->sut->handleUpload($upload);
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testUploadOfNonImageShowsError(): void
+    {
+        $upload = new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
+        $response = $this->sut->handleUpload($upload);
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testUploadBadFilenameShowsError(): void
+    {
+        $upload = new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
+        $response = $this->sut->handleUpload($upload);
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testMoveUploadFailureShowsError(): void
+    {
+        $upload = $this->createStub(Upload::class);
+        $upload->method('name')->willReturn('image.jpg');
+        $upload->method('error')->willReturn(0);
+        $upload->method('moveTo')->willReturn(false);
+        $response = $this->sut->handleUpload($upload);
         Approvals::verifyHtml($response->output());
     }
 }

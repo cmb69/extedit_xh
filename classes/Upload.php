@@ -22,7 +22,7 @@
 namespace Extedit;
 
 /**
- * @phpstan-type File array{name: string, type: string, size: int, tmp_name: string, error: int}
+ * @phpstan-type File array{name: string, tmp_name: string, error: int}
  */
 class Upload
 {

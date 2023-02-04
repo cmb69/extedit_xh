@@ -119,11 +119,10 @@ class ImagePicker
     /**
      * @return Response
      */
-    public function handleUpload()
+    public function handleUpload(Upload $upload)
     {
         $this->csrfProtector->check();
         $response = new Response();
-        $upload = new Upload($_FILES['extedit_file']);
         if ($upload->error()) {
             $key = $this->getUploadErrorKey($upload->error());
             $message = $this->lang["imagepicker_err_$key"];

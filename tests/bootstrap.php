@@ -19,6 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const CMSIMPLE_URL = "http://example.com/";
 const EXTEDIT_VERSION = "2.0-dev";
 
 require_once "../../cmsimple/classes/CSRFProtection.php";
@@ -31,4 +32,5 @@ require_once "./classes/ImagePicker.php";
 require_once "./classes/PluginInfo.php";
 require_once "./classes/Response.php";
 require_once "./classes/SystemChecker.php";
+require_once "./classes/Upload.php";
 require_once "./classes/View.php";

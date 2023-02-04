@@ -67,4 +67,9 @@ class Response
     {
         return $this->output;
     }
+
+    public function location(): ?string
+    {
+        return $this->location;
+    }
 }
