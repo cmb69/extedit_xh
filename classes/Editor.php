@@ -51,12 +51,17 @@ class Editor
         }
         $this->isEditorInitialized = true;
         $editor = $this->configuredEditor;
-        if (!(defined('XH_ADM') && XH_ADM) && in_array($editor, array('ckeditor', 'tinymce', 'tinymce4'))) {
-            include_once "{$this->pluginFolder}connectors/$editor.php";
+        $connector = "{$this->pluginFolder}connectors/$editor.php";
+        $init = "{$this->pluginFolder}inits/$editor.js";
+        if (!(defined('XH_ADM') && XH_ADM) && is_readable($connector) && is_readable($init)) {
+            include_once $connector;
             $func = "extedit_{$editor}_init";
-            assert(is_callable($func));
-            $hjs .= $func() . "\n";
-            $config = file_get_contents("{$this->pluginFolder}inits/$editor.js");
+            if (is_callable($func)) {
+                $hjs .= $func() . "\n";
+                $config = file_get_contents($init);
+            } else {
+                $config = false;
+            }
         } else {
             $config = false;
         }
