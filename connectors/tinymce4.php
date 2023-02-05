@@ -23,9 +23,10 @@ use Extedit\Session;
 
 function Extedit_Tinymce4_init(): string
 {
-    global $sn, $su;
+    global $sn, $su, $plugin_tx;
 
     (new Session())->set('tinymce_fb_callback', 'extedit_imagepicker');
+    $title = json_encode($plugin_tx['extedit']['imagepicker_title']);
     $url = "$sn?$su&extedit_imagepicker";
     return <<<EOS
 <script type="text/javascript">
@@ -34,7 +35,7 @@ function extedit_imagepicker(field_name, url, type, win) {
         return false;
     };
     tinymce.activeEditor.windowManager.open({
-        title: "hallo",
+        title: $title,
         url: "$url",
         width: 640,
         height: 480,
