@@ -15,6 +15,7 @@
       <arg file="classes"/>
       <arg file="connectors"/>
       <arg file="tests"/>
+      <arg file="admin.php"/>
       <arg file="index.php"/>
     </exec>
   </target>
@@ -25,7 +26,7 @@
 
   <target name="mess" description="detects code flaws">
     <exec executable="phpmd" passthru="true" checkreturn="true">
-      <arg line="classes,connectors,tests,index.php ansi codesize,unusedcode --ignore-violations-on-exit"/>
+      <arg line="classes,connectors,tests,admin.php,index.php ansi codesize,unusedcode --ignore-violations-on-exit"/>
     </exec>
   </target>
 

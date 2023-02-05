@@ -25,9 +25,6 @@ use Extedit\Session;
 
 const EXTEDIT_VERSION = '2.0-dev';
 
-$temp = new Extedit\Plugin();
-$temp->dispatch();
-
 /**
  * @param string $username
  * @param string $textname
@@ -51,4 +48,12 @@ function extedit($username, $textname = null)
         $textname
     );
     return $controller->handle();
+}
+
+/**
+ * @var array<string,array<string,string>> $plugin_cf
+ */
+
+if ($plugin_cf['extedit']['allow_template'] && ($_GET['extedit_mode'] ?? null) === 'edit') {
+    Dic::makeEditor()->init();
 }
