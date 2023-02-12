@@ -4,6 +4,7 @@ parameters:
     - classes/
     - connectors/
     - views/
+    - admin.php
     - index.php
   bootstrapFiles:
     - phpstan.php

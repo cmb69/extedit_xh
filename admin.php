@@ -21,6 +21,11 @@
 
 use Extedit\Dic;
 
+/**
+ * @var string $admin
+ * @var string $o
+ */
+
 XH_registerStandardPluginMenuItems(false);
 
 if (XH_wantsPluginAdministration('extedit')) {
