@@ -10,7 +10,7 @@ use Extedit\View;
  */
 ?>
 <!-- Extedit: info -->
-<h1>Extedit <?=$this->escape($version)?></h1>
+<h1>Extedit <?=$this->esc($version)?></h1>
 <h2><?=$this->text('synopsis');?></h2>
 <p><code>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</code></p>
 <p>
@@ -25,8 +25,8 @@ use Extedit\View;
 <ul style="list-style: none">
 <?php foreach ($checks as $check => $state):?>
   <li>
-    <img src="<?=$this->escape($images[$state])?>" alt="<?=$this->escape($state)?>" style="padding-right: 1em"/>
-    <?=$this->escape($check);?>
+    <img src="<?=$this->esc($images[$state])?>" alt="<?=$this->esc($state)?>" style="padding-right: 1em"/>
+    <?=$this->esc($check);?>
   </li>
 <?php endforeach?>
 </ul>

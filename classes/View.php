@@ -52,13 +52,15 @@ class View
         return (string) ob_get_clean();
     }
 
-    /** @param string|int|HtmlString $value */
-    public function escape($value): string
+    /** @param scalar $value */
+    public function esc($value): string
     {
-        if (is_scalar($value)) {
-            return XH_hsc((string) $value);
-        } else {
-            return $value;
-        }
+        return XH_hsc((string) $value);
+    }
+
+    /** @param scalar $value */
+    public function raw($value): string
+    {
+        return (string) $value;
     }
 }

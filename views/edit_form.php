@@ -12,8 +12,8 @@ use Extedit\View;
  */
 ?>
 
-<a href="<?=$this->escape($editUrl)?>"><?=$this->text('mode_view')?></a>
+<a href="<?=$this->esc($editUrl)?>"><?=$this->text('mode_view')?></a>
 <form action="" method="POST">
-  <textarea name="<?=$this->escape($textareaName)?>" cols="80" rows="25" class="xh-editor" style="width: 100%"><?=$this->escape($content)?></textarea>
-  <input type="hidden" name="<?=$this->escape($mtimeName)?>" value="<?=$this->escape($mtime)?>">
+  <textarea name="<?=$this->esc($textareaName)?>" cols="80" rows="25" class="xh-editor" style="width: 100%"><?=$this->esc($content)?></textarea>
+  <input type="hidden" name="<?=$this->esc($mtimeName)?>" value="<?=$this->esc($mtime)?>">
 </form>
