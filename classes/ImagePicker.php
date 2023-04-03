@@ -21,6 +21,7 @@
 
 namespace Extedit;
 
+use Extedit\Value\Response;
 use XH\CSRFProtection as CsrfProtector;
 
 class ImagePicker
@@ -92,10 +93,7 @@ class ImagePicker
 
     public function show(): Response
     {
-        $response = new Response();
-        $response->setHeader("Content-Type", "text/html; charset=utf-8");
-        $response->addOuput($this->doShow(""));
-        return $response;
+        return Response::create($this->doShow(""))->withHeader("Content-Type", "text/html; charset=utf-8");
     }
 
     /**
@@ -116,37 +114,28 @@ class ImagePicker
         return $view->render('imagepicker', $data);
     }
 
-    /**
-     * @return Response
-     */
-    public function handleUpload(Upload $upload)
+    public function handleUpload(Upload $upload): Response
     {
         $this->csrfProtector->check();
-        $response = new Response();
         if ($upload->error()) {
             $key = $this->getUploadErrorKey($upload->error());
             $message = $this->lang["imagepicker_err_$key"];
-            $response->addOuput($this->doShow($message));
-            return $response;
+            return Response::create($this->doShow($message));
         }
         if (!$this->hasAllowedExtension($upload->name())) {
             $message = $this->lang["imagepicker_err_mimetype"];
-            $response->addOuput($this->doShow($message));
-            return $response;
+            return Response::create($this->doShow($message));
         }
         $destination = $this->sanitizedName($upload);
         if ($destination === "") {
             $message = $this->lang["imagepicker_err_cantwrite"];
-            $response->addOuput($this->doShow($message));
-            return $response;
+            return Response::create($this->doShow($message));
         }
         if (!$upload->moveTo($destination)) {
             $message = $this->lang["imagepicker_err_cantwrite"];
-            $response->addOuput($this->doShow($message));
-            return $response;
+            return Response::create($this->doShow($message));
         }
-        $response->redirect(CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
-        return $response;
+        return Response::redirect(CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
     }
 
     /**

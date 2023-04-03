@@ -21,6 +21,7 @@
 
 namespace Extedit;
 
+use Extedit\Infra\Responder;
 use XH\CSRFProtection as CsrfProtector;
 
 class FunctionController
@@ -124,11 +125,11 @@ class FunctionController
                 );
                 if ($_GET['extedit_imagepicker'] !== "upload") {
                     ob_end_clean(); // necessary if called from template
-                    echo $imagePicker->show()->trigger();
+                    echo Responder::respond($imagePicker->show());
                     exit;
                 }
                 if ($_GET['extedit_imagepicker'] === "upload") {
-                    echo $imagePicker->handleUpload(new Upload($_FILES['extedit_file']))->trigger();
+                    echo Responder::respond($imagePicker->handleUpload(new Upload($_FILES['extedit_file'])));
                     exit;
                 }
             }

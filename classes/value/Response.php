@@ -19,10 +19,24 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Value;
 
 class Response
 {
+    public static function create(string $output): self
+    {
+        $that = new self;
+        $that->output = $output;
+        return $that;
+    }
+
+    public static function redirect(string $location): self
+    {
+        $that = new self;
+        $that->location = $location;
+        return $that;
+    }
+
     /** @var string */
     private $output = "";
 
@@ -32,40 +46,22 @@ class Response
     /** @var string|null */
     private $location = null;
 
-    /** @return void */
-    public function addOuput(string $output)
+    public function withHeader(string $key, string $value): self
     {
-        $this->output .= $output;
-    }
-
-    /** @return void */
-    public function setHeader(string $key, string $value)
-    {
-        $this->headers[$key] = $value;
-    }
-
-    /** @return void */
-    public function redirect(string $location)
-    {
-        $this->location = $location;
-    }
-
-    /** @return string|never */
-    public function trigger()
-    {
-        if ($this->location !== null) {
-            header("Location: $this->location");
-            exit;
-        }
-        foreach ($this->headers as $key => $value) {
-            header("{$key}: {$value}");
-        }
-        return $this->output;
+        $that = clone $this;
+        $that->headers[$key] = $value;
+        return $that;
     }
 
     public function output(): string
     {
         return $this->output;
+    }
+
+    /** @return array<string,string> */
+    public function headers(): array
+    {
+        return $this->headers;
     }
 
     public function location(): ?string

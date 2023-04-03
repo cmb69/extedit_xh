@@ -22,6 +22,7 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Value\Response;
 use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
 use XH\CSRFProtection as CsrfProtector;
