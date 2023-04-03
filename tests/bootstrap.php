@@ -25,12 +25,18 @@ const EXTEDIT_VERSION = "2.0-dev";
 require_once "../../cmsimple/classes/CSRFProtection.php";
 require_once "../../cmsimple/functions.php";
 
-require_once "./classes/ContentRepo.php";
-require_once "./classes/HtmlString.php";
-require_once "./classes/ImageFinder.php";
-require_once "./classes/ImagePicker.php";
-require_once "./classes/PluginInfo.php";
-require_once "./classes/Response.php";
-require_once "./classes/SystemChecker.php";
-require_once "./classes/Upload.php";
-require_once "./classes/View.php";
+spl_autoload_register(function (string $className) {
+    $parts = explode("\\", $className);
+    if ($parts[0] !== "Extedit") {
+        return;
+    }
+    if (count($parts) === 3) {
+        $parts[1] = strtolower($parts[1]);
+    }
+    $filename = implode("/", array_slice($parts, 1)) . ".php";
+    if (is_readable("./classes/$filename")) {
+        include_once "./classes/$filename";
+    } elseif (is_readable("./tests/$filename")) {
+        include_once "./tests/$filename";
+    }
+});
