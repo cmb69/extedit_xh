@@ -26,10 +26,6 @@
     <exec executable="phpstan" passthru="true" checkreturn="true"/>
   </target>
 
-  <target name="compat" description="checks compatibility with PHP_CompatInfo">
-    <exec command="phpcompatinfo analyser:run classes" passthru="true" checkreturn="true"/>
-  </target>
-
   <target name="test" description="runs all developer tests">
     <exec executable="phpunit" passthru="true" checkreturn="true"/>
   </target>
