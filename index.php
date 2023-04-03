@@ -21,6 +21,7 @@
 
 use Extedit\Dic;
 use Extedit\Infra\Request;
+use Extedit\Infra\Responder;
 
 const EXTEDIT_VERSION = '2.0-dev';
 
@@ -41,3 +42,5 @@ function extedit($username, $textname = null)
 if ($plugin_cf['extedit']['allow_template'] && ($_GET['extedit_mode'] ?? null) === 'edit') {
     Dic::makeEditor()->init();
 }
+
+Responder::respond(Dic::makeImagePicker()(Request::current()));

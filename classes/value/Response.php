@@ -40,16 +40,16 @@ class Response
     /** @var string */
     private $output = "";
 
-    /** @var array<string,string> */
-    private $headers = [];
+    /** @var string|null */
+    private $contentType = null;
 
     /** @var string|null */
     private $location = null;
 
-    public function withHeader(string $key, string $value): self
+    public function withContentType(string $contentType): self
     {
         $that = clone $this;
-        $that->headers[$key] = $value;
+        $that->contentType = $contentType;
         return $that;
     }
 
@@ -58,10 +58,9 @@ class Response
         return $this->output;
     }
 
-    /** @return array<string,string> */
-    public function headers(): array
+    public function contentType(): ?string
     {
-        return $this->headers;
+        return $this->contentType;
     }
 
     public function location(): ?string

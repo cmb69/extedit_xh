@@ -29,12 +29,24 @@ class Responder
     public static function respond(Response $response)
     {
         if ($response->location() !== null) {
+            self::purgeOutputBuffers();
             header("Location: " . $response->location());
             exit;
         }
-        foreach ($response->headers() as $key => $value) {
-            header("{$key}: {$value}");
+        if ($response->contentType() !== null) {
+            self::purgeOutputBuffers();
+            header("Content-Type: " . $response->contentType());
+            echo $response->output();
+            exit;
         }
         return $response->output();
+    }
+
+    /** @return void */
+    private static function purgeOutputBuffers()
+    {
+        while (ob_get_level()) {
+            ob_get_clean();
+        }
     }
 }

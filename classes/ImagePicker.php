@@ -87,9 +87,22 @@ class ImagePicker
         $this->csrfProtector = $csrfProtector;
     }
 
+    public function __invoke(Request $request): Response
+    {
+        if (isset($_GET['extedit_imagepicker']) && $request->user() !== "") {
+            if ($_GET['extedit_imagepicker'] !== "upload") {
+                return $this->show($request);
+            }
+            if ($_GET['extedit_imagepicker'] === "upload") {
+                return $this->handleUpload($request, new Upload($_FILES['extedit_file']));
+            }
+        }
+        return Response::create("");
+    }
+
     public function show(Request $request): Response
     {
-        return Response::create($this->doShow($request, ""))->withHeader("Content-Type", "text/html; charset=utf-8");
+        return Response::create($this->doShow($request, ""))->withContentType("text/html; charset=utf-8");
     }
 
     /**
@@ -117,20 +130,20 @@ class ImagePicker
         if ($upload->error()) {
             $key = $this->getUploadErrorKey($upload->error());
             $message = $this->lang["imagepicker_err_$key"];
-            return Response::create($this->doShow($request, $message));
+            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
         if (!$this->hasAllowedExtension($upload->name())) {
             $message = $this->lang["imagepicker_err_mimetype"];
-            return Response::create($this->doShow($request, $message));
+            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
         $destination = $this->sanitizedName($request, $upload);
         if ($destination === "") {
             $message = $this->lang["imagepicker_err_cantwrite"];
-            return Response::create($this->doShow($request, $message));
+            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
         if (!$upload->moveTo($destination)) {
             $message = $this->lang["imagepicker_err_cantwrite"];
-            return Response::create($this->doShow($request, $message));
+            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
         return Response::redirect(CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
     }

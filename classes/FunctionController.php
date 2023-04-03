@@ -73,18 +73,6 @@ class FunctionController
         $textname = $this->sanitizeTextname($textname);
         $o = '';
         if ($this->isAuthorizedToEdit($request, $username)) {
-            if (isset($_GET['extedit_imagepicker'])) {
-                $imagePicker = Dic::makeImagePicker();
-                if ($_GET['extedit_imagepicker'] !== "upload") {
-                    ob_end_clean(); // necessary if called from template
-                    echo Responder::respond($imagePicker->show($request));
-                    exit;
-                }
-                if ($_GET['extedit_imagepicker'] === "upload") {
-                    echo Responder::respond($imagePicker->handleUpload($request, new Upload($_FILES['extedit_file'])));
-                    exit;
-                }
-            }
             if (isset($_POST["extedit_{$textname}_text"])) {
                 $o .= Responder::respond($this->handleSave($textname));
             } else {
