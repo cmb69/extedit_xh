@@ -24,16 +24,6 @@ namespace Extedit;
 class Session
 {
     /**
-     * @param mixed $default
-     * @return mixed
-     */
-    public function get(string $key, $default = null)
-    {
-        XH_startSession();
-        return $_SESSION[$key] ?? $default;
-    }
-
-    /**
      * @param mixed $value
      * @return void
      */

@@ -21,17 +21,47 @@
 
 namespace Extedit;
 
+use Extedit\Infra\CsrfProtector;
+
 class Dic
 {
+    public static function makeFunctionController(): FunctionController
+    {
+        global $pth, $plugin_cf, $plugin_tx;
+        return new FunctionController(
+            $plugin_cf["extedit"],
+            $plugin_tx["extedit"],
+            new ContentRepo($pth["folder"]["content"] . "extedit/"),
+            Dic::makeEditor(),
+            new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"])
+        );
+    }
+
+    public static function makeImagePicker(): ImagePicker
+    {
+        global $pth, $cf, $plugin_cf, $plugin_tx, $sn, $su;
+        return new ImagePicker(
+            $pth["folder"]["plugins"] . "extedit/",
+            $pth["folder"]["base"],
+            $pth["folder"]["images"],
+            $sn,
+            $su,
+            $plugin_cf["extedit"],
+            $plugin_tx["extedit"],
+            $cf["editor"]["external"],
+            new ImageFinder($plugin_tx["extedit"]['imagepicker_dimensions']),
+            new CsrfProtector
+        );
+    }
+
     public static function makePluginInfo(): PluginInfo
     {
         global $pth, $plugin_tx;
-
         return new PluginInfo(
-            "{$pth['folder']['plugins']}extedit/",
-            $plugin_tx['extedit'],
+            $pth["folder"]["plugins"] . "extedit/",
+            $plugin_tx["extedit"],
             new SystemChecker(),
-            new ContentRepo("{$pth['folder']['content']}extedit/")
+            new ContentRepo($pth["folder"]["content"] . "extedit/")
         );
     }
 
@@ -39,9 +69,8 @@ class Dic
     {
         global $pth, $cf;
         static $instance;
-
         if (!isset($instance)) {
-            $instance = new Editor("{$pth['folder']['plugins']}extedit/", $cf['editor']['external']);
+            $instance = new Editor($pth["folder"]["plugins"] . "extedit/", $cf["editor"]["external"]);
         }
         return $instance;
     }

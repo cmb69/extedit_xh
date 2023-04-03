@@ -19,11 +19,8 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Extedit\ContentRepo;
 use Extedit\Dic;
 use Extedit\Infra\Request;
-use Extedit\Session;
-use Extedit\View;
 
 const EXTEDIT_VERSION = '2.0-dev';
 
@@ -34,23 +31,7 @@ const EXTEDIT_VERSION = '2.0-dev';
  */
 function extedit($username, $textname = null)
 {
-    global $pth, $cf, $plugin_cf, $plugin_tx;
-
-    $controller = new Extedit\FunctionController(
-        "{$pth['folder']['plugins']}extedit/",
-        $pth['folder']['base'],
-        $pth['folder']['images'],
-        $cf['editor']['external'],
-        $plugin_cf['extedit'],
-        $plugin_tx['extedit'],
-        new ContentRepo("{$pth['folder']['content']}extedit/"),
-        new Session(),
-        Dic::makeEditor(),
-        new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"]),
-        $username,
-        $textname
-    );
-    return $controller->handle(Request::current());
+    return Dic::makeFunctionController()->handle(Request::current(), $username, $textname);
 }
 
 /**

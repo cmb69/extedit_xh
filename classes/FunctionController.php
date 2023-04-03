@@ -24,22 +24,9 @@ namespace Extedit;
 use Extedit\Infra\Request;
 use Extedit\Infra\Responder;
 use Extedit\Value\Response;
-use XH\CSRFProtection as CsrfProtector;
 
 class FunctionController
 {
-    /** @var string */
-    private $pluginFolder;
-
-    /** @var string */
-    private $baseFolder;
-
-    /** @var string */
-    private $imageFolder;
-
-    /** @var string */
-    private $configuredEditor;
-
     /** @var array<string,string> */
     private $conf;
 
@@ -48,9 +35,6 @@ class FunctionController
 
     /** @var ContentRepo */
     private $contentRepo;
-
-    /** @var Session */
-    private $session;
 
     /** @var Editor */
     private $editor;
@@ -61,98 +45,59 @@ class FunctionController
     /**
      * @var string
      */
-    private $username;
-
-    /**
-     * @var string|null
-     */
-    private $textname;
-
-    /**
-     * @var string
-     */
     private $content;
 
     /**
      * @param array<string,string> $conf
      * @param array<string,string> $lang
-     * @param string $username
-     * @param string|null $textname
      */
     public function __construct(
-        string $pluginFolder,
-        string $baseFolder,
-        string $imageFolder,
-        string $configuredEditor,
         array $conf,
         array $lang,
         ContentRepo $contentRepo,
-        Session $session,
         Editor $editor,
-        View $view,
-        $username,
-        $textname = null
+        View $view
     ) {
-        $this->pluginFolder = $pluginFolder;
-        $this->baseFolder = $baseFolder;
-        $this->imageFolder = $imageFolder;
-        $this->configuredEditor = $configuredEditor;
         $this->conf = $conf;
         $this->lang = $lang;
         $this->contentRepo = $contentRepo;
-        $this->session = $session;
         $this->editor = $editor;
         $this->view = $view;
-        $this->username = $username;
-        $this->textname = $textname;
-        $this->sanitizeTextname();
     }
 
     /**
      * @return string (X)HTML
      */
-    public function handle(Request $request)
+    public function handle(Request $request, string $username, ?string $textname)
     {
-        global $sn, $su;
-
+        $textname = $this->sanitizeTextname($textname);
         $o = '';
-        if ($this->isAuthorizedToEdit($request, $this->username)) {
+        if ($this->isAuthorizedToEdit($request, $username)) {
             if (isset($_GET['extedit_imagepicker'])) {
-                $imagePicker = new ImagePicker(
-                    $this->pluginFolder,
-                    $this->baseFolder,
-                    $this->getImageFolder(),
-                    $sn,
-                    $su,
-                    $this->conf,
-                    $this->lang,
-                    $this->configuredEditor,
-                    new ImageFinder($this->lang['imagepicker_dimensions']),
-                    new CsrfProtector('extedit_csrf_token')
-                );
+                $imagePicker = Dic::makeImagePicker();
                 if ($_GET['extedit_imagepicker'] !== "upload") {
                     ob_end_clean(); // necessary if called from template
-                    echo Responder::respond($imagePicker->show());
+                    echo Responder::respond($imagePicker->show($request));
                     exit;
                 }
                 if ($_GET['extedit_imagepicker'] === "upload") {
-                    echo Responder::respond($imagePicker->handleUpload(new Upload($_FILES['extedit_file'])));
+                    echo Responder::respond($imagePicker->handleUpload($request, new Upload($_FILES['extedit_file'])));
                     exit;
                 }
             }
-            if (isset($_POST["extedit_{$this->textname}_text"])) {
-                $o .= Responder::respond($this->handleSave());
+            if (isset($_POST["extedit_{$textname}_text"])) {
+                $o .= Responder::respond($this->handleSave($textname));
             } else {
-                $this->content = $this->contentRepo->findByName($this->textname);
+                $this->content = $this->contentRepo->findByName($textname);
             }
             if ($this->isEditModeRequested()) {
-                $o .= $this->renderEditForm();
+                $o .= $this->renderEditForm($textname);
                 $this->editor->init();
             } else {
                 $o .= $this->getEditLink() . $this->evaluatePlugincall();
             }
         } else {
-            $this->content = $this->contentRepo->findByName($this->textname);
+            $this->content = $this->contentRepo->findByName($textname);
             $o .= $this->evaluatePlugincall();
         }
         return $o;
@@ -165,51 +110,40 @@ class FunctionController
     private function isAuthorizedToEdit(Request $request, $username)
     {
         return $request->admin()
-            || $username == '*' && $this->session->get('username', '')
-            || in_array($this->session->get('username', ''), explode(',', $username));
+            || $username == '*' && $request->user()
+            || in_array($request->user(), explode(',', $username));
     }
 
-    /**
-     * @return string
-     */
-    private function getImageFolder()
-    {
-        $subfolder = $this->conf['images_subfolder']
-            ? preg_replace('/[^a-z0-9-]/i', '', $this->session->get('username', ''))
-            : '';
-        return rtrim($this->imageFolder . $subfolder, '/') . '/';
-    }
-
-    private function handleSave(): Response
+    private function handleSave(string $textname): Response
     {
         global $su;
 
-        $this->content = $_POST["extedit_{$this->textname}_text"];
-        $mtime = $this->contentRepo->findLastModification($this->textname);
-        if ($_POST["extedit_{$this->textname}_mtime"] >= $mtime) {
-            if ($this->contentRepo->save($this->textname, $this->content)) {
+        $this->content = $_POST["extedit_{$textname}_text"];
+        $mtime = $this->contentRepo->findLastModification($textname);
+        if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
+            if ($this->contentRepo->save($textname, $this->content)) {
                 return Response::redirect(CMSIMPLE_URL . "?$su&extedit_mode=edit");
             } else {
-                return Response::create($this->view->error("err_save", $this->contentRepo->filename($this->textname)));
+                return Response::create($this->view->error("err_save", $this->contentRepo->filename($textname)));
             }
         } else {
-            return Response::create($this->view->error("err_changed", $this->textname));
+            return Response::create($this->view->error("err_changed", $textname));
         }
     }
 
     /**
      * @return string (X)HTML
      */
-    private function renderEditForm(): string
+    private function renderEditForm(string $textname): string
     {
         global $sn, $su;
 
         return $this->view->render('edit_form', [
             'editUrl' => "$sn?$su",
-            'textareaName' => "extedit_{$this->textname}_text",
+            'textareaName' => "extedit_{$textname}_text",
             'content' => $this->content,
-            'mtimeName' => "extedit_{$this->textname}_mtime",
-            'mtime' => $this->contentRepo->findLastModification($this->textname),
+            'mtimeName' => "extedit_{$textname}_mtime",
+            'mtime' => $this->contentRepo->findLastModification($textname),
         ]);
     }
 
@@ -231,18 +165,15 @@ class FunctionController
         return "<a href=\"$sn?$su&amp;extedit_mode=edit\">" . $this->lang['mode_edit'] . '</a>';
     }
 
-    /**
-     * @return void
-     */
-    private function sanitizeTextname()
+    private function sanitizeTextname(?string $textname): string
     {
         global $h, $s;
 
         // TODO: check that $s is valid?
-        if (!isset($this->textname)) {
-            $this->textname = $h[max($s, 0)];
+        if (!isset($textname)) {
+            $textname = $h[max($s, 0)];
         }
-        $this->textname = preg_replace('/[^a-z0-9-]/i', '', $this->textname);
+        return preg_replace('/[^a-z0-9-]/i', '', $textname);
     }
 
     /**

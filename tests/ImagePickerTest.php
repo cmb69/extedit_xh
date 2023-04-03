@@ -22,10 +22,11 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\Request;
 use Extedit\Value\Response;
 use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
-use XH\CSRFProtection as CsrfProtector;
 
 class ImagePickerTest extends TestCase
 {
@@ -65,7 +66,8 @@ class ImagePickerTest extends TestCase
 
     public function testShowRendersImagePickerWithNoImages(): void
     {
-        $response = $this->sut->show();
+        $request = $this->createStub(Request::class);
+        $response = $this->sut->show($request);
         Approvals::verifyHtml($response->output());
     }
 
@@ -75,48 +77,54 @@ class ImagePickerTest extends TestCase
             "image.jpg (640 × 480 px)" => "./userfiles/images/cmb/image.jpg",
             "image.png (480 × 640 px)" => "./userfiles/images/cmb/image.png",
         ]);
-        $response = $this->sut->show();
+        $request = $this->createStub(Request::class);
+        $response = $this->sut->show($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testSuccessfulUploadRedirects(): void
     {
+        $request = $this->createStub(Request::class);
         $upload = $this->createStub(Upload::class);
         $upload->method('name')->willReturn('image.jpg');
         $upload->method('error')->willReturn(0);
         $upload->method('moveTo')->willReturn(true);
-        $response = $this->sut->handleUpload($upload);
+        $response = $this->sut->handleUpload($request, $upload);
         $this->assertNotNull($response->location());
     }
 
     public function testUploadFailureShowsError(): void
     {
+        $request = $this->createStub(Request::class);
         $upload = new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1]);
-        $response = $this->sut->handleUpload($upload);
+        $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
     }
 
     public function testUploadOfNonImageShowsError(): void
     {
+        $request = $this->createStub(Request::class);
         $upload = new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
-        $response = $this->sut->handleUpload($upload);
+        $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
     }
 
     public function testUploadBadFilenameShowsError(): void
     {
+        $request = $this->createStub(Request::class);
         $upload = new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
-        $response = $this->sut->handleUpload($upload);
+        $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
     }
 
     public function testMoveUploadFailureShowsError(): void
     {
+        $request = $this->createStub(Request::class);
         $upload = $this->createStub(Upload::class);
         $upload->method('name')->willReturn('image.jpg');
         $upload->method('error')->willReturn(0);
         $upload->method('moveTo')->willReturn(false);
-        $response = $this->sut->handleUpload($upload);
+        $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
     }
 }
