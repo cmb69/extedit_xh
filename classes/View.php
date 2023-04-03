@@ -43,6 +43,12 @@ class View
         return vsprintf($this->lang[$key], $args);
     }
 
+    /** @param scalar $args */
+    public function error(string $key, ...$args): string
+    {
+        return XH_message("fail", $this->lang[$key], ...$args);
+    }
+
     /** @param array<string,mixed> $_data */
     public function render(string $_template, array $_data): string
     {

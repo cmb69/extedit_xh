@@ -21,7 +21,9 @@
 
 namespace Extedit;
 
+use Extedit\Infra\Request;
 use Extedit\Infra\Responder;
+use Extedit\Value\Response;
 use XH\CSRFProtection as CsrfProtector;
 
 class FunctionController
@@ -52,6 +54,9 @@ class FunctionController
 
     /** @var Editor */
     private $editor;
+
+    /** @var View */
+    private $view;
 
     /**
      * @var string
@@ -84,6 +89,7 @@ class FunctionController
         ContentRepo $contentRepo,
         Session $session,
         Editor $editor,
+        View $view,
         $username,
         $textname = null
     ) {
@@ -96,6 +102,7 @@ class FunctionController
         $this->contentRepo = $contentRepo;
         $this->session = $session;
         $this->editor = $editor;
+        $this->view = $view;
         $this->username = $username;
         $this->textname = $textname;
         $this->sanitizeTextname();
@@ -104,12 +111,12 @@ class FunctionController
     /**
      * @return string (X)HTML
      */
-    public function handle()
+    public function handle(Request $request)
     {
         global $sn, $su;
 
         $o = '';
-        if ($this->isAuthorizedToEdit($this->username)) {
+        if ($this->isAuthorizedToEdit($request, $this->username)) {
             if (isset($_GET['extedit_imagepicker'])) {
                 $imagePicker = new ImagePicker(
                     $this->pluginFolder,
@@ -134,7 +141,7 @@ class FunctionController
                 }
             }
             if (isset($_POST["extedit_{$this->textname}_text"])) {
-                $o .= $this->handleSave();
+                $o .= Responder::respond($this->handleSave());
             } else {
                 $this->content = $this->contentRepo->findByName($this->textname);
             }
@@ -155,9 +162,9 @@ class FunctionController
      * @param string $username
      * @return bool
      */
-    private function isAuthorizedToEdit($username)
+    private function isAuthorizedToEdit(Request $request, $username)
     {
-        return (defined('XH_ADM') && XH_ADM)
+        return $request->admin()
             || $username == '*' && $this->session->get('username', '')
             || in_array($this->session->get('username', ''), explode(',', $username));
     }
@@ -173,10 +180,7 @@ class FunctionController
         return rtrim($this->imageFolder . $subfolder, '/') . '/';
     }
 
-    /**
-     * @return string (X)HTML
-     */
-    private function handleSave()
+    private function handleSave(): Response
     {
         global $su;
 
@@ -184,17 +188,12 @@ class FunctionController
         $mtime = $this->contentRepo->findLastModification($this->textname);
         if ($_POST["extedit_{$this->textname}_mtime"] >= $mtime) {
             if ($this->contentRepo->save($this->textname, $this->content)) {
-                header('Location: ' . CMSIMPLE_URL . "?$su&extedit_mode=edit");
-                exit;
+                return Response::redirect(CMSIMPLE_URL . "?$su&extedit_mode=edit");
             } else {
-                return XH_message(
-                    'fail',
-                    $this->lang['err_save'],
-                    $this->contentRepo->filename($this->textname)
-                );
+                return Response::create($this->view->error("err_save", $this->contentRepo->filename($this->textname)));
             }
         } else {
-            return XH_message('fail', $this->lang['err_changed'], $this->textname);
+            return Response::create($this->view->error("err_changed", $this->textname));
         }
     }
 
@@ -205,8 +204,7 @@ class FunctionController
     {
         global $sn, $su;
 
-        $view = new View("{$this->pluginFolder}views/", $this->lang);
-        return $view->render('edit_form', [
+        return $this->view->render('edit_form', [
             'editUrl' => "$sn?$su",
             'textareaName' => "extedit_{$this->textname}_text",
             'content' => $this->content,

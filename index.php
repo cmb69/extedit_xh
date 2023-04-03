@@ -21,7 +21,9 @@
 
 use Extedit\ContentRepo;
 use Extedit\Dic;
+use Extedit\Infra\Request;
 use Extedit\Session;
+use Extedit\View;
 
 const EXTEDIT_VERSION = '2.0-dev';
 
@@ -44,10 +46,11 @@ function extedit($username, $textname = null)
         new ContentRepo("{$pth['folder']['content']}extedit/"),
         new Session(),
         Dic::makeEditor(),
+        new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"]),
         $username,
         $textname
     );
-    return $controller->handle();
+    return $controller->handle(Request::current());
 }
 
 /**
