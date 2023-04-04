@@ -22,6 +22,8 @@
 namespace Extedit;
 
 use Extedit\Infra\Request;
+use Extedit\Infra\View;
+use Extedit\Value\Html;
 use Extedit\Value\Response;
 
 class FunctionController
@@ -134,7 +136,7 @@ class FunctionController
         return $this->view->render("view", [
             "may_edit" => $mayEdit,
             "url" => "$sn?$su&extedit_action=edit",
-            "content" => $this->evaluatePlugincall($content),
+            "content" => Html::of($this->evaluatePlugincall($content)),
         ]);
     }
 

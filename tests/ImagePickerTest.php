@@ -24,6 +24,7 @@ namespace Extedit;
 use ApprovalTests\Approvals;
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Request;
+use Extedit\Infra\View;
 use Extedit\Value\Response;
 use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +61,8 @@ class ImagePickerTest extends TestCase
             $lang,
             "tinymce4",
             $this->imageFinder,
-            $this->csrfProtector
+            $this->csrfProtector,
+            new View("./views/", $lang)
         );
     }
 

@@ -19,7 +19,9 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
+
+use Extedit\Value\Html;
 
 class View
 {
@@ -27,46 +29,46 @@ class View
     private $templateFolder;
 
     /** @var array<string,string> */
-    private $lang;
+    private $text;
 
-    /** @param array<string,string> $lang */
-    public function __construct(string $templateFolder, array $lang)
+    /** @param array<string,string> $text */
+    public function __construct(string $templateFolder, array $text)
     {
         $this->templateFolder = $templateFolder;
-        $this->lang = $lang;
+        $this->text = $text;
     }
 
-    public function text(string $key): string
+    /** @param scalar $args */
+    public function text(string $key, ...$args): string
     {
-        $args = func_get_args();
-        array_shift($args);
-        return vsprintf($this->lang[$key], $args);
+        return sprintf($this->esc($this->text[$key]), ...$args);
     }
 
     /** @param scalar $args */
     public function error(string $key, ...$args): string
     {
-        return XH_message("fail", $this->lang[$key], ...$args);
+        return XH_message("fail", $this->text[$key], ...$args) . "\n";
     }
 
     /** @param array<string,mixed> $_data */
     public function render(string $_template, array $_data): string
     {
+        array_walk_recursive($_data, function (&$value) {
+            assert(is_null($value) || is_scalar($value) || $value instanceof Html);
+            if (is_string($value)) {
+                $value = $this->esc($value);
+            } elseif ($value instanceof Html) {
+                $value = $value->toString();
+            }
+        });
         extract($_data);
         ob_start();
-        include "{$this->templateFolder}{$_template}.php";
+        include $this->templateFolder . "$_template.php";
         return (string) ob_get_clean();
     }
 
-    /** @param scalar $value */
-    public function esc($value): string
+    public function esc(string $value): string
     {
-        return XH_hsc((string) $value);
-    }
-
-    /** @param scalar $value */
-    public function raw($value): string
-    {
-        return (string) $value;
+        return XH_hsc($value);
     }
 }

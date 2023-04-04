@@ -22,6 +22,7 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Infra\View;
 use PHPUnit\Framework\TestCase;
 
 class PluginInfoTest extends TestCase
@@ -35,7 +36,8 @@ class PluginInfoTest extends TestCase
         $systemChecker->method('checkExtension')->willReturn(true);
         $systemChecker->method('checkWritability')->willReturn(true);
         $contentRepo = $this->createStub(ContentRepo::class);
-        $sut = new PluginInfo("./", $lang, $systemChecker, $contentRepo);
+        $view = new View("./views/", $lang);
+        $sut = new PluginInfo("./", $lang, $systemChecker, $contentRepo, $view);
         $response = $sut();
         Approvals::verifyHtml($response);
     }

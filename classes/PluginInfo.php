@@ -21,6 +21,8 @@
 
 namespace Extedit;
 
+use Extedit\Infra\View;
+
 class PluginInfo
 {
     /** @var string */
@@ -35,17 +37,22 @@ class PluginInfo
     /** @var ContentRepo */
     private $contentRepo;
 
+    /** @var View */
+    private $view;
+
     /** @param array<string,string> $lang */
     public function __construct(
         string $pluginFolder,
         array $lang,
         SystemChecker $systemChecker,
-        ContentRepo $contentRepo
+        ContentRepo $contentRepo,
+        View $view
     ) {
         $this->pluginFolder = $pluginFolder;
         $this->lang = $lang;
         $this->systemChecker = $systemChecker;
         $this->contentRepo = $contentRepo;
+        $this->view = $view;
     }
 
     public function __invoke(): string
@@ -53,13 +60,12 @@ class PluginInfo
         foreach (array('ok', 'warn', 'fail') as $state) {
             $images[$state] = "{$this->pluginFolder}images/$state.png";
         }
-        $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
             'images' => $images,
             'checks' => $this->systemChecks(),
             'version' => EXTEDIT_VERSION,
         ];
-        return $view->render('info', $data);
+        return $this->view->render('info', $data);
     }
 
     /**

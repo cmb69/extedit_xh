@@ -1,6 +1,8 @@
 <?php
 
-use Extedit\View;
+use Extedit\Infra\View;
+
+if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 
 /**
  * @var View $this
@@ -9,8 +11,8 @@ use Extedit\View;
  * @var array<string,string> $images
  */
 ?>
-<!-- Extedit: info -->
-<h1>Extedit <?=$this->esc($version)?></h1>
+<!-- extedit info -->
+<h1>Extedit <?=$version?></h1>
 <h2><?=$this->text('synopsis');?></h2>
 <p><code>{{{extedit('<?=$this->text('synopsis_username')?>', '<?=$this->text('synopsis_textname')?>');}}}</code></p>
 <p>
@@ -23,10 +25,10 @@ use Extedit\View;
 </p>
 <h2><?=$this->text('syscheck');?></h2>
 <ul style="list-style: none">
-<?php foreach ($checks as $check => $state):?>
+<?foreach ($checks as $check => $state):?>
   <li>
-    <img src="<?=$this->esc($images[$state])?>" alt="<?=$this->esc($state)?>" style="padding-right: 1em"/>
-    <?=$this->esc($check);?>
+    <img src="<?=$images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
+    <?=$check?>
   </li>
-<?php endforeach?>
+<?endforeach?>
 </ul>

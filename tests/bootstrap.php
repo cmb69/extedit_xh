@@ -19,6 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const CMSIMPLE_XH_VERSION = "CMSimple_XH 1.7.5";
 const CMSIMPLE_URL = "http://example.com/";
 const EXTEDIT_VERSION = "2.0-dev";
 

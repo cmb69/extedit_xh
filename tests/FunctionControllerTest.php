@@ -23,6 +23,7 @@ namespace Extedit;
 
 use ApprovalTests\Approvals;
 use Extedit\Infra\Request;
+use Extedit\Infra\View;
 use PHPUnit\Framework\TestCase;
 
 class FunctionControllerTest extends TestCase
@@ -69,7 +70,7 @@ class FunctionControllerTest extends TestCase
         $_GET = ["extedit_action" => "edit"];
         $this->request->method("action")->willReturn("edit");
         $response = $this->sut->handle($this->request, "cmb", "test");
-        $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>", $response->output());
+        $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
     public function testSavesContent(): void
@@ -87,7 +88,7 @@ class FunctionControllerTest extends TestCase
         $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
         $this->request->method("action")->willReturn("do_edit");
         $response = $this->sut->handle($this->request, "cmb", "test");
-        $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>", $response->output());
+        $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
     public function testReportsConcurrencyIssue(): void

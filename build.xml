@@ -52,7 +52,7 @@
       </fileset>
       <filterchain>
         <replaceregexp>
-          <regexp pattern="\?=" replace="?php echo "/>
+          <regexp pattern="&lt;\?(?!=)" replace="&lt;?php "/>
         </replaceregexp>
       </filterchain>
     </move>

@@ -23,6 +23,8 @@ namespace Extedit;
 
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Request;
+use Extedit\Infra\View;
+use Extedit\Value\Html;
 use Extedit\Value\Response;
 
 class ImagePicker
@@ -59,6 +61,9 @@ class ImagePicker
      */
     private $csrfProtector;
 
+    /** @var View */
+    private $view;
+
     /**
      * @param array<string,string> $conf
      * @param array<string,string> $lang
@@ -73,7 +78,8 @@ class ImagePicker
         array $lang,
         string $configuredEditor,
         ImageFinder $imageFinder,
-        CsrfProtector $csrfProtector
+        CsrfProtector $csrfProtector,
+        View $view
     ) {
         $this->pluginFolder = $pluginFolder;
         $this->baseFolder = $baseFolder;
@@ -85,6 +91,7 @@ class ImagePicker
         $this->configuredEditor = $configuredEditor;
         $this->imageFinder = $imageFinder;
         $this->csrfProtector = $csrfProtector;
+        $this->view = $view;
     }
 
     public function __invoke(Request $request): Response
@@ -111,17 +118,16 @@ class ImagePicker
      */
     private function doShow(Request $request, $message)
     {
-        $view = new View("{$this->pluginFolder}views/", $this->lang);
         $data = [
             'images' => $this->imageFinder->findAll($this->getImageFolder($request)),
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_imagepicker=upload",
             'message' => $message,
-            'csrfTokenInput' => $this->csrfProtector->tokenInput(),
+            'csrfTokenInput' => Html::of($this->csrfProtector->tokenInput()),
         ];
         $this->csrfProtector->store();
-        return $view->render('imagepicker', $data);
+        return $this->view->render('imagepicker', $data);
     }
 
     public function handleUpload(Request $request, Upload $upload): Response

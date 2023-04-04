@@ -1,6 +1,8 @@
 <?php
 
-use Extedit\View;
+use Extedit\Infra\View;
+
+if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 
 /**
  * @var View $this
@@ -12,6 +14,7 @@ use Extedit\View;
  */
 ?>
 <!DOCTYPE html>
+<!-- extedit imagepicker -->
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -32,7 +35,7 @@ use Extedit\View;
       }
     </style>
     <script type="text/javascript">
-      var baseFolder = "<?=$this->esc($baseFolder)?>";
+      var baseFolder = "<?=$baseFolder?>";
       function init() {
         var picker = document.getElementById("imagepicker"),
           images = picker.getElementsByTagName("img"),
@@ -57,21 +60,21 @@ use Extedit\View;
         setUrl(path);
       }
     </script>
-    <script type="text/javascript" src="<?=$this->esc($editorHook)?>"></script>
+    <script type="text/javascript" src="<?=$editorHook?>"></script>
   </head>
   <body onload="init();">
-    <div id="message"><p><?=$this->esc($message)?></p></div>
+    <div id="message"><p><?=$message?></p></div>
     <div id="imagepicker">
-<?php if (empty($images)):?>
+<?if (empty($images)):?>
       <p><?=$this->text('imagepicker_empty')?></p>
-<?php else:?>
-<?php foreach ($images as $image => $url):?>
-      <img src="<?=$this->esc($url)?>" alt="<?=$this->esc($image)?>" title="<?=$this->esc($image)?>"/>
-<?php endforeach?>
-<?php endif?>
+<?else:?>
+<?  foreach ($images as $image => $url):?>
+      <img src="<?=$url?>" alt="<?=$image?>" title="<?=$image?>"/>
+<?  endforeach?>
+<?endif?>
     </div>
-    <form id="upload" action="<?=$this->esc($uploadUrl)?>" method="POST" enctype="multipart/form-data">
-      <?=$this->raw($csrfTokenInput)?>
+    <form id="upload" action="<?=$uploadUrl?>" method="POST" enctype="multipart/form-data">
+      <?=$csrfTokenInput?>
       <input name="extedit_file" type="file">
       <button><?=$this->text('imagepicker_upload')?></button>
     </form>

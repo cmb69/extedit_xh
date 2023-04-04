@@ -19,20 +19,22 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Value;
 
-class HtmlString
+class Html
 {
-    /** @var string */
-    private $value;
-
-    public function __construct(string $string)
+    public static function of(string $string): self
     {
-        $this->value = $string;
+        $that = new self;
+        $that->string = $string;
+        return $that;
     }
 
-    public function __toString(): string
+    /** @var string */
+    private $string;
+
+    public function toString(): string
     {
-        return $this->value;
+        return $this->string;
     }
 }

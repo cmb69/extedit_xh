@@ -22,6 +22,7 @@
 namespace Extedit;
 
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\View;
 
 class Dic
 {
@@ -32,7 +33,7 @@ class Dic
             $plugin_cf["extedit"],
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             Dic::makeEditor(),
-            new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"])
+            self::makeView()
         );
     }
 
@@ -49,7 +50,8 @@ class Dic
             $plugin_tx["extedit"],
             $cf["editor"]["external"],
             new ImageFinder($plugin_tx["extedit"]['imagepicker_dimensions']),
-            new CsrfProtector
+            new CsrfProtector,
+            self::makeView()
         );
     }
 
@@ -60,7 +62,8 @@ class Dic
             $pth["folder"]["plugins"] . "extedit/",
             $plugin_tx["extedit"],
             new SystemChecker(),
-            new ContentRepo($pth["folder"]["content"] . "extedit/")
+            new ContentRepo($pth["folder"]["content"] . "extedit/"),
+            self::makeView()
         );
     }
 
@@ -72,5 +75,11 @@ class Dic
             $instance = new Editor($pth["folder"]["plugins"] . "extedit/", $cf["editor"]["external"]);
         }
         return $instance;
+    }
+
+    private static function makeView(): View
+    {
+        global $pth, $plugin_tx;
+        return new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"]);
     }
 }
