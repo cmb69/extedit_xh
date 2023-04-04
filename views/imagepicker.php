@@ -6,6 +6,7 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 
 /**
  * @var View $this
+ * @var list<array{title:string,filename:string}> $images
  * @var string $baseFolder
  * @var string $editorHook
  * @var string $message
@@ -68,8 +69,8 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 <?if (empty($images)):?>
       <p><?=$this->text('imagepicker_empty')?></p>
 <?else:?>
-<?  foreach ($images as $image => $url):?>
-      <img src="<?=$url?>" alt="<?=$image?>" title="<?=$image?>"/>
+<?  foreach ($images as $image):?>
+      <img src="<?=$image['filename']?>" alt="<?=$image['title']?>" title="<?=$image['title']?>"/>
 <?  endforeach?>
 <?endif?>
     </div>

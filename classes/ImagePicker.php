@@ -22,10 +22,13 @@
 namespace Extedit;
 
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\ImageRepo;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
 use Extedit\Value\Html;
+use Extedit\Value\Image;
 use Extedit\Value\Response;
+use Extedit\Value\Upload;
 
 class ImagePicker
 {
@@ -53,8 +56,8 @@ class ImagePicker
     /** @var string */
     private $configuredEditor;
 
-    /** @var ImageFinder */
-    private $imageFinder;
+    /** @var ImageRepo */
+    private $imageRepo;
 
     /**
      * @var CsrfProtector
@@ -77,7 +80,7 @@ class ImagePicker
         array $conf,
         array $lang,
         string $configuredEditor,
-        ImageFinder $imageFinder,
+        ImageRepo $imageRepo,
         CsrfProtector $csrfProtector,
         View $view
     ) {
@@ -89,7 +92,7 @@ class ImagePicker
         $this->conf = $conf;
         $this->lang = $lang;
         $this->configuredEditor = $configuredEditor;
-        $this->imageFinder = $imageFinder;
+        $this->imageRepo = $imageRepo;
         $this->csrfProtector = $csrfProtector;
         $this->view = $view;
     }
@@ -118,8 +121,18 @@ class ImagePicker
      */
     private function doShow(Request $request, $message)
     {
+        $images = array_map(function (Image $image) {
+            $title = basename($image->filename());
+            if ($image->width() && $image->height()) {
+                $title .= $this->view->plain("imagepicker_dimensions", $image->width(), $image->height());
+            }
+            return [
+                "title" => $title,
+                "filename" => $image->filename(),
+            ];
+        }, $this->imageRepo->findAll($this->getImageFolder($request)));
         $data = [
-            'images' => $this->imageFinder->findAll($this->getImageFolder($request)),
+            'images' => $images,
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_imagepicker=upload",
@@ -147,7 +160,7 @@ class ImagePicker
             $message = $this->lang["imagepicker_err_cantwrite"];
             return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
-        if (!$upload->moveTo($destination)) {
+        if (!$this->imageRepo->save($upload, $destination)) {
             $message = $this->lang["imagepicker_err_cantwrite"];
             return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }

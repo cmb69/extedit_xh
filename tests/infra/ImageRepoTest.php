@@ -19,17 +19,18 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
 
+use Extedit\Value\Image;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
-class ImageFinderTest extends TestCase
+class ImageRepoTest extends TestCase
 {
     public function testFindsNoImagesInEmptyFolder(): void
     {
         vfsStream::setup("root/");
-        $sut = new ImageFinder(" (%1\$d × %2\$d px)");
+        $sut = new ImageRepo(" (%1\$d × %2\$d px)");
         $images = $sut->findAll(vfsStream::url("root/"));
         $this->assertEmpty($images);
     }
@@ -42,11 +43,11 @@ class ImageFinderTest extends TestCase
         $im = imagecreatetruecolor(5, 500);
         imagejpeg($im, vfsStream::url("root/image.png"));
         // touch(vfsStream::url("root/text.txt"));
-        $sut = new ImageFinder(" (%1\$d × %2\$d px)");
+        $sut = new ImageRepo(" (%1\$d × %2\$d px)");
         $images = $sut->findAll(vfsStream::url("root/"));
         $expected = [
-            "image.jpg (50 × 50 px)" => "vfs://root/image.jpg",
-            "image.png (5 × 500 px)" => "vfs://root/image.png",
+            new Image("vfs://root/image.jpg", 50, 50),
+            new Image("vfs://root/image.png", 5, 500),
         ];
         $this->assertEquals($expected, $images);
     }

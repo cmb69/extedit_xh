@@ -21,14 +21,16 @@
 
 namespace Extedit;
 
+use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\ImageRepo;
 use Extedit\Infra\View;
 
 class Dic
 {
     public static function makeFunctionController(): FunctionController
     {
-        global $pth, $plugin_cf, $plugin_tx;
+        global $pth, $plugin_cf;
         return new FunctionController(
             $plugin_cf["extedit"],
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
@@ -49,7 +51,7 @@ class Dic
             $plugin_cf["extedit"],
             $plugin_tx["extedit"],
             $cf["editor"]["external"],
-            new ImageFinder($plugin_tx["extedit"]['imagepicker_dimensions']),
+            new ImageRepo,
             new CsrfProtector,
             self::makeView()
         );

@@ -21,6 +21,7 @@
 
 namespace Extedit;
 
+use Extedit\Infra\ContentRepo;
 use Extedit\Infra\View;
 
 class PluginInfo

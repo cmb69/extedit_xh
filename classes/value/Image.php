@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013-2023 Christoph M. Becker
+ * Copyright 2023 Christoph M. Becker
  *
  * This file is part of Extedit_XH.
  *
@@ -19,38 +19,38 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Value;
 
-/**
- * @phpstan-type File array{name: string, tmp_name: string, error: int}
- */
-class Upload
+class Image
 {
-    /** @var File */
-    private $file;
+    /** @var string */
+    private $filename;
 
-    /** @param File $file*/
-    public function __construct($file)
+    /** @var int */
+    private $width;
+
+    /** @var int */
+    private $height;
+
+    public function __construct(string $filename, int $width, int $height)
     {
-        $this->file = $file;
+        $this->filename = $filename;
+        $this->width = $width;
+        $this->height = $height;
     }
 
-    public function name(): string
+    public function filename(): string
     {
-        return $this->file['name'];
+        return $this->filename;
     }
 
-    public function error(): int
+    public function width(): int
     {
-        return $this->file['error'];
+        return $this->width;
     }
 
-    public function moveTo(string $destination): bool
+    public function height(): int
     {
-        if (file_exists($destination)) {
-            return false;
-        }
-        // TODO: process image with GD to avoid dangerous images?
-        return move_uploaded_file($this->file['tmp_name'], $destination);
+        return $this->height;
     }
 }

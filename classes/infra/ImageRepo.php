@@ -19,22 +19,17 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
 
-class ImageFinder
+use Extedit\Value\Image;
+use Extedit\Value\Upload;
+
+class ImageRepo
 {
-    /** @var string */
-    private $dimensionFormat;
-
-    public function __construct(string $dimensionFormat)
-    {
-        $this->dimensionFormat = $dimensionFormat;
-    }
-
-    /** @return array<string,string> */
+    /** @return list<Image> */
     public function findAll(string $folder): array
     {
-        $images = array();
+        $images = [];
         if (($dh = opendir($folder)) !== false) {
             while (($entry = readdir($dh)) !== false) {
                 if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
@@ -42,13 +37,29 @@ class ImageFinder
                 ) {
                     $info = getimagesize($ffn);
                     if ($info) {
-                        list($width, $height) = $info;
-                        $entry .= sprintf($this->dimensionFormat, $width, $height);
+                        [$width, $height] = $info;
+                    } else {
+                        $width = $height = 0;
                     }
-                    $images[$entry] = $ffn;
+                    $images[] = new Image($ffn, $width, $height);
                 }
             }
         }
         return $images;
+    }
+
+    public function save(Upload $upload, string $destination): bool
+    {
+        if (file_exists($destination)) {
+            return false;
+        }
+        // TODO: process image with GD to avoid dangerous images?
+        return $this->moveUploadedFile($upload->tempName(), $destination);
+    }
+
+    /** @codeCoverageIgnore */
+    protected function moveUploadedFile(string $from, string $to): bool
+    {
+        return move_uploaded_file($from, $to);
     }
 }

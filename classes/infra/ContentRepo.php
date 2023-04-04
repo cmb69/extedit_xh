@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
 
 class ContentRepo
 {
@@ -34,7 +34,7 @@ class ContentRepo
     public function foldername(): string
     {
         if (!file_exists($this->foldername)) {
-            mkdir($this->foldername);
+            mkdir($this->foldername, 0777, true);
             chmod($this->foldername, 0777);
         }
         return $this->foldername;

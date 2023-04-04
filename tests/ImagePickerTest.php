@@ -23,9 +23,11 @@ namespace Extedit;
 
 use ApprovalTests\Approvals;
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\FakeImageRepo;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
-use Extedit\Value\Response;
+use Extedit\Value\Upload;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -34,19 +36,20 @@ class ImagePickerTest extends TestCase
     /** @var ImagePicker */
     private $sut;
 
-    /** @var ImageFinder&MockObject */
-    private $imageFinder;
+    private $imageRepo;
 
     /** @var CsrfProtector&MockObject */
     private $csrfProtector;
 
     public function setUp(): void
     {
+        vfsStream::setup("root");
+        mkdir("vfs://root/userfiles/images/cmb", 0777, true);
         $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
         $conf = $plugin_cf['extedit'];
         $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
         $lang = $plugin_tx['extedit'];
-        $this->imageFinder = $this->createStub(ImageFinder::class);
+        $this->imageRepo = new FakeImageRepo;
         $this->csrfProtector = $this->createStub(CsrfProtector::class);
         $this->csrfProtector->method('tokenInput')->willReturn(
             '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
@@ -54,13 +57,13 @@ class ImagePickerTest extends TestCase
         $this->sut = new ImagePicker(
             "./",
             "",
-            "",
+            "vfs://root/userfiles/images/",
             "/",
             "whatever",
             $conf,
             $lang,
             "tinymce4",
-            $this->imageFinder,
+            $this->imageRepo,
             $this->csrfProtector,
             new View("./views/", $lang)
         );
@@ -75,11 +78,10 @@ class ImagePickerTest extends TestCase
 
     public function testShowRendersImagePickerWithImages(): void
     {
-        $this->imageFinder->method('findAll')->willReturn([
-            "image.jpg (640 × 480 px)" => "./userfiles/images/cmb/image.jpg",
-            "image.png (480 × 640 px)" => "./userfiles/images/cmb/image.png",
-        ]);
+        $this->imageRepo->save($this->upload(), "vfs://root/userfiles/images/cmb/image.jpg");
+        $this->imageRepo->save($this->upload("png", 480, 640), "vfs://root/userfiles/images/cmb/image.png");
         $request = $this->createStub(Request::class);
+        $request->method("user")->willReturn("cmb");
         $response = $this->sut->show($request);
         Approvals::verifyHtml($response->output());
     }
@@ -87,11 +89,7 @@ class ImagePickerTest extends TestCase
     public function testSuccessfulUploadRedirects(): void
     {
         $request = $this->createStub(Request::class);
-        $upload = $this->createStub(Upload::class);
-        $upload->method('name')->willReturn('image.jpg');
-        $upload->method('error')->willReturn(0);
-        $upload->method('moveTo')->willReturn(true);
-        $response = $this->sut->handleUpload($request, $upload);
+        $response = $this->sut->handleUpload($request, $this->upload());
         $this->assertNotNull($response->location());
     }
 
@@ -122,11 +120,21 @@ class ImagePickerTest extends TestCase
     public function testMoveUploadFailureShowsError(): void
     {
         $request = $this->createStub(Request::class);
-        $upload = $this->createStub(Upload::class);
-        $upload->method('name')->willReturn('image.jpg');
-        $upload->method('error')->willReturn(0);
-        $upload->method('moveTo')->willReturn(false);
+        $upload = new Upload(["name" => "image.jpg", "tmp_name" => "irrelevant", "error" => 0]);
         $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
+    }
+
+    private function upload(string $format = "jpg", int $width = 640, int $height = 480): Upload
+    {
+        assert(in_array($format, ["jpg", "png"]));
+        $image = imagecreatetruecolor($width, $height);
+        imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, 0);
+        if ($format === "jpg") {
+            imagejpeg($image, "vfs://root/image.$format");
+        } else {
+            imagepng($image, "vfs://root/image.$format");
+        }
+        return new Upload(["name" => "image.$format", "tmp_name" => "vfs://root/image.$format", "error" => 0]);
     }
 }

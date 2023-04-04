@@ -22,20 +22,23 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Infra\FakeContentRepo;
 use Extedit\Infra\View;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
 class PluginInfoTest extends TestCase
 {
     public function testRendersPluginInfo(): void
     {
+        vfsStream::setup("root");
         $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
         $lang = $plugin_tx['extedit'];
         $systemChecker = $this->createStub(SystemChecker::class);
         $systemChecker->method('checkVersion')->willReturn(true);
         $systemChecker->method('checkExtension')->willReturn(true);
         $systemChecker->method('checkWritability')->willReturn(true);
-        $contentRepo = $this->createStub(ContentRepo::class);
+        $contentRepo = new FakeContentRepo("vfs://root/content/extedit/");
         $view = new View("./views/", $lang);
         $sut = new PluginInfo("./", $lang, $systemChecker, $contentRepo, $view);
         $response = $sut();

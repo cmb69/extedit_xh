@@ -22,8 +22,10 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Infra\FakeContentRepo;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
 class FunctionControllerTest extends TestCase
@@ -34,9 +36,10 @@ class FunctionControllerTest extends TestCase
 
     public function setUp(): void
     {
+        vfsStream::setup("root");
         $conf = XH_includeVar("./config/config.php", "plugin_cf")["extedit"];
-        $this->contentRepo = $this->createStub(ContentRepo::class);
-        $this->contentRepo->method("findByName")->willReturn("some content");
+        $this->contentRepo = new FakeContentRepo("vfs://root/content/extedit/");
+        $this->contentRepo->save("test", "some content");
         $editor = $this->createStub(Editor::class);
         $view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
         $this->sut = new FunctionController($conf, $this->contentRepo, $editor, $view);
@@ -76,10 +79,10 @@ class FunctionControllerTest extends TestCase
     public function testSavesContent(): void
     {
         $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
-        $this->contentRepo->expects($this->once())->method("save")->willReturn(true);
         $this->request->method("user")->willReturn("cmb");
         $this->request->method("action")->willReturn("do_edit");
         $response = $this->sut->handle($this->request, "cmb", "test");
+        $this->assertEquals("some content", $this->contentRepo->findByName("test"));
         $this->assertEquals("http://example.com/?&extedit_action=edit", $response->location());
     }
 
@@ -94,7 +97,7 @@ class FunctionControllerTest extends TestCase
     public function testReportsConcurrencyIssue(): void
     {
         $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
-        $this->contentRepo->method("findLastModification")->willReturn(1680563743);
+        $this->contentRepo->options(["lastModification" => 1680563743]);
         $this->request->method("user")->willReturn("cmb");
         $this->request->method("action")->willReturn("do_edit");
         $response = $this->sut->handle($this->request, "cmb", "test");
@@ -104,8 +107,7 @@ class FunctionControllerTest extends TestCase
     public function testReportsFailureToSaveContent(): void
     {
         $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
-        $this->contentRepo->expects($this->once())->method("save")->willReturn(false);
-        $this->contentRepo->method("filename")->willReturn("./content/extedit/test.htm");
+        $this->contentRepo->options(["save" => false]);
         $this->request->method("user")->willReturn("cmb");
         $this->request->method("action")->willReturn("do_edit");
         $response = $this->sut->handle($this->request, "cmb", "test");
