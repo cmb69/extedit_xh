@@ -23,7 +23,7 @@ namespace Extedit;
 
 use ApprovalTests\Approvals;
 use Extedit\Infra\FakeContentRepo;
-use Extedit\Infra\Request;
+use Extedit\Infra\FakeRequest;
 use Extedit\Infra\View;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,6 @@ class FunctionControllerTest extends TestCase
 {
     private $sut;
     private $contentRepo;
-    private $request;
 
     public function setUp(): void
     {
@@ -43,74 +42,79 @@ class FunctionControllerTest extends TestCase
         $editor = $this->createStub(Editor::class);
         $view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
         $this->sut = new FunctionController($conf, $this->contentRepo, $editor, $view);
-        $this->request = $this->createStub(Request::class);
     }
 
     public function testRendersView(): void
     {
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest(["query" => "Extedit"]);
+        $response = $this->sut->handle($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testRendersViewForEditors(): void
     {
-        $this->request->method("user")->willReturn("cmb");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
+        $response = $this->sut->handle($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testRendersEditor(): void
     {
-        $_GET = ["extedit_action" => "edit"];
-        $this->request->method("user")->willReturn("cmb");
-        $this->request->method("action")->willReturn("edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest(["query" => "Extedit&extedit_action=edit", "user" => "cmb"]);
+        $response = $this->sut->handle($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testReportsMissingAuthorizationToEdit(): void
     {
-        $_GET = ["extedit_action" => "edit"];
-        $this->request->method("action")->willReturn("edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest(["query" => "Extedit&extedit_action=edit"]);
+        $response = $this->sut->handle($request, "cmb", "test");
         $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
     public function testSavesContent(): void
     {
-        $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
-        $this->request->method("user")->willReturn("cmb");
-        $this->request->method("action")->willReturn("do_edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest([
+            "query" => "Extedit&extedit_action=edit",
+            "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
+            "user" => "cmb",
+        ]);
+        $response = $this->sut->handle($request, "cmb", "test");
         $this->assertEquals("some content", $this->contentRepo->findByName("test"));
-        $this->assertEquals("http://example.com/?&extedit_action=edit", $response->location());
+        $this->assertEquals("http://example.com/?Extedit&extedit_action=edit", $response->location());
     }
 
     public function testReportsMissingAuthorizationToSave(): void
     {
-        $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
-        $this->request->method("action")->willReturn("do_edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest([
+            "query" => "Extedit&extedit_action=edit",
+            "post" => ["extedit_text" => "some content", "extedit_mtime" => "0"],
+        ]);
+        $response = $this->sut->handle($request, "cmb", "test");
         $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
     public function testReportsConcurrencyIssue(): void
     {
-        $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
         $this->contentRepo->options(["lastModification" => 1680563743]);
-        $this->request->method("user")->willReturn("cmb");
-        $this->request->method("action")->willReturn("do_edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest([
+            "query" => "Extedit&extedit_action=edit",
+            "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
+            "user" => "cmb",
+        ]);
+        $response = $this->sut->handle($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testReportsFailureToSaveContent(): void
     {
-        $_POST = ["extedit_test_text" => "some content", "extedit_test_mtime" => "0"];
         $this->contentRepo->options(["save" => false]);
-        $this->request->method("user")->willReturn("cmb");
-        $this->request->method("action")->willReturn("do_edit");
-        $response = $this->sut->handle($this->request, "cmb", "test");
+        $request = new FakeRequest([
+            "query" => "Extedit&extedit_action=edit",
+            "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
+            "user" => "cmb",
+        ]);
+        $response = $this->sut->handle($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 }

@@ -21,12 +21,23 @@
 
 namespace Extedit\Infra;
 
+use Extedit\Value\Url;
+
 class Request
 {
     /** @codeCoverageIgnore */
     public static function current(): self
     {
         return new self;
+    }
+
+    public function url(): Url
+    {
+        $rest = $this->query();
+        if ($rest !== "") {
+            $rest = "?" . $rest;
+        }
+        return Url::from(CMSIMPLE_URL . $rest);
     }
 
     /** @codeCoverageIgnore */
@@ -43,16 +54,53 @@ class Request
 
     public function action(string $textname): string
     {
-        $action = $_GET["extedit_action"] ?? "";
+        $action = $this->url()->param("extedit_action") ?? "";
         if (!is_string($action)) {
             return "";
         }
         if (!strncmp($action, "do_", strlen("do_"))) {
             return "";
         }
-        if (isset($_POST["extedit_{$textname}_text"])) {
+        $post = $this->post();
+        if (isset($post["extedit_do"]) && $post["extedit_do"] === $textname) {
             return "do_$action";
         }
         return $action;
+    }
+
+    /** @return array{text:string,mtime:string} */
+    public function textPost(): array
+    {
+        return [
+            "text" => $this->trimmedPostString("extedit_text"),
+            "mtime" => $this->trimmedPostString("extedit_mtime"),
+        ];
+    }
+
+    private function trimmedPostString(string $name): string
+    {
+        $post = $this->post();
+        if (!isset($post[$name])) {
+            return "";
+        }
+        if (!is_string($post[$name])) {
+            return "";
+        }
+        return trim($post[$name]);
+    }
+
+    /** @codeCoverageIgnore */
+    protected function query(): string
+    {
+        return $_SERVER["QUERY_STRING"];
+    }
+
+    /**
+     * @return array<string,string|array<string>>
+     * @codeCoverageIgnore
+     */
+    protected function post(): array
+    {
+        return $_POST;
     }
 }

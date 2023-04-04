@@ -27,13 +27,11 @@ class DicTest extends TestCase
 {
     public function setUp(): void
     {
-        global $pth, $cf, $plugin_cf, $plugin_tx, $sn, $su;
+        global $pth, $cf, $plugin_cf, $plugin_tx;
         $pth = ["folder" => ["base" => "", "content" => "", "images" => "", "plugins" => ""]];
         $cf = ["editor" => ["external" => ""]];
         $plugin_cf = ["extedit" => []];
         $plugin_tx = ["extedit" => ["imagepicker_dimensions" => ""]];
-        $sn = "/";
-        $su = "";
     }
 
     public function testMakesFunctionController(): void

@@ -41,13 +41,11 @@ class Dic
 
     public static function makeImagePicker(): ImagePicker
     {
-        global $pth, $cf, $plugin_cf, $plugin_tx, $sn, $su;
+        global $pth, $cf, $plugin_cf, $plugin_tx;
         return new ImagePicker(
             $pth["folder"]["plugins"] . "extedit/",
             $pth["folder"]["base"],
             $pth["folder"]["images"],
-            $sn,
-            $su,
             $plugin_cf["extedit"],
             $plugin_tx["extedit"],
             $cf["editor"]["external"],

@@ -41,12 +41,6 @@ class ImagePicker
     /** @var string */
     private $imageFolder;
 
-    /** @var string */
-    private $scriptName;
-
-    /** @var string */
-    private $selectedUrl;
-
     /** @var array<string,string> */
     private $conf;
 
@@ -75,8 +69,6 @@ class ImagePicker
         string $pluginFolder,
         string $baseFolder,
         string $imageFolder,
-        string $scriptName,
-        string $selectedUrl,
         array $conf,
         array $lang,
         string $configuredEditor,
@@ -87,8 +79,6 @@ class ImagePicker
         $this->pluginFolder = $pluginFolder;
         $this->baseFolder = $baseFolder;
         $this->imageFolder = $imageFolder;
-        $this->scriptName = $scriptName;
-        $this->selectedUrl = $selectedUrl;
         $this->conf = $conf;
         $this->lang = $lang;
         $this->configuredEditor = $configuredEditor;
@@ -135,7 +125,7 @@ class ImagePicker
             'images' => $images,
             'baseFolder' => $this->baseFolder,
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
-            'uploadUrl' => "{$this->scriptName}?{$this->selectedUrl}&extedit_imagepicker=upload",
+            'uploadUrl' => $request->url()->with("extedit_imagepicker", "upload")->relative(),
             'message' => $message,
             'csrfTokenInput' => Html::of($this->csrfProtector->tokenInput()),
         ];
@@ -164,7 +154,7 @@ class ImagePicker
             $message = $this->lang["imagepicker_err_cantwrite"];
             return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
         }
-        return Response::redirect(CMSIMPLE_URL . "?{$this->selectedUrl}&extedit_imagepicker");
+        return Response::redirect($request->url()->with("extedit_imagepicker", "")->absolute());
     }
 
     /**

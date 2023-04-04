@@ -24,7 +24,7 @@ namespace Extedit;
 use ApprovalTests\Approvals;
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\FakeImageRepo;
-use Extedit\Infra\Request;
+use Extedit\Infra\FakeRequest;
 use Extedit\Infra\View;
 use Extedit\Value\Upload;
 use org\bovigo\vfs\vfsStream;
@@ -58,8 +58,6 @@ class ImagePickerTest extends TestCase
             "./",
             "",
             "vfs://root/userfiles/images/",
-            "/",
-            "whatever",
             $conf,
             $lang,
             "tinymce4",
@@ -71,7 +69,7 @@ class ImagePickerTest extends TestCase
 
     public function testShowRendersImagePickerWithNoImages(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest(["query" => "Extedit"]);
         $response = $this->sut->show($request);
         Approvals::verifyHtml($response->output());
     }
@@ -80,22 +78,21 @@ class ImagePickerTest extends TestCase
     {
         $this->imageRepo->save($this->upload(), "vfs://root/userfiles/images/cmb/image.jpg");
         $this->imageRepo->save($this->upload("png", 480, 640), "vfs://root/userfiles/images/cmb/image.png");
-        $request = $this->createStub(Request::class);
-        $request->method("user")->willReturn("cmb");
+        $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
         $response = $this->sut->show($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testSuccessfulUploadRedirects(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest();
         $response = $this->sut->handleUpload($request, $this->upload());
         $this->assertNotNull($response->location());
     }
 
     public function testUploadFailureShowsError(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest(["query" => "Extedit"]);
         $upload = new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1]);
         $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
@@ -103,7 +100,7 @@ class ImagePickerTest extends TestCase
 
     public function testUploadOfNonImageShowsError(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest(["query" => "Extedit"]);
         $upload = new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
         $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
@@ -111,7 +108,7 @@ class ImagePickerTest extends TestCase
 
     public function testUploadBadFilenameShowsError(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest(["query" => "Extedit"]);
         $upload = new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
         $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());
@@ -119,7 +116,7 @@ class ImagePickerTest extends TestCase
 
     public function testMoveUploadFailureShowsError(): void
     {
-        $request = $this->createStub(Request::class);
+        $request = new FakeRequest(["query" => "Extedit"]);
         $upload = new Upload(["name" => "image.jpg", "tmp_name" => "irrelevant", "error" => 0]);
         $response = $this->sut->handleUpload($request, $upload);
         Approvals::verifyHtml($response->output());

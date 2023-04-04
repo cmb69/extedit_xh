@@ -26,6 +26,7 @@ use Extedit\Infra\Request;
 use Extedit\Infra\View;
 use Extedit\Value\Html;
 use Extedit\Value\Response;
+use Extedit\Value\Url;
 
 class FunctionController
 {
@@ -70,7 +71,7 @@ class FunctionController
     private function view(Request $request, string $username, string $textname): Response
     {
         $content = $this->contentRepo->findByName($textname);
-        return Response::create($this->renderView($this->isAuthorizedToEdit($request, $username), $content));
+        return Response::create($this->renderView($request->url(), $this->isAuthorizedToEdit($request, $username), $content));
     }
 
     private function edit(Request $request, string $username, string $textname): Response
@@ -79,7 +80,7 @@ class FunctionController
             return Response::create($this->view->error("err_unauthorized"));
         }
         $this->editor->init();
-        return Response::create($this->renderEditForm($textname, $this->contentRepo->findByName($textname)));
+        return Response::create($this->renderEditForm($request->url(), $textname, $this->contentRepo->findByName($textname)));
     }
 
     /**
@@ -95,48 +96,42 @@ class FunctionController
 
     private function handleSave(Request $request, string $username, string $textname): Response
     {
-        global $su;
-
         if (!$this->isAuthorizedToEdit($request, $username)) {
             return Response::create($this->view->error("err_unauthorized"));
         }
-        $content = $_POST["extedit_{$textname}_text"];
+        $post = $request->textPost();
         $mtime = $this->contentRepo->findLastModification($textname);
-        if ($_POST["extedit_{$textname}_mtime"] < $mtime) {
+        if ($post["mtime"] < $mtime) {
             $this->editor->init();
             return Response::create($this->view->error("err_changed", $textname)
-                . $this->renderEditForm($textname, $content));
+                . $this->renderEditForm($request->url(), $textname, $post["text"]));
         }
-        if (!$this->contentRepo->save($textname, $content)) {
+        if (!$this->contentRepo->save($textname, $post["text"])) {
             $this->editor->init();
             return Response::create($this->view->error("err_save", $this->contentRepo->filename($textname))
-                . $this->renderEditForm($textname, $content));
+                . $this->renderEditForm($request->url(), $textname, $post["text"]));
         }
-        return Response::redirect(CMSIMPLE_URL . "?$su&extedit_action=edit");
+        return Response::redirect($request->url()->with("extedit_action", "edit")->absolute());
     }
 
     /**
      * @return string (X)HTML
      */
-    private function renderEditForm(string $textname, string $content): string
+    private function renderEditForm(Url $url, string $textname, string $content): string
     {
-        global $sn, $su;
-
         return $this->view->render('edit_form', [
-            'editUrl' => "$sn?$su",
-            'textareaName' => "extedit_{$textname}_text",
+            'editUrl' => $url->without("extedit_action")->relative(),
             'content' => $content,
-            'mtimeName' => "extedit_{$textname}_mtime",
             'mtime' => $this->contentRepo->findLastModification($textname),
+            "textname" => $textname,
         ]);
     }
 
-    private function renderView(bool $mayEdit, string $content): string
+    private function renderView(Url $url, bool $mayEdit, string $content): string
     {
-        global $sn, $su;
         return $this->view->render("view", [
             "may_edit" => $mayEdit,
-            "url" => "$sn?$su&extedit_action=edit",
+            "url" => $url->with("extedit_action", "edit")->relative(),
             "content" => Html::of($this->evaluatePlugincall($content)),
         ]);
     }
