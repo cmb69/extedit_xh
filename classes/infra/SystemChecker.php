@@ -19,8 +19,9 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
 
+/** @codeCoverageIgnore */
 class SystemChecker
 {
     public function checkVersion(string $actual, string $minimum): bool

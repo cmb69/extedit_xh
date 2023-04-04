@@ -24,6 +24,7 @@ namespace Extedit;
 use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\ImageRepo;
+use Extedit\Infra\SystemChecker;
 use Extedit\Infra\View;
 
 class Dic
@@ -62,7 +63,7 @@ class Dic
         return new PluginInfo(
             $pth["folder"]["plugins"] . "extedit/",
             $plugin_tx["extedit"],
-            new SystemChecker(),
+            new SystemChecker,
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             self::makeView()
         );

@@ -23,6 +23,7 @@ namespace Extedit;
 
 use ApprovalTests\Approvals;
 use Extedit\Infra\FakeContentRepo;
+use Extedit\Infra\SystemChecker;
 use Extedit\Infra\View;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
