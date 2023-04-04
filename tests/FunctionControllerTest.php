@@ -23,6 +23,7 @@ namespace Extedit;
 
 use ApprovalTests\Approvals;
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\Editor;
 use Extedit\Infra\FakeContentRepo;
 use Extedit\Infra\FakeRequest;
 use Extedit\Infra\View;

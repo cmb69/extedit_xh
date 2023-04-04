@@ -23,6 +23,7 @@ namespace Extedit;
 
 use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\Editor;
 use Extedit\Infra\ImageRepo;
 use Extedit\Infra\SystemChecker;
 use Extedit\Infra\View;

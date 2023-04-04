@@ -19,7 +19,7 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Extedit;
+namespace Extedit\Infra;
 
 class Editor
 {

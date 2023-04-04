@@ -23,6 +23,7 @@ namespace Extedit;
 
 use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
+use Extedit\Infra\Editor;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
 use Extedit\Value\Html;
