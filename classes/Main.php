@@ -19,22 +19,32 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Extedit\Dic;
+namespace Extedit;
+
+use Extedit\Infra\Editor;
 use Extedit\Infra\Request;
-use Extedit\Infra\Responder;
+use Extedit\Value\Response;
 
-if (!defined("CMSIMPLE_XH_VERSION")) {
-    header("HTTP/1.1 403 Forbidden");
-    exit;
-}
-
-const EXTEDIT_VERSION = "2.0-dev";
-
-function extedit(string $username, string $textname = null): string
+class Main
 {
-    return Responder::respond(Dic::makeFunctionController()(Request::current(), $username, $textname));
+    /** @var array<string,string> */
+    private $conf;
+
+    /** @var Editor */
+    private $editor;
+
+    /** @param array<string,string> $conf */
+    public function __construct(array $conf, Editor $editor)
+    {
+        $this->conf = $conf;
+        $this->editor = $editor;
+    }
+
+    public function __invoke(Request $request): Response
+    {
+        if ($this->conf["allow_template"] && $request->action("") === "edit") {
+            $this->editor->init();
+        }
+        return Response::create("");
+    }
 }
-
-Responder::respond(Dic::makeMain()(Request::current()));
-
-Responder::respond(Dic::makeImagePicker()(Request::current()));

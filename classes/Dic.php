@@ -31,6 +31,12 @@ use Extedit\Infra\View;
 
 class Dic
 {
+    public static function makeMain(): Main
+    {
+        global $plugin_cf;
+        return new Main($plugin_cf["extedit"], self::makeEditor());
+    }
+
     public static function makeFunctionController(): FunctionController
     {
         global $pth, $plugin_cf;
@@ -71,7 +77,7 @@ class Dic
         );
     }
 
-    public static function makeEditor(): Editor
+    private static function makeEditor(): Editor
     {
         global $pth, $cf;
         static $instance;

@@ -22,6 +22,11 @@
 use Extedit\Dic;
 use Extedit\Infra\Responder;
 
+if (!defined("CMSIMPLE_XH_VERSION")) {
+    header("HTTP/1.1 403 Forbidden");
+    exit;
+}
+
 /**
  * @var string $admin
  * @var string $o
@@ -29,10 +34,10 @@ use Extedit\Infra\Responder;
 
 XH_registerStandardPluginMenuItems(false);
 
-if (XH_wantsPluginAdministration('extedit')) {
-    $o .= print_plugin_admin('off');
+if (XH_wantsPluginAdministration("extedit")) {
+    $o .= print_plugin_admin("off");
     switch ($admin) {
-        case '':
+        case "":
             $o .= Responder::respond(Dic::makePluginInfo()());
             break;
         default:

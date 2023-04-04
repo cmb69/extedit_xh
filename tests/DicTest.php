@@ -35,6 +35,11 @@ class DicTest extends TestCase
         $plugin_tx = ["extedit" => ["imagepicker_dimensions" => ""]];
     }
 
+    public function testMakesMain(): void
+    {
+        $this->assertInstanceOf(Main::class, Dic::makeMain());
+    }
+
     public function testMakesFunctionController(): void
     {
         $this->assertInstanceOf(FunctionController::class, Dic::makeFunctionController());
@@ -48,10 +53,5 @@ class DicTest extends TestCase
     public function testMakesPluginInfo(): void
     {
         $this->assertInstanceOf(PluginInfo::class, Dic::makePluginInfo());
-    }
-
-    public function testMakesEditor(): void
-    {
-        $this->assertInstanceOf(Editor::class, Dic::makeEditor());
     }
 }
