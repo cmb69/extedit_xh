@@ -169,7 +169,7 @@ class ImagePicker
 
     private function sanitizedName(Request $request, Upload $upload): string
     {
-        $basename = preg_replace('/[^a-z0-9_.-]/i', '', basename($upload->name()));
+        $basename = (string) preg_replace('/[^a-z0-9_.-]/i', '', basename($upload->name()));
         if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
             return "";
         }

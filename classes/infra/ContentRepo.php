@@ -45,12 +45,11 @@ class ContentRepo
         return "{$this->foldername()}{$name}.htm";
     }
 
-    /** @return string|null */
-    public function findByName(string $name)
+    public function findByName(string $name): string
     {
         $filename = "{$this->foldername()}{$name}.htm";
         if (!is_readable($filename)) {
-            return null;
+            return "";
         }
         $content = file_get_contents($filename);
         return (string) $content;

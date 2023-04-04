@@ -36,13 +36,13 @@ class ContentRepoTest extends TestCase
         $this->assertEquals('<p>Some HTML</p>', $content);
     }
 
-    public function testMissingContentReturnsNullButCreatesFolder(): void
+    public function testMissingContentReturnsEmptyStringAndCreatesFolder(): void
     {
         vfsStream::setup('root/');
         $folder = vfsStream::url('root/extedit/');
         $sut = new ContentRepo($folder);
         $content = $sut->findByName('test');
-        $this->assertNull($content);
+        $this->assertEquals("", $content);
         $this->assertFileExists(vfsStream::url('root/extedit/'));
     }
 

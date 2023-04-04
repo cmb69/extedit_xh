@@ -1,5 +1,5 @@
 parameters:
-  level: 7
+  level: 9
   paths:
     - classes/
     - connectors/
@@ -12,4 +12,3 @@ parameters:
     - ../../cmsimple/classes/CSRFProtection.php
     - ../../cmsimple/adminfuncs.php
     - ../../cmsimple/functions.php
-    - ../../cmsimple/utf8.php
