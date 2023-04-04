@@ -35,6 +35,7 @@ class Dic
             $plugin_cf["extedit"],
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             Dic::makeEditor(),
+            new CsrfProtector,
             self::makeView()
         );
     }

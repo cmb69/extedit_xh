@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013-2023 Christoph M. Becker
+ * Copyright 2023 Christoph M. Becker
  *
  * This file is part of Extedit_XH.
  *
@@ -21,15 +21,14 @@
 
 namespace Extedit;
 
-class Session
-{
-    /**
-     * @param mixed $value
-     * @return void
-     */
-    public function set(string $key, $value)
-    {
-        XH_startSession();
-        $_SESSION[$key] = $value;
-    }
+if (!defined("CMSIMPLE_XH_VERSION")) {
+    header("HTTP/1.1 403 Forbidden");
+    exit;
+}
+
+/** @var array{folder:array<string,string>,file:array<string,string>} $pth */
+
+$temp = $pth["folder"]["cmsimple"] . ".sessionname";
+if (is_file($temp) && isset($_COOKIE[file_get_contents($temp)])) {
+    XH_startSession();
 }

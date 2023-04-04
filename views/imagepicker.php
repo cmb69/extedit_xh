@@ -11,7 +11,7 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
  * @var string $editorHook
  * @var string $message
  * @var string $uploadUrl
- * @var string $csrfTokenInput
+ * @var string $token
  */
 ?>
 <!DOCTYPE html>
@@ -75,7 +75,7 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 <?endif?>
     </div>
     <form id="upload" action="<?=$uploadUrl?>" method="POST" enctype="multipart/form-data">
-      <?=$csrfTokenInput?>
+      <input type="hidden" name="extedit_token" value="<?=$token?>">
       <input name="extedit_file" type="file">
       <button><?=$this->text('imagepicker_upload')?></button>
     </form>

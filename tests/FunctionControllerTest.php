@@ -22,6 +22,7 @@
 namespace Extedit;
 
 use ApprovalTests\Approvals;
+use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\FakeContentRepo;
 use Extedit\Infra\FakeRequest;
 use Extedit\Infra\View;
@@ -40,8 +41,11 @@ class FunctionControllerTest extends TestCase
         $this->contentRepo = new FakeContentRepo("vfs://root/content/extedit/");
         $this->contentRepo->save("test", "some content");
         $editor = $this->createStub(Editor::class);
+        $csrfProtector = $this->createStub(CsrfProtector::class);
+        $csrfProtector->method("token")->willReturn("C241yFT+b4BFU7hhp2oY");
+        $csrfProtector->method("check")->willReturn(true);
         $view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
-        $this->sut = new FunctionController($conf, $this->contentRepo, $editor, $view);
+        $this->sut = new FunctionController($conf, $this->contentRepo, $editor, $csrfProtector, $view);
     }
 
     public function testRendersView(): void

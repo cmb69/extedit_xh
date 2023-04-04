@@ -21,33 +21,21 @@
 
 namespace Extedit\Infra;
 
-use XH\CSRFProtection;
-
 class CsrfProtector
 {
-    public function tokenInput(): string
+    public function token(): string
     {
-        return $this->csrfProtection()->tokenInput();
-    }
-
-    /** @return void */
-    public function check()
-    {
-        $this->csrfProtection()->check();
-    }
-
-    /** @return void */
-    public function store()
-    {
-        $this->csrfProtection()->store();
-    }
-
-    protected function csrfProtection(): CSRFProtection
-    {
-        static $instance = null;
-        if ($instance === null) {
-            $instance = new CSRFProtection("extedit_csrf_token");
+        if (isset($_SESSION["extedit_token"])) {
+            return $_SESSION["extedit_token"];
         }
-        return $instance;
+        $token = base64_encode(random_bytes(15));
+        $_SESSION["extedit_token"] = $token;
+        return $token;
+    }
+
+    public function check(): bool
+    {
+        return isset($_SESSION["extedit_token"], $_POST["extedit_token"])
+            && hash_equals($_SESSION["extedit_token"], $_POST["extedit_token"]);
     }
 }

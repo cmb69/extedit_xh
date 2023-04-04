@@ -19,13 +19,10 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Extedit\Session;
-
 function Extedit_Tinymce4_init(): string
 {
     global $sn, $su, $plugin_tx;
 
-    (new Session())->set('tinymce_fb_callback', 'extedit_imagepicker');
     $title = json_encode($plugin_tx['extedit']['imagepicker_title']);
     $url = "$sn?$su&extedit_imagepicker";
     return <<<EOS

@@ -22,6 +22,7 @@
 namespace Extedit;
 
 use Extedit\Infra\ContentRepo;
+use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
 use Extedit\Value\Html;
@@ -39,6 +40,9 @@ class FunctionController
     /** @var Editor */
     private $editor;
 
+    /** @var CsrfProtector */
+    private $csrfProtector;
+
     /** @var View */
     private $view;
 
@@ -47,11 +51,13 @@ class FunctionController
         array $conf,
         ContentRepo $contentRepo,
         Editor $editor,
+        CsrfProtector $csrfProtector,
         View $view
     ) {
         $this->conf = $conf;
         $this->contentRepo = $contentRepo;
         $this->editor = $editor;
+        $this->csrfProtector = $csrfProtector;
         $this->view = $view;
     }
 
@@ -96,7 +102,7 @@ class FunctionController
 
     private function handleSave(Request $request, string $username, string $textname): Response
     {
-        if (!$this->isAuthorizedToEdit($request, $username)) {
+        if (!$this->isAuthorizedToEdit($request, $username) || !$this->csrfProtector->check()) {
             return Response::create($this->view->error("err_unauthorized"));
         }
         $post = $request->textPost();
@@ -124,6 +130,7 @@ class FunctionController
             'content' => $content,
             'mtime' => $this->contentRepo->findLastModification($textname),
             "textname" => $textname,
+            "token" => $this->csrfProtector->token(),
         ]);
     }
 

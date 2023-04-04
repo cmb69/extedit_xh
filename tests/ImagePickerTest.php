@@ -51,9 +51,8 @@ class ImagePickerTest extends TestCase
         $lang = $plugin_tx['extedit'];
         $this->imageRepo = new FakeImageRepo;
         $this->csrfProtector = $this->createStub(CsrfProtector::class);
-        $this->csrfProtector->method('tokenInput')->willReturn(
-            '<input type="hidden" name="xh_csrf_token" value="d20386f8f33ff903ebc3680b93f72704">'
-        );
+        $this->csrfProtector->method("token")->willReturn("C241yFT+b4BFU7hhp2oY");
+        $this->csrfProtector->method("check")->willReturn(true);
         $this->sut = new ImagePicker(
             "./",
             "",

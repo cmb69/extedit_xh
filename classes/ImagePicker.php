@@ -127,15 +127,17 @@ class ImagePicker
             'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
             'uploadUrl' => $request->url()->with("extedit_imagepicker", "upload")->relative(),
             'message' => $message,
-            'csrfTokenInput' => Html::of($this->csrfProtector->tokenInput()),
+            'token' => $this->csrfProtector->token(),
         ];
-        $this->csrfProtector->store();
         return $this->view->render('imagepicker', $data);
     }
 
     public function handleUpload(Request $request, Upload $upload): Response
     {
-        $this->csrfProtector->check();
+        if (!$this->csrfProtector->check()) {
+            return Response::create($this->doShow($request, $this->lang["err_unauthorized"]))
+                ->withContentType("text/html; charset=utf-8");
+        }
         if ($upload->error()) {
             $key = $this->getUploadErrorKey($upload->error());
             $message = $this->lang["imagepicker_err_$key"];
