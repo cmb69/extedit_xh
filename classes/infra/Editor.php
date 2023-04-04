@@ -32,17 +32,22 @@ class Editor
     /** @var string */
     private $configuredEditor;
 
-    public function __construct(string $pluginFolder, string $configuredEditor)
+    /** @var array<string,string> */
+    private $text;
+
+    /** @param array<string,string> $text */
+    public function __construct(string $pluginFolder, string $configuredEditor, array $text)
     {
         $this->pluginFolder = $pluginFolder;
         $this->configuredEditor = $configuredEditor;
+        $this->text = $text;
     }
 
     /**
      * @return void
      * @todo Image picker for other editors
      */
-    public function init()
+    public function init(Request $request)
     {
         global $hjs;
 
@@ -51,13 +56,10 @@ class Editor
         }
         $this->isEditorInitialized = true;
         $editor = $this->configuredEditor;
-        $connector = "{$this->pluginFolder}connectors/$editor.php";
-        $init = "{$this->pluginFolder}inits/$editor.js";
-        if (!(defined('XH_ADM') && XH_ADM) && is_readable($connector) && is_readable($init)) {
-            include_once $connector;
-            $func = "extedit_{$editor}_init";
-            if (is_callable($func)) {
-                $hjs .= $func() . "\n";
+        $init = $this->pluginFolder . "inits/$editor.js";
+        if (!$request->admin() && is_readable($init)) {
+            if (is_callable([$this, $editor])) {
+                $hjs .= $this->$editor($request) . "\n";
                 $config = file_get_contents($init);
             } else {
                 $config = false;
@@ -65,15 +67,52 @@ class Editor
         } else {
             $config = false;
         }
-        $this->doInit($config);
+        $this->initEditor($config);
+    }
+
+    private function tinymce4(Request $request): string
+    {
+        $title = json_encode($this->text["imagepicker_title"]);
+        $url = json_encode($request->url()->with("function", "extedit_imagepicker")->relative());
+        return <<<EOS
+<script>
+function extedit_imagepicker(field_name, url, type, win) {
+    if (type !== "image") {
+        return false;
+    };
+    tinymce.activeEditor.windowManager.open({
+        title: $title,
+        url: $url,
+        width: 640,
+        height: 480,
+        inline: 1,
+    }, {
+        window: win,
+        input: field_name
+    });
+    return false;
+}
+</script>
+EOS;
+    }
+
+    private function ckeditor(Request $request): string
+    {
+        $url = json_encode($request->url()->with("function", "extedit_imagepicker")->relative());
+        return <<<EOS
+<script>
+var extedit_filepicker_url = $url;
+</script>
+EOS;
     }
 
     /**
      * @param string|false $config
      * @return void
+     * @codeCoverageIgnore
      */
-    private function doInit($config)
+    protected function initEditor($config)
     {
-        init_editor(array('xh-editor'), $config);
+        init_editor(["xh-editor"], $config);
     }
 }

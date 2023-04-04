@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013-2023 Christoph M. Becker
+ * Copyright 2023 Christoph M. Becker
  *
  * This file is part of Extedit_XH.
  *
@@ -19,30 +19,19 @@
  * along with Extedit_XH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Extedit_Tinymce4_init(): string
-{
-    global $sn, $su, $plugin_tx;
+namespace Extedit\Infra;
 
-    $title = json_encode($plugin_tx['extedit']['imagepicker_title']);
-    $url = "$sn?$su&function=extedit_imagepicker";
-    return <<<EOS
-<script type="text/javascript">
-function extedit_imagepicker(field_name, url, type, win) {
-    if (type != "image") {
-        return false;
-    };
-    tinymce.activeEditor.windowManager.open({
-        title: $title,
-        url: "$url",
-        width: 640,
-        height: 480,
-        inline: 1,
-    }, {
-        window: win,
-        input: field_name
-    });
-    return false;
-}
-</script>
-EOS;
+class FakeEditor extends Editor
+{
+    private $lastConfig;
+
+    protected function initEditor($config)
+    {
+        $this->lastConfig = $config;
+    }
+
+    public function lastConfig()
+    {
+        return $this->lastConfig;
+    }
 }

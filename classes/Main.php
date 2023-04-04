@@ -43,7 +43,7 @@ class Main
     public function __invoke(Request $request): Response
     {
         if ($this->conf["allow_template"] && $request->action("") === "edit") {
-            $this->editor->init();
+            $this->editor->init($request);
         }
         return Response::null();
     }

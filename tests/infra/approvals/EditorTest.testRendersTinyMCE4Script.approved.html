@@ -1,0 +1,18 @@
+<script>
+function extedit_imagepicker(field_name, url, type, win) {
+    if (type !== "image") {
+        return false;
+    };
+    tinymce.activeEditor.windowManager.open({
+        title: "Choose an Image",
+        url: "\/?&function=extedit_imagepicker",
+        width: 640,
+        height: 480,
+        inline: 1,
+    }, {
+        window: win,
+        input: field_name
+    });
+    return false;
+}
+</script>

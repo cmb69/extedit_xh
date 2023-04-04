@@ -77,10 +77,14 @@ class Dic
 
     private static function makeEditor(): Editor
     {
-        global $pth, $cf;
+        global $pth, $cf, $plugin_tx;
         static $instance;
         if (!isset($instance)) {
-            $instance = new Editor($pth["folder"]["plugins"] . "extedit/", $cf["editor"]["external"]);
+            $instance = new Editor(
+                $pth["folder"]["plugins"] . "extedit/",
+                $cf["editor"]["external"],
+                $plugin_tx["extedit"]
+            );
         }
         return $instance;
     }

@@ -102,7 +102,7 @@ class FunctionController
             return Response::create($this->view->error("err_unauthorized"));
         }
         $content = $this->contentRepo->findByName($textname);
-        $this->editor->init();
+        $this->editor->init($request);
         return Response::create($this->renderEditForm($request->url(), $textname, $content));
     }
 
@@ -115,12 +115,12 @@ class FunctionController
         $mtime = $this->contentRepo->findLastModification($textname);
         if ((int) $post["mtime"] < $mtime) {
             $errors = [["err_changed", $textname]];
-            $this->editor->init();
+            $this->editor->init($request);
             return Response::create($this->renderEditForm($request->url(), $textname, $post["text"], $errors));
         }
         if (!$this->contentRepo->save($textname, $post["text"])) {
             $errors = [["err_save", $this->contentRepo->filename($textname)]];
-            $this->editor->init();
+            $this->editor->init($request);
             return Response::create($this->renderEditForm($request->url(), $textname, $post["text"], $errors));
         }
         return Response::redirect($request->url()->with("extedit_action", "edit")->absolute());
