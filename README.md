@@ -24,8 +24,7 @@ For security reasons the file browser is replaced with a minimal image picker.
 ## Requirements
 
 Extedit_XH is a plugin for CMSimple_XH.
-It requires CMSimple_XH ≥ 1.7.0 and
-PHP ≥ 7.1.0 with the fileinfo and session extensions.
+It requires CMSimple_XH ≥ 1.7.0 and PHP ≥ 7.1.0.
 
 ## Download
 
@@ -167,9 +166,6 @@ Danish translation © 2013 Jens Maegaard
 
 The plugin logo is designed by [Alessandro Rei](http://www.mentalrey.it/).
 Many thanks for publishing this icon under GPL.
-
-This plugin uses free applications icons from [Aha-Soft](http://www.aha-soft.com/).
-Many thanks for making these icons freely available.
 
 Many thanks to the community at the [CMSimple_XH Forum](https://www.cmsimpleforum.com)
 for tips, suggestions and testing. Especially, I like to thank *Ulrich*, *svasti* and

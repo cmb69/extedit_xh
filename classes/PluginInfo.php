@@ -24,14 +24,12 @@ namespace Extedit;
 use Extedit\Infra\ContentRepo;
 use Extedit\Infra\SystemChecker;
 use Extedit\Infra\View;
+use Extedit\Value\Response;
 
 class PluginInfo
 {
     /** @var string */
     private $pluginFolder;
-
-    /** @var array<string,string> */
-    private $lang;
 
     /** @var SystemChecker */
     private $systemChecker;
@@ -42,54 +40,52 @@ class PluginInfo
     /** @var View */
     private $view;
 
-    /** @param array<string,string> $lang */
     public function __construct(
         string $pluginFolder,
-        array $lang,
         SystemChecker $systemChecker,
         ContentRepo $contentRepo,
         View $view
     ) {
         $this->pluginFolder = $pluginFolder;
-        $this->lang = $lang;
         $this->systemChecker = $systemChecker;
         $this->contentRepo = $contentRepo;
         $this->view = $view;
     }
 
-    public function __invoke(): string
+    public function __invoke(): Response
     {
-        foreach (array('ok', 'warn', 'fail') as $state) {
-            $images[$state] = "{$this->pluginFolder}images/$state.png";
-        }
-        $data = [
-            'images' => $images,
-            'checks' => $this->systemChecks(),
-            'version' => EXTEDIT_VERSION,
-        ];
-        return $this->view->render('info', $data);
+        return Response::create($this->view->render("info", [
+            "checks" => $this->systemChecks(),
+            "version" => EXTEDIT_VERSION,
+        ]));
     }
 
-    /**
-     * @return array<string,string>
-     */
-    private function systemChecks()
+    /** @return list<array{class:string,message:string}> */
+    private function systemChecks(): array
     {
-        $phpVersion = '7.1.0';
-        $checks = array();
-        $checks[sprintf($this->lang['syscheck_phpversion'], $phpVersion)]
-            = $this->systemChecker->checkVersion(PHP_VERSION, $phpVersion) ? 'ok' : 'fail';
-        foreach (array('fileinfo', 'session') as $ext) {
-            $checks[sprintf($this->lang['syscheck_extension'], $ext)]
-                = $this->systemChecker->checkExtension($ext) ? 'ok' : 'fail';
-        }
-        foreach (array('config/', 'languages/') as $folder) {
+        $checks = [];
+        $phpVersion = "7.1.0";
+        $state = $this->systemChecker->checkVersion(PHP_VERSION, $phpVersion);
+        $checks[] = [
+            "class" => "xh_" . ($state ? "success" : "fail"),
+            "message" => $this->view->plain("syscheck_phpversion" . ($state ? "" : "_no"), $phpVersion),
+        ];
+        $xhVersion = "1.7.0";
+        $state = $this->systemChecker->checkVersion(CMSIMPLE_XH_VERSION, "CMSimple_XH $xhVersion");
+        $checks[] = [
+            "class" => "xh_" . ($state ? "success" : "fail"),
+            "message" => $this->view->plain("syscheck_xhversion" . ($state ? "" : "_no"), $xhVersion),
+        ];
+        foreach (["config/", "languages/"] as $folder) {
             $folders[] = $this->pluginFolder . $folder;
         }
         $folders[] = $this->contentRepo->foldername();
         foreach ($folders as $folder) {
-            $checks[sprintf($this->lang['syscheck_writable'], $folder)]
-                = $this->systemChecker->checkWritability($folder) ? 'ok' : 'warn';
+            $state = $this->systemChecker->checkWritability($folder);
+            $checks[] = [
+                "class" => "xh_" . ($state ? "success" : "warning"),
+                "message" => $this->view->plain("syscheck_writable" . ($state ? "" : "_no"), $folder),
+            ];
         }
         return $checks;
     }

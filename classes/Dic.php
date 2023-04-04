@@ -60,10 +60,9 @@ class Dic
 
     public static function makePluginInfo(): PluginInfo
     {
-        global $pth, $plugin_tx;
+        global $pth;
         return new PluginInfo(
             $pth["folder"]["plugins"] . "extedit/",
-            $plugin_tx["extedit"],
             new SystemChecker,
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             self::makeView()

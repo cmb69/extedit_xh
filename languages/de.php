@@ -28,9 +28,12 @@ $plugin_tx['extedit']['synopsis_textname']="%%TEXTNAME%%";
 $plugin_tx['extedit']['synopsis_textname_desc']="Der eindeutige Name des \"Extedits\". Lassen Sie diesen Parameter aus, um die Überschrift der enthaltenden Seite zu verwenden.";
 
 $plugin_tx['extedit']['syscheck']="Systemprüfung";
-$plugin_tx['extedit']['syscheck_phpversion']="PHP-Version ≥ %s";
-$plugin_tx['extedit']['syscheck_extension']="Erweiterung '%s' geladen";
-$plugin_tx['extedit']['syscheck_writable']="Ordner '%s' beschreibbar";
+$plugin_tx['extedit']['syscheck_phpversion']="PHP Version ist wenigstens %s";
+$plugin_tx['extedit']['syscheck_phpversion_no']="PHP Version ist nicht wenigstens %s";
+$plugin_tx['extedit']['syscheck_xhversion']="CMSimple_XH Version ist wenigstens %s";
+$plugin_tx['extedit']['syscheck_xhversion_no']="CMSimple_XH Version ist nicht wenigstens %s";
+$plugin_tx['extedit']['syscheck_writable']="Ordner '%s' ist beschreibbar";
+$plugin_tx['extedit']['syscheck_writable_no']="Ordner '%s' ist nicht beschreibbar";
 
 $plugin_tx['extedit']['cf_images_subfolder']="Soll der Editor nur Zugriff auf seinen eigenen Bilderordner haben?";
 $plugin_tx['extedit']['cf_images_extensions']="Eine durch Komma getrennte Liste von erlaubten Dateinamen-Erweiterungen für den Upload.";

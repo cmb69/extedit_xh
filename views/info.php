@@ -7,8 +7,7 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 /**
  * @var View $this
  * @var string $version
- * @var array<string,string> $checks
- * @var array<string,string> $images
+ * @var list<array{class:string,message:string}> $checks
  */
 ?>
 <!-- extedit info -->
@@ -24,11 +23,6 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
   <span><?=$this->text('synopsis_textname_desc')?></span>
 </p>
 <h2><?=$this->text('syscheck');?></h2>
-<ul style="list-style: none">
-<?foreach ($checks as $check => $state):?>
-  <li>
-    <img src="<?=$images[$state]?>" alt="<?=$state?>" style="padding-right: 1em"/>
-    <?=$check?>
-  </li>
+<?foreach ($checks as ["class" => $class, "message" => $message]):?>
+  <p class="<?=$class?>"><?=$message?></p>
 <?endforeach?>
-</ul>

@@ -37,12 +37,11 @@ class PluginInfoTest extends TestCase
         $lang = $plugin_tx['extedit'];
         $systemChecker = $this->createStub(SystemChecker::class);
         $systemChecker->method('checkVersion')->willReturn(true);
-        $systemChecker->method('checkExtension')->willReturn(true);
         $systemChecker->method('checkWritability')->willReturn(true);
         $contentRepo = new FakeContentRepo("vfs://root/content/extedit/");
         $view = new View("./views/", $lang);
-        $sut = new PluginInfo("./", $lang, $systemChecker, $contentRepo, $view);
+        $sut = new PluginInfo("./", $systemChecker, $contentRepo, $view);
         $response = $sut();
-        Approvals::verifyHtml($response);
+        Approvals::verifyHtml($response->output());
     }
 }

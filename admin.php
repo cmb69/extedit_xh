@@ -20,6 +20,7 @@
  */
 
 use Extedit\Dic;
+use Extedit\Infra\Responder;
 
 /**
  * @var string $admin
@@ -32,7 +33,7 @@ if (XH_wantsPluginAdministration('extedit')) {
     $o .= print_plugin_admin('off');
     switch ($admin) {
         case '':
-            $o .= Dic::makePluginInfo()();
+            $o .= Responder::respond(Dic::makePluginInfo()());
             break;
         default:
             $o .= plugin_admin_common();

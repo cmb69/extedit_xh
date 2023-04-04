@@ -27,8 +27,7 @@ ersetzt.
 ## Voraussetzungen
 
 Extedit_XH ist ein Plugin für CMSimple_XH.
-Es benötigt CMSimple_XH ≥ 1.7.0 und
-PHP ≥ 7.1.0 mit den fileinfo und session Extensions.
+Es benötigt CMSimple_XH ≥ 1.7.0 und PHP ≥ 7.1.0.
 
 ## Download
 
@@ -177,9 +176,6 @@ Dänische Übersetzung © 2013 Jens Maegaard
 
 Das Pluginlogo wurde von [Alessandro Rei](http://www.mentalrey.it/) gestaltet.
 Vielen Dank für die Veröffentlichung des Icons unter GPL.
-
-Dieses Plugin verwendet freie Anwendungs-Icons von [Aha-Soft](http://www.aha-soft.com/).
-Vielen Dank für die freie Verwendbarkeit dieser Icons.
 
 Vielen Dank an die Gemeinde im [CMSimple_XH-Forum](http://www.cmsimpleforum.com/)
 für Hinweise, Vorschläge und das Testen.

@@ -14,11 +14,6 @@ $plugin_tx['extedit']['synopsis_username_desc']="Navnet på Register_XH eller Me
 $plugin_tx['extedit']['synopsis_textname']="%%TEKSTNAVN%%";
 $plugin_tx['extedit']['synopsis_textname_desc']="Navnet på extedit. Navnet anvendes som Heading på siden.";
 
-$plugin_tx['extedit']['syscheck']="System check";
-$plugin_tx['extedit']['syscheck_phpversion']="PHP version ≥ %s";
-$plugin_tx['extedit']['syscheck_extension']="Extension '%s' loaded";
-$plugin_tx['extedit']['syscheck_writable']="Folder '%s' writable";
-
 $plugin_tx['extedit']['cf_images_subfolder']="Hvis editoeren skal have adgang til den normale billedemappe (\"0\") eller sin egen undermappe (\"1\").";
 $plugin_tx['extedit']['cf_allow_scripting']="Tillad at bruge pliuins i exiedit:xh': \"1\" (ja) eller \"0\" (nej).";
 
