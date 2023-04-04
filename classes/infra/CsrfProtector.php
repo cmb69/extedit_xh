@@ -21,6 +21,7 @@
 
 namespace Extedit\Infra;
 
+/** @codeCoverageIgnore */
 class CsrfProtector
 {
     public function token(): string

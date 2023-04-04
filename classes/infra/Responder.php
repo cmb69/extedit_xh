@@ -23,6 +23,7 @@ namespace Extedit\Infra;
 
 use Extedit\Value\Response;
 
+/** @codeCoverageIgnore */
 class Responder
 {
     /** @return string|never */
