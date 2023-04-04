@@ -73,6 +73,7 @@ class ImagePickerTest extends TestCase
     {
         $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -82,6 +83,7 @@ class ImagePickerTest extends TestCase
         $this->imageRepo->save($this->upload("png", 480, 640), "vfs://root/userfiles/images/cmb/image.png");
         $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -98,6 +100,7 @@ class ImagePickerTest extends TestCase
         $this->csrfProtector->method("check")->willReturn(false);
         $request = new FakeRequest(["method" => "post", "user" => "cmb", "upload" => $this->upload()]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -106,6 +109,7 @@ class ImagePickerTest extends TestCase
         $this->csrfProtector->method("check")->willReturn(true);
         $request = new FakeRequest(["method" => "post", "user" => "cmb"]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -119,6 +123,7 @@ class ImagePickerTest extends TestCase
             "upload" => new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1])
         ]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -132,6 +137,7 @@ class ImagePickerTest extends TestCase
             "upload" => new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]),
         ]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -145,6 +151,7 @@ class ImagePickerTest extends TestCase
             "upload" => new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]),
         ]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
@@ -158,6 +165,7 @@ class ImagePickerTest extends TestCase
             "upload" => new Upload(["name" => "image.jpg", "tmp_name" => "irrelevant", "error" => 0]),
         ]);
         $response = $this->sut()($request);
+        $this->assertEquals("text/html; charset=utf-8", $response->contentType());
         Approvals::verifyHtml($response->output());
     }
 
