@@ -32,14 +32,14 @@ const EXTEDIT_VERSION = '2.0-dev';
  */
 function extedit($username, $textname = null)
 {
-    return Dic::makeFunctionController()->handle(Request::current(), $username, $textname);
+    return Responder::respond(Dic::makeFunctionController()->handle(Request::current(), $username, $textname));
 }
 
 /**
  * @var array<string,array<string,string>> $plugin_cf
  */
 
-if ($plugin_cf['extedit']['allow_template'] && ($_GET['extedit_mode'] ?? null) === 'edit') {
+if ($plugin_cf['extedit']['allow_template'] && ($_GET['extedit_action'] ?? null) === 'edit') {
     Dic::makeEditor()->init();
 }
 

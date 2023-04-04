@@ -40,4 +40,19 @@ class Request
     {
         return $_SESSION["username"] ?? "";
     }
+
+    public function action(string $textname): string
+    {
+        $action = $_GET["extedit_action"] ?? "";
+        if (!is_string($action)) {
+            return "";
+        }
+        if (!strncmp($action, "do_", strlen("do_"))) {
+            return "";
+        }
+        if (isset($_POST["extedit_{$textname}_text"])) {
+            return "do_$action";
+        }
+        return $action;
+    }
 }

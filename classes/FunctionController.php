@@ -22,16 +22,12 @@
 namespace Extedit;
 
 use Extedit\Infra\Request;
-use Extedit\Infra\Responder;
 use Extedit\Value\Response;
 
 class FunctionController
 {
     /** @var array<string,string> */
     private $conf;
-
-    /** @var array<string,string> */
-    private $lang;
 
     /** @var ContentRepo */
     private $contentRepo;
@@ -42,53 +38,45 @@ class FunctionController
     /** @var View */
     private $view;
 
-    /**
-     * @var string
-     */
-    private $content;
-
-    /**
-     * @param array<string,string> $conf
-     * @param array<string,string> $lang
-     */
+    /** @param array<string,string> $conf */
     public function __construct(
         array $conf,
-        array $lang,
         ContentRepo $contentRepo,
         Editor $editor,
         View $view
     ) {
         $this->conf = $conf;
-        $this->lang = $lang;
         $this->contentRepo = $contentRepo;
         $this->editor = $editor;
         $this->view = $view;
     }
 
-    /**
-     * @return string (X)HTML
-     */
-    public function handle(Request $request, string $username, ?string $textname)
+    public function handle(Request $request, string $username, ?string $textname): Response
     {
         $textname = $this->sanitizeTextname($textname);
-        $o = '';
-        if ($this->isAuthorizedToEdit($request, $username)) {
-            if (isset($_POST["extedit_{$textname}_text"])) {
-                $o .= Responder::respond($this->handleSave($textname));
-            } else {
-                $this->content = $this->contentRepo->findByName($textname);
-            }
-            if ($this->isEditModeRequested()) {
-                $o .= $this->renderEditForm($textname);
-                $this->editor->init();
-            } else {
-                $o .= $this->getEditLink() . $this->evaluatePlugincall();
-            }
-        } else {
-            $this->content = $this->contentRepo->findByName($textname);
-            $o .= $this->evaluatePlugincall();
+        switch ($request->action($textname)) {
+            default:
+                return $this->view($request, $username, $textname);
+            case "edit":
+                return $this->edit($request, $username, $textname);
+            case "do_edit":
+                return $this->handleSave($request, $username, $textname);
         }
-        return $o;
+    }
+
+    private function view(Request $request, string $username, string $textname): Response
+    {
+        $content = $this->contentRepo->findByName($textname);
+        return Response::create($this->renderView($this->isAuthorizedToEdit($request, $username), $content));
+    }
+
+    private function edit(Request $request, string $username, string $textname): Response
+    {
+        if (!$this->isAuthorizedToEdit($request, $username)) {
+            return Response::create($this->view->error("err_unauthorized"));
+        }
+        $this->editor->init();
+        return Response::create($this->renderEditForm($textname, $this->contentRepo->findByName($textname)));
     }
 
     /**
@@ -102,55 +90,52 @@ class FunctionController
             || in_array($request->user(), explode(',', $username));
     }
 
-    private function handleSave(string $textname): Response
+    private function handleSave(Request $request, string $username, string $textname): Response
     {
         global $su;
 
-        $this->content = $_POST["extedit_{$textname}_text"];
-        $mtime = $this->contentRepo->findLastModification($textname);
-        if ($_POST["extedit_{$textname}_mtime"] >= $mtime) {
-            if ($this->contentRepo->save($textname, $this->content)) {
-                return Response::redirect(CMSIMPLE_URL . "?$su&extedit_mode=edit");
-            } else {
-                return Response::create($this->view->error("err_save", $this->contentRepo->filename($textname)));
-            }
-        } else {
-            return Response::create($this->view->error("err_changed", $textname));
+        if (!$this->isAuthorizedToEdit($request, $username)) {
+            return Response::create($this->view->error("err_unauthorized"));
         }
+        $content = $_POST["extedit_{$textname}_text"];
+        $mtime = $this->contentRepo->findLastModification($textname);
+        if ($_POST["extedit_{$textname}_mtime"] < $mtime) {
+            $this->editor->init();
+            return Response::create($this->view->error("err_changed", $textname)
+                . $this->renderEditForm($textname, $content));
+        }
+        if (!$this->contentRepo->save($textname, $content)) {
+            $this->editor->init();
+            return Response::create($this->view->error("err_save", $this->contentRepo->filename($textname))
+                . $this->renderEditForm($textname, $content));
+        }
+        return Response::redirect(CMSIMPLE_URL . "?$su&extedit_action=edit");
     }
 
     /**
      * @return string (X)HTML
      */
-    private function renderEditForm(string $textname): string
+    private function renderEditForm(string $textname, string $content): string
     {
         global $sn, $su;
 
         return $this->view->render('edit_form', [
             'editUrl' => "$sn?$su",
             'textareaName' => "extedit_{$textname}_text",
-            'content' => $this->content,
+            'content' => $content,
             'mtimeName' => "extedit_{$textname}_mtime",
             'mtime' => $this->contentRepo->findLastModification($textname),
         ]);
     }
 
-    /**
-     * @return bool
-     */
-    private function isEditModeRequested()
-    {
-        return isset($_GET['extedit_mode']) && $_GET['extedit_mode'] === 'edit';
-    }
-
-    /**
-     * @return string (X)HTML
-     */
-    private function getEditLink()
+    private function renderView(bool $mayEdit, string $content): string
     {
         global $sn, $su;
-
-        return "<a href=\"$sn?$su&amp;extedit_mode=edit\">" . $this->lang['mode_edit'] . '</a>';
+        return $this->view->render("view", [
+            "may_edit" => $mayEdit,
+            "url" => "$sn?$su&extedit_action=edit",
+            "content" => $this->evaluatePlugincall($content),
+        ]);
     }
 
     private function sanitizeTextname(?string $textname): string
@@ -167,11 +152,11 @@ class FunctionController
     /**
      * @return string
      */
-    private function evaluatePlugincall()
+    private function evaluatePlugincall(string $content)
     {
         if ($this->conf['allow_scripting']) {
-            return evaluate_plugincall($this->content);
+            return evaluate_plugincall($content);
         }
-        return $this->content;
+        return $content;
     }
 }

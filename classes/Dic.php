@@ -30,7 +30,6 @@ class Dic
         global $pth, $plugin_cf, $plugin_tx;
         return new FunctionController(
             $plugin_cf["extedit"],
-            $plugin_tx["extedit"],
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             Dic::makeEditor(),
             new View($pth["folder"]["plugins"] . "extedit/views/", $plugin_tx["extedit"])

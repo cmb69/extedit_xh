@@ -5,6 +5,7 @@ $plugin_tx['extedit']['mode_view']="View";
 
 $plugin_tx['extedit']['err_changed']="The content of '%s' was changed in the meantime! Save again to overwrite the previous changes.";
 $plugin_tx['extedit']['err_save']="The file %s couldn't be saved.";
+$plugin_tx['extedit']['err_unauthorized']="You are not authorized for this action!";
 
 $plugin_tx['extedit']['imagepicker_title']="Choose an Image";
 $plugin_tx['extedit']['imagepicker_empty']="There are no images in the image folder.";
