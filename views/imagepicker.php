@@ -9,7 +9,7 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
  * @var list<array{title:string,filename:string}> $images
  * @var string $baseFolder
  * @var string $editorHook
- * @var string $message
+ * @var string|null $error
  * @var string $uploadUrl
  * @var string $token
  */
@@ -64,7 +64,9 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
     <script type="text/javascript" src="<?=$editorHook?>"></script>
   </head>
   <body onload="init();">
-    <div id="message"><p><?=$message?></p></div>
+<?if (isset($error)):?>
+    <div id="message"><p><?=$this->text($error)?></p></div>
+<?endif?>
     <div id="imagepicker">
 <?if (empty($images)):?>
       <p><?=$this->text('imagepicker_empty')?></p>

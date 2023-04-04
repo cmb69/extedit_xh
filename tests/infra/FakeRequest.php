@@ -21,6 +21,8 @@
 
 namespace Extedit\Infra;
 
+use Extedit\Value\Upload;
+
 class FakeRequest extends Request
 {
     private $options;
@@ -28,6 +30,11 @@ class FakeRequest extends Request
     public function __construct(array $options = [])
     {
         $this->options = $options;
+    }
+
+    public function method(): string
+    {
+        return $this->options["method"] ?? "get";
     }
 
     public function admin(): bool
@@ -43,6 +50,11 @@ class FakeRequest extends Request
     public function s(): int
     {
         return $this->options["s"] ?? -1;
+    }
+
+    public function upload(): ?Upload
+    {
+        return $this->options["upload"] ?? null;
     }
 
     protected function query(): string

@@ -30,6 +30,11 @@ class Response
         return $that;
     }
 
+    public static function null(): self
+    {
+        return new self;
+    }
+
     public static function redirect(string $location): self
     {
         $that = new self;

@@ -21,6 +21,7 @@
 
 namespace Extedit\Infra;
 
+use Extedit\Value\Upload;
 use Extedit\Value\Url;
 
 class Request
@@ -38,6 +39,12 @@ class Request
             $rest = "?" . $rest;
         }
         return Url::from(CMSIMPLE_URL . $rest);
+    }
+
+    /** @codeCoverageIgnore */
+    public function method(): string
+    {
+        return strtolower($_SERVER["REQUEST_METHOD"]);
     }
 
     /** @codeCoverageIgnore */
@@ -94,6 +101,14 @@ class Request
             return "";
         }
         return trim($post[$name]);
+    }
+
+    public function upload(): ?Upload
+    {
+        if (!isset($_FILES["extedit_file"])) {
+            return null;
+        }
+        return new Upload($_FILES["extedit_file"]);
     }
 
     /** @codeCoverageIgnore */

@@ -21,7 +21,6 @@
 
 namespace Extedit;
 
-use Extedit\Infra\Editor;
 use PHPUnit\Framework\TestCase;
 
 class DicTest extends TestCase

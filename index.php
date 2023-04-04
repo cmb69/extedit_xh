@@ -35,6 +35,9 @@ function extedit(string $username, string $textname = null): string
     return Responder::respond(Dic::makeFunctionController()(Request::current(), $username, $textname));
 }
 
-Responder::respond(Dic::makeMain()(Request::current()));
+/** @var string $function */
+if ($function === "extedit_imagepicker") {
+    Responder::respond(Dic::makeImagePicker()(Request::current()));
+}
 
-Responder::respond(Dic::makeImagePicker()(Request::current()));
+Responder::respond(Dic::makeMain()(Request::current()));

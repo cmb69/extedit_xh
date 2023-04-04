@@ -28,48 +28,51 @@ use Extedit\Infra\FakeRequest;
 use Extedit\Infra\View;
 use Extedit\Value\Upload;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImagePickerTest extends TestCase
 {
-    /** @var ImagePicker */
-    private $sut;
-
+    private $conf;
     private $imageRepo;
-
-    /** @var CsrfProtector&MockObject */
     private $csrfProtector;
+    private $view;
 
     public function setUp(): void
     {
         vfsStream::setup("root");
         mkdir("vfs://root/userfiles/images/cmb", 0777, true);
         $plugin_cf = XH_includeVar("./config/config.php", 'plugin_cf');
-        $conf = $plugin_cf['extedit'];
-        $plugin_tx = XH_includeVar("./languages/en.php", 'plugin_tx');
-        $lang = $plugin_tx['extedit'];
+        $this->conf = $plugin_cf['extedit'] + ["editor_external" => "tinymce4"];
         $this->imageRepo = new FakeImageRepo;
         $this->csrfProtector = $this->createStub(CsrfProtector::class);
         $this->csrfProtector->method("token")->willReturn("C241yFT+b4BFU7hhp2oY");
-        $this->csrfProtector->method("check")->willReturn(true);
-        $this->sut = new ImagePicker(
+        $this->view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
+    }
+
+    private function sut(): ImagePicker
+    {
+        return new ImagePicker(
             "./",
             "",
             "vfs://root/userfiles/images/",
-            $conf,
-            $lang,
-            "tinymce4",
+            $this->conf,
             $this->imageRepo,
             $this->csrfProtector,
-            new View("./views/", $lang)
+            $this->view
         );
+    }
+
+    public function testVisitorsCannotAccessImagePicker(): void
+    {
+        $request = new FakeRequest(["query" => "Extedit"]);
+        $response = $this->sut()($request);
+        $this->assertEquals("", $response->output());
     }
 
     public function testShowRendersImagePickerWithNoImages(): void
     {
-        $request = new FakeRequest(["query" => "Extedit"]);
-        $response = $this->sut->show($request);
+        $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 
@@ -78,46 +81,83 @@ class ImagePickerTest extends TestCase
         $this->imageRepo->save($this->upload(), "vfs://root/userfiles/images/cmb/image.jpg");
         $this->imageRepo->save($this->upload("png", 480, 640), "vfs://root/userfiles/images/cmb/image.png");
         $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
-        $response = $this->sut->show($request);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testSuccessfulUploadRedirects(): void
     {
-        $request = new FakeRequest();
-        $response = $this->sut->handleUpload($request, $this->upload());
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest(["method" => "post", "user" => "cmb", "upload" => $this->upload()]);
+        $response = $this->sut()($request);
         $this->assertNotNull($response->location());
+    }
+
+    public function testReportsFailedCsrfCheck(): void
+    {
+        $this->csrfProtector->method("check")->willReturn(false);
+        $request = new FakeRequest(["method" => "post", "user" => "cmb", "upload" => $this->upload()]);
+        $response = $this->sut()($request);
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testReportsMissingUpload(): void
+    {
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest(["method" => "post", "user" => "cmb"]);
+        $response = $this->sut()($request);
+        Approvals::verifyHtml($response->output());
     }
 
     public function testUploadFailureShowsError(): void
     {
-        $request = new FakeRequest(["query" => "Extedit"]);
-        $upload = new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1]);
-        $response = $this->sut->handleUpload($request, $upload);
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest([
+            "method" => "post",
+            "user" => "cmb",
+            "query" => "Extedit",
+            "upload" => new Upload(['name' => "image.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 1])
+        ]);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testUploadOfNonImageShowsError(): void
     {
-        $request = new FakeRequest(["query" => "Extedit"]);
-        $upload = new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
-        $response = $this->sut->handleUpload($request, $upload);
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest([
+            "method" => "post",
+            "user" => "cmb",
+            "query" => "Extedit",
+            "upload" => new Upload(['name' => "image.txt", 'tmp_name' => "does_not_really_matter", 'error' => 0]),
+        ]);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testUploadBadFilenameShowsError(): void
     {
-        $request = new FakeRequest(["query" => "Extedit"]);
-        $upload = new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]);
-        $response = $this->sut->handleUpload($request, $upload);
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest([
+            "method" => "post",
+            "user" => "cmb",
+            "query" => "Extedit",
+            "upload" => new Upload(['name' => "äöü.jpg", 'tmp_name' => "does_not_really_matter", 'error' => 0]),
+        ]);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 
     public function testMoveUploadFailureShowsError(): void
     {
-        $request = new FakeRequest(["query" => "Extedit"]);
-        $upload = new Upload(["name" => "image.jpg", "tmp_name" => "irrelevant", "error" => 0]);
-        $response = $this->sut->handleUpload($request, $upload);
+        $this->csrfProtector->method("check")->willReturn(true);
+        $request = new FakeRequest([
+            "method" => "post",
+            "user" => "cmb",
+            "query" => "Extedit",
+            "upload" => new Upload(["name" => "image.jpg", "tmp_name" => "irrelevant", "error" => 0]),
+        ]);
+        $response = $this->sut()($request);
         Approvals::verifyHtml($response->output());
     }
 

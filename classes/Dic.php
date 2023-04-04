@@ -52,14 +52,12 @@ class Dic
 
     public static function makeImagePicker(): ImagePicker
     {
-        global $pth, $cf, $plugin_cf, $plugin_tx;
+        global $pth, $cf, $plugin_cf;
         return new ImagePicker(
             $pth["folder"]["plugins"] . "extedit/",
             $pth["folder"]["base"],
             $pth["folder"]["images"],
-            $plugin_cf["extedit"],
-            $plugin_tx["extedit"],
-            $cf["editor"]["external"],
+            $plugin_cf["extedit"] + ["editor_external" => $cf["editor"]["external"]],
             new ImageRepo,
             new CsrfProtector,
             self::makeView()

@@ -44,34 +44,21 @@ class ImagePicker
     /** @var array<string,string> */
     private $conf;
 
-    /** @var array<string,string> */
-    private $lang;
-
-    /** @var string */
-    private $configuredEditor;
-
     /** @var ImageRepo */
     private $imageRepo;
 
-    /**
-     * @var CsrfProtector
-     */
+    /** @var CsrfProtector */
     private $csrfProtector;
 
     /** @var View */
     private $view;
 
-    /**
-     * @param array<string,string> $conf
-     * @param array<string,string> $lang
-     */
+    /** @param array<string,string> $conf */
     public function __construct(
         string $pluginFolder,
         string $baseFolder,
         string $imageFolder,
         array $conf,
-        array $lang,
-        string $configuredEditor,
         ImageRepo $imageRepo,
         CsrfProtector $csrfProtector,
         View $view
@@ -80,8 +67,6 @@ class ImagePicker
         $this->baseFolder = $baseFolder;
         $this->imageFolder = $imageFolder;
         $this->conf = $conf;
-        $this->lang = $lang;
-        $this->configuredEditor = $configuredEditor;
         $this->imageRepo = $imageRepo;
         $this->csrfProtector = $csrfProtector;
         $this->view = $view;
@@ -89,29 +74,41 @@ class ImagePicker
 
     public function __invoke(Request $request): Response
     {
-        if (isset($_GET['extedit_imagepicker']) && $request->user() !== "") {
-            if ($_GET['extedit_imagepicker'] !== "upload") {
-                return $this->show($request);
-            }
-            if ($_GET['extedit_imagepicker'] === "upload") {
-                return $this->handleUpload($request, new Upload($_FILES['extedit_file']));
-            }
+        if ($request->user() === "") {
+            return Response::null();
         }
-        return Response::create("");
+        switch ($request->method()) {
+            default:
+                return $this->show($request);
+            case "post":
+                return $this->upload($request);
+        }
     }
 
-    public function show(Request $request): Response
+    private function show(Request $request): Response
     {
-        return Response::create($this->doShow($request, ""))->withContentType("text/html; charset=utf-8");
+        return Response::create($this->render($request))->withContentType("text/html; charset=utf-8");
+    }
+
+    private function render(Request $request, ?string $error = null): string
+    {
+        return $this->view->render("imagepicker", [
+            "images" => $this->imageRecords($this->imageRepo->findAll($this->imageFolder($request))),
+            "baseFolder" => $this->baseFolder,
+            "editorHook" => $this->pluginFolder . "connectors/" . $this->conf["editor_external"] . ".js",
+            "uploadUrl" => $request->url()->with("function", "extedit_imagepicker")->relative(),
+            "error" => $error,
+            "token" => $this->csrfProtector->token(),
+        ]);
     }
 
     /**
-     * @param string $message
-     * @return string
+     * @param list<Image> $images
+     * @return list<array{title:string,filename:string}>
      */
-    private function doShow(Request $request, $message)
+    private function imageRecords(array $images): array
     {
-        $images = array_map(function (Image $image) {
+        return array_map(function (Image $image) {
             $title = basename($image->filename());
             if ($image->width() && $image->height()) {
                 $title .= $this->view->plain("imagepicker_dimensions", $image->width(), $image->height());
@@ -120,98 +117,58 @@ class ImagePicker
                 "title" => $title,
                 "filename" => $image->filename(),
             ];
-        }, $this->imageRepo->findAll($this->getImageFolder($request)));
-        $data = [
-            'images' => $images,
-            'baseFolder' => $this->baseFolder,
-            'editorHook' => "{$this->pluginFolder}connectors/{$this->configuredEditor}.js",
-            'uploadUrl' => $request->url()->with("extedit_imagepicker", "upload")->relative(),
-            'message' => $message,
-            'token' => $this->csrfProtector->token(),
-        ];
-        return $this->view->render('imagepicker', $data);
+        }, $images);
     }
 
-    public function handleUpload(Request $request, Upload $upload): Response
+    private function upload(Request $request): Response
     {
         if (!$this->csrfProtector->check()) {
-            return Response::create($this->doShow($request, $this->lang["err_unauthorized"]))
+            return Response::create($this->render($request, "err_unauthorized"))
+                ->withContentType("text/html; charset=utf-8");
+        }
+        if (($upload = $request->upload()) === null) {
+            return Response::create($this->render($request, "imagepicker_err_nofile"))
                 ->withContentType("text/html; charset=utf-8");
         }
         if ($upload->error()) {
-            $key = $this->getUploadErrorKey($upload->error());
-            $message = $this->lang["imagepicker_err_$key"];
-            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
+            return Response::create($this->render($request, "imagepicker_err_" . $upload->error()))
+                ->withContentType("text/html; charset=utf-8");
         }
         if (!$this->hasAllowedExtension($upload->name())) {
-            $message = $this->lang["imagepicker_err_mimetype"];
-            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
+            return Response::create($this->render($request, "imagepicker_err_mimetype"))
+                ->withContentType("text/html; charset=utf-8");
         }
         $destination = $this->sanitizedName($request, $upload);
         if ($destination === "") {
-            $message = $this->lang["imagepicker_err_cantwrite"];
-            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
+            return Response::create($this->render($request, "imagepicker_err_save"))
+                ->withContentType("text/html; charset=utf-8");
         }
         if (!$this->imageRepo->save($upload, $destination)) {
-            $message = $this->lang["imagepicker_err_cantwrite"];
-            return Response::create($this->doShow($request, $message))->withContentType("text/html; charset=utf-8");
+            return Response::create($this->render($request, "imagepicker_err_save"))
+                ->withContentType("text/html; charset=utf-8");
         }
-        return Response::redirect($request->url()->with("extedit_imagepicker", "")->absolute());
+        return Response::redirect($request->url()->with("function", "extedit_imagepicker")->absolute());
     }
 
-    /**
-     * @param string $filename
-     * @return bool
-     */
-    private function hasAllowedExtension($filename)
+    private function hasAllowedExtension(string $filename): bool
     {
-        $allowedExtensions = array_map('trim', explode(',', $this->conf['images_extensions']));
+        $allowedExtensions = array_map("trim", explode(",", $this->conf["images_extensions"]));
         return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
     }
 
     private function sanitizedName(Request $request, Upload $upload): string
     {
-        $basename = (string) preg_replace('/[^a-z0-9_.-]/i', '', basename($upload->name()));
+        $basename = (string) preg_replace('/[^a-z0-9_.-]/i', "", basename($upload->name()));
         if (!preg_match('/[a-z0-9_-]{1,200}\.[a-z0-9_-]{1,10}/', $basename)) {
             return "";
         }
-        return $this->getImageFolder($request) . $basename;
+        return $this->imageFolder($request) . $basename;
     }
 
-    /**
-     * @return string
-     */
-    private function getImageFolder(Request $request)
+    private function imageFolder(Request $request): string
     {
-        $subfolder = $this->conf['images_subfolder']
-            ? preg_replace('/[^a-z0-9-]/i', '', $request->user())
-            : '';
-        return rtrim($this->imageFolder . $subfolder, '/') . '/';
-    }
-
-    /**
-     * @param int $error
-     * @return string
-     */
-    private function getUploadErrorKey($error)
-    {
-        switch ($error) {
-            case UPLOAD_ERR_INI_SIZE:
-                return 'inisize';
-            case UPLOAD_ERR_FORM_SIZE:
-                return 'formsize';
-            case UPLOAD_ERR_PARTIAL:
-                return 'partial';
-            case UPLOAD_ERR_NO_FILE:
-                return 'nofile';
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return 'notmpdir';
-            case UPLOAD_ERR_CANT_WRITE:
-                return 'cantwrite';
-            case UPLOAD_ERR_EXTENSION:
-                return 'extension';
-            default:
-                return 'unknown';
-        }
+        return $this->conf["images_subfolder"]
+            ? $this->imageFolder . preg_replace('/[^a-z0-9-]/i', "", $request->user()) . "/"
+            : $this->imageFolder;
     }
 }

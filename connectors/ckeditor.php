@@ -23,7 +23,7 @@ function Extedit_Ckeditor_init(): string
 {
     global $sn, $su;
 
-    $url = "$sn?$su&extedit_imagepicker";
+    $url = "$sn?$su&function=extedit_imagepicker";
     return <<<SCRIPT
 <script type="text/javascript">
 var extedit_filepicker_url = "$url";

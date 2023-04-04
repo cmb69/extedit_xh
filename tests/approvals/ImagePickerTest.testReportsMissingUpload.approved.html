@@ -48,11 +48,11 @@
     <script type="text/javascript" src="./connectors/tinymce4.js"></script>
   </head>
   <body onload="init();">
+    <div id="message"><p>No file was selected for upload!</p></div>
     <div id="imagepicker">
-      <img src="vfs://root/userfiles/images/cmb/image.jpg" alt="image.jpg (640 × 480 px)" title="image.jpg (640 × 480 px)"/>
-      <img src="vfs://root/userfiles/images/cmb/image.png" alt="image.png (480 × 640 px)" title="image.png (480 × 640 px)"/>
+      <p>There are no images in the image folder.</p>
     </div>
-    <form id="upload" action="/?Extedit&amp;function=extedit_imagepicker" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/?&amp;function=extedit_imagepicker" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="extedit_token" value="C241yFT+b4BFU7hhp2oY">
       <input name="extedit_file" type="file">
       <button>Upload</button>

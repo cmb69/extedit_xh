@@ -24,7 +24,7 @@ function Extedit_Tinymce4_init(): string
     global $sn, $su, $plugin_tx;
 
     $title = json_encode($plugin_tx['extedit']['imagepicker_title']);
-    $url = "$sn?$su&extedit_imagepicker";
+    $url = "$sn?$su&function=extedit_imagepicker";
     return <<<EOS
 <script type="text/javascript">
 function extedit_imagepicker(field_name, url, type, win) {

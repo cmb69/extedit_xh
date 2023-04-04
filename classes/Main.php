@@ -45,6 +45,6 @@ class Main
         if ($this->conf["allow_template"] && $request->action("") === "edit") {
             $this->editor->init();
         }
-        return Response::create("");
+        return Response::null();
     }
 }
