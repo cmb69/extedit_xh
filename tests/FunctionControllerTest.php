@@ -26,54 +26,90 @@ use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Editor;
 use Extedit\Infra\FakeContentRepo;
 use Extedit\Infra\FakeRequest;
+use Extedit\Infra\Pages;
 use Extedit\Infra\View;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
 class FunctionControllerTest extends TestCase
 {
-    private $sut;
+    private $conf;
     private $contentRepo;
+    private $editor;
+    private $csrfProtector;
+    private $pages;
+    private $view;
 
     public function setUp(): void
     {
         vfsStream::setup("root");
-        $conf = XH_includeVar("./config/config.php", "plugin_cf")["extedit"];
+        $this->conf = XH_includeVar("./config/config.php", "plugin_cf")["extedit"];
         $this->contentRepo = new FakeContentRepo("vfs://root/content/extedit/");
         $this->contentRepo->save("test", "some content");
-        $editor = $this->createStub(Editor::class);
-        $csrfProtector = $this->createStub(CsrfProtector::class);
-        $csrfProtector->method("token")->willReturn("C241yFT+b4BFU7hhp2oY");
-        $csrfProtector->method("check")->willReturn(true);
-        $view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
-        $this->sut = new FunctionController($conf, $this->contentRepo, $editor, $csrfProtector, $view);
+        $this->contentRepo->save("Extedit", "some other content");
+        $this->contentRepo->save("plugincall", "{{{trim('something')}}}");
+        $this->editor = $this->createStub(Editor::class);
+        $this->csrfProtector = $this->createStub(CsrfProtector::class);
+        $this->csrfProtector->method("token")->willReturn("C241yFT+b4BFU7hhp2oY");
+        $this->csrfProtector->method("check")->willReturn(true);
+        $this->pages = $this->createStub(Pages::class);
+        $this->view = new View("./views/", XH_includeVar("./languages/en.php", "plugin_tx")["extedit"]);
+    }
+
+    public function sut(): FunctionController
+    {
+        return new FunctionController(
+            $this->conf,
+            $this->contentRepo,
+            $this->editor,
+            $this->csrfProtector,
+            $this->pages,
+            $this->view
+        );
     }
 
     public function testRendersView(): void
     {
         $request = new FakeRequest(["query" => "Extedit"]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testRendersViewForEditors(): void
     {
         $request = new FakeRequest(["query" => "Extedit", "user" => "cmb"]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testRendersViewWithImplicitTextname(): void
+    {
+        $this->pages->method("heading")->willReturn("Extedit");
+        $request = new FakeRequest(["query" => "Extedit"]);
+        $response = $this->sut()($request, "cmb", null);
+        Approvals::verifyHtml($response->output());
+    }
+
+    public function testRendersViewWithEvaluatedPluginCalls(): void
+    {
+        $this->conf = ["allow_scripting" => "true"] + $this->conf;
+        $this->pages->method("evaluatePluginCalls")->willReturn("something");
+        $request = new FakeRequest(["query" => "Extedit"]);
+        $response = $this->sut()($request, "cmb", "plugincall");
         Approvals::verifyHtml($response->output());
     }
 
     public function testRendersEditor(): void
     {
         $request = new FakeRequest(["query" => "Extedit&extedit_action=edit", "user" => "cmb"]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
     public function testReportsMissingAuthorizationToEdit(): void
     {
         $request = new FakeRequest(["query" => "Extedit&extedit_action=edit"]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
@@ -84,7 +120,7 @@ class FunctionControllerTest extends TestCase
             "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
             "user" => "cmb",
         ]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         $this->assertEquals("some content", $this->contentRepo->findByName("test"));
         $this->assertEquals("http://example.com/?Extedit&extedit_action=edit", $response->location());
     }
@@ -93,9 +129,9 @@ class FunctionControllerTest extends TestCase
     {
         $request = new FakeRequest([
             "query" => "Extedit&extedit_action=edit",
-            "post" => ["extedit_text" => "some content", "extedit_mtime" => "0"],
+            "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
         ]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         $this->assertEquals("<p class=\"xh_fail\">You are not authorized for this action!</p>\n", $response->output());
     }
 
@@ -107,7 +143,7 @@ class FunctionControllerTest extends TestCase
             "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
             "user" => "cmb",
         ]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 
@@ -119,7 +155,7 @@ class FunctionControllerTest extends TestCase
             "post" => ["extedit_do" => "test", "extedit_text" => "some content", "extedit_mtime" => "0"],
             "user" => "cmb",
         ]);
-        $response = $this->sut->handle($request, "cmb", "test");
+        $response = $this->sut()($request, "cmb", "test");
         Approvals::verifyHtml($response->output());
     }
 }

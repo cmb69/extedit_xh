@@ -21,37 +21,18 @@
 
 namespace Extedit\Infra;
 
-class FakeRequest extends Request
+/** @codeCoverageIgnore */
+class Pages
 {
-    private $options;
-
-    public function __construct(array $options = [])
+    public function heading(int $page): string
     {
-        $this->options = $options;
+        global $h, $cl;
+        assert($page >= 0 && $page < $cl);
+        return $h[$page];
     }
 
-    public function admin(): bool
+    public function evaluatePluginCalls(string $content): string
     {
-        return $this->options["admin"] ?? false;
-    }
-
-    public function user(): string
-    {
-        return $this->options["user"] ?? "";
-    }
-
-    public function s(): int
-    {
-        return $this->options["s"] ?? -1;
-    }
-
-    protected function query(): string
-    {
-        return $this->options["query"] ?? "";
-    }
-
-    protected function post(): array
-    {
-        return $this->options["post"] ?? [];
+        return evaluate_plugincall($content);
     }
 }

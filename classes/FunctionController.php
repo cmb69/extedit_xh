@@ -24,6 +24,7 @@ namespace Extedit;
 use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Editor;
+use Extedit\Infra\Pages;
 use Extedit\Infra\Request;
 use Extedit\Infra\View;
 use Extedit\Value\Html;
@@ -44,6 +45,9 @@ class FunctionController
     /** @var CsrfProtector */
     private $csrfProtector;
 
+    /** @var Pages */
+    private $pages;
+
     /** @var View */
     private $view;
 
@@ -53,32 +57,43 @@ class FunctionController
         ContentRepo $contentRepo,
         Editor $editor,
         CsrfProtector $csrfProtector,
+        Pages $pages,
         View $view
     ) {
         $this->conf = $conf;
         $this->contentRepo = $contentRepo;
         $this->editor = $editor;
         $this->csrfProtector = $csrfProtector;
+        $this->pages = $pages;
         $this->view = $view;
     }
 
-    public function handle(Request $request, string $username, ?string $textname): Response
+    public function __invoke(Request $request, string $username, ?string $textname): Response
     {
-        $textname = $this->sanitizeTextname($textname);
+        $textname = $this->sanitizeTextname($request, $textname);
         switch ($request->action($textname)) {
             default:
                 return $this->view($request, $username, $textname);
             case "edit":
                 return $this->edit($request, $username, $textname);
             case "do_edit":
-                return $this->handleSave($request, $username, $textname);
+                return $this->save($request, $username, $textname);
         }
+    }
+
+    private function sanitizeTextname(Request $request, ?string $textname): string
+    {
+        if ($textname === null) {
+            $textname = $this->pages->heading(max(0, $request->s()));
+        }
+        return (string) preg_replace('/[^a-z0-9-]/i', "", $textname);
     }
 
     private function view(Request $request, string $username, string $textname): Response
     {
+        $mayEdit = $this->isAuthorizedToEdit($request, $username);
         $content = $this->contentRepo->findByName($textname);
-        return Response::create($this->renderView($request->url(), $this->isAuthorizedToEdit($request, $username), $content));
+        return Response::create($this->renderView($request->url(), $mayEdit, $content));
     }
 
     private function edit(Request $request, string $username, string $textname): Response
@@ -86,53 +101,36 @@ class FunctionController
         if (!$this->isAuthorizedToEdit($request, $username)) {
             return Response::create($this->view->error("err_unauthorized"));
         }
+        $content = $this->contentRepo->findByName($textname);
         $this->editor->init();
-        return Response::create($this->renderEditForm($request->url(), $textname, $this->contentRepo->findByName($textname)));
+        return Response::create($this->renderEditForm($request->url(), $textname, $content));
     }
 
-    /**
-     * @param string $username
-     * @return bool
-     */
-    private function isAuthorizedToEdit(Request $request, $username)
-    {
-        return $request->admin()
-            || $username == '*' && $request->user()
-            || in_array($request->user(), explode(',', $username));
-    }
-
-    private function handleSave(Request $request, string $username, string $textname): Response
+    private function save(Request $request, string $username, string $textname): Response
     {
         if (!$this->isAuthorizedToEdit($request, $username) || !$this->csrfProtector->check()) {
             return Response::create($this->view->error("err_unauthorized"));
         }
         $post = $request->textPost();
         $mtime = $this->contentRepo->findLastModification($textname);
-        if ($post["mtime"] < $mtime) {
+        if ((int) $post["mtime"] < $mtime) {
+            $errors = [["err_changed", $textname]];
             $this->editor->init();
-            return Response::create($this->view->error("err_changed", $textname)
-                . $this->renderEditForm($request->url(), $textname, $post["text"]));
+            return Response::create($this->renderEditForm($request->url(), $textname, $post["text"], $errors));
         }
         if (!$this->contentRepo->save($textname, $post["text"])) {
+            $errors = [["err_save", $this->contentRepo->filename($textname)]];
             $this->editor->init();
-            return Response::create($this->view->error("err_save", $this->contentRepo->filename($textname))
-                . $this->renderEditForm($request->url(), $textname, $post["text"]));
+            return Response::create($this->renderEditForm($request->url(), $textname, $post["text"], $errors));
         }
         return Response::redirect($request->url()->with("extedit_action", "edit")->absolute());
     }
 
-    /**
-     * @return string (X)HTML
-     */
-    private function renderEditForm(Url $url, string $textname, string $content): string
+    private function isAuthorizedToEdit(Request $request, string $username): bool
     {
-        return $this->view->render('edit_form', [
-            'editUrl' => $url->without("extedit_action")->relative(),
-            'content' => $content,
-            'mtime' => $this->contentRepo->findLastModification($textname),
-            "textname" => $textname,
-            "token" => $this->csrfProtector->token(),
-        ]);
+        return $request->admin()
+            || $request->user() && $username == "*"
+            || $request->user() && in_array($request->user(), explode(",", $username), true);
     }
 
     private function renderView(Url $url, bool $mayEdit, string $content): string
@@ -144,24 +142,23 @@ class FunctionController
         ]);
     }
 
-    private function sanitizeTextname(?string $textname): string
+    /** @param list<array{string}> $errors */
+    private function renderEditForm(Url $url, string $textname, string $content, array $errors = []): string
     {
-        global $h, $s;
-
-        // TODO: check that $s is valid?
-        if (!isset($textname)) {
-            $textname = $h[max($s, 0)];
-        }
-        return preg_replace('/[^a-z0-9-]/i', '', $textname);
+        return $this->view->render("edit_form", [
+            "url" => $url->without("extedit_action")->relative(),
+            "errors" => $errors,
+            "content" => $content,
+            "mtime" => $this->contentRepo->findLastModification($textname),
+            "textname" => $textname,
+            "token" => $this->csrfProtector->token(),
+        ]);
     }
 
-    /**
-     * @return string
-     */
-    private function evaluatePlugincall(string $content)
+    private function evaluatePlugincall(string $content): string
     {
-        if ($this->conf['allow_scripting']) {
-            return evaluate_plugincall($content);
+        if ($this->conf["allow_scripting"]) {
+            return $this->pages->evaluatePluginCalls($content);
         }
         return $content;
     }

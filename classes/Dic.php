@@ -25,6 +25,7 @@ use Extedit\Infra\ContentRepo;
 use Extedit\Infra\CsrfProtector;
 use Extedit\Infra\Editor;
 use Extedit\Infra\ImageRepo;
+use Extedit\Infra\Pages;
 use Extedit\Infra\SystemChecker;
 use Extedit\Infra\View;
 
@@ -38,6 +39,7 @@ class Dic
             new ContentRepo($pth["folder"]["content"] . "extedit/"),
             Dic::makeEditor(),
             new CsrfProtector,
+            new Pages,
             self::makeView()
         );
     }

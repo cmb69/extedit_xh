@@ -52,6 +52,13 @@ class Request
         return $_SESSION["username"] ?? "";
     }
 
+    /** @codeCoverageIgnore */
+    public function s(): int
+    {
+        global $s;
+        return $s;
+    }
+
     public function action(string $textname): string
     {
         $action = $this->url()->param("extedit_action") ?? "";

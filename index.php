@@ -32,7 +32,7 @@ const EXTEDIT_VERSION = '2.0-dev';
  */
 function extedit($username, $textname = null)
 {
-    return Responder::respond(Dic::makeFunctionController()->handle(Request::current(), $username, $textname));
+    return Responder::respond(Dic::makeFunctionController()(Request::current(), $username, $textname));
 }
 
 /**
