@@ -1,0 +1,19 @@
+/* image picker */
+
+#message {
+    background: #ffa7a7;
+}
+#imagepicker {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+#imagepicker img {
+    max-height: 120px;
+    margin: 5px;
+    cursor: pointer;
+}
+#upload {
+    margin: 1em;
+}

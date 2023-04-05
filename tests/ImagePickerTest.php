@@ -53,7 +53,6 @@ class ImagePickerTest extends TestCase
     {
         return new ImagePicker(
             "./",
-            "",
             "vfs://root/userfiles/images/",
             $this->conf,
             $this->imageRepo,

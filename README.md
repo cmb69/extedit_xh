@@ -41,7 +41,7 @@ for further details.
 1. Unzip the distribution on your computer.
 1. Upload the whole directory `extedit/` to your server into the `plugins/`
    directory of CMSimple_XH.
-1. Set write permissions for the subdirectories `config/` and `languages/`.
+1. Set write permissions for the subdirectories `config/`, `css/` and `languages/`.
 1. Navigate to `Plugins` → `Extedit` in the back-end
    to check if all requirements are fulfilled.
 

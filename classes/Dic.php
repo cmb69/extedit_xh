@@ -55,7 +55,6 @@ class Dic
         global $pth, $cf, $plugin_cf;
         return new ImagePicker(
             $pth["folder"]["plugins"] . "extedit/",
-            $pth["folder"]["base"],
             $pth["folder"]["images"],
             $plugin_cf["extedit"] + ["editor_external" => $cf["editor"]["external"]],
             new ImageRepo($plugin_cf["extedit"]["images_extensions"]),

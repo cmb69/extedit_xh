@@ -36,9 +36,6 @@ class ImagePicker
     private $pluginFolder;
 
     /** @var string */
-    private $baseFolder;
-
-    /** @var string */
     private $imageFolder;
 
     /** @var array<string,string> */
@@ -56,7 +53,6 @@ class ImagePicker
     /** @param array<string,string> $conf */
     public function __construct(
         string $pluginFolder,
-        string $baseFolder,
         string $imageFolder,
         array $conf,
         ImageRepo $imageRepo,
@@ -64,7 +60,6 @@ class ImagePicker
         View $view
     ) {
         $this->pluginFolder = $pluginFolder;
-        $this->baseFolder = $baseFolder;
         $this->imageFolder = $imageFolder;
         $this->conf = $conf;
         $this->imageRepo = $imageRepo;
@@ -94,8 +89,9 @@ class ImagePicker
     {
         return $this->view->render("imagepicker", [
             "images" => $this->imageRecords($this->imageRepo->findAll($this->imageFolder($request))),
-            "baseFolder" => $this->baseFolder,
-            "editorHook" => $this->pluginFolder . "connectors/" . $this->conf["editor_external"] . ".js",
+            "stylesheet" => $this->pluginFolder . "css/stylesheet.css",
+            "script" => $this->pluginFolder . "imagepicker.min.js",
+            "editor" => $this->conf["editor_external"],
             "uploadUrl" => $request->url()->with("function", "extedit_imagepicker")->relative(),
             "error" => $error,
             "token" => $this->csrfProtector->token(),

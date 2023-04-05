@@ -2,13 +2,11 @@ parameters:
   level: 9
   paths:
     - classes/
-    - connectors/
     - views/
     - admin.php
     - index.php
   bootstrapFiles:
     - phpstan.php
   scanFiles:
-    - ../../cmsimple/classes/CSRFProtection.php
     - ../../cmsimple/adminfuncs.php
     - ../../cmsimple/functions.php

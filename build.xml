@@ -11,7 +11,7 @@
 
   <target name="sniff" description="checks adherence to the coding standard">
     <exec executable="phpcs" passthru="true" checkreturn="true">
-      <arg line="--standard=PSR2 --runtime-set ignore_warnings_on_exit true --extensions=php classes connectors admin.php index.php"/>
+      <arg line="--standard=PSR2 --runtime-set ignore_warnings_on_exit true --extensions=php classes admin.php index.php"/>
     </exec>
   </target>
 
@@ -46,6 +46,9 @@
     </exec>
     <unzip file="export.zip" todir="export"/>
     <delete file="export.zip"/>
+    <exec executable="uglifyjs" passthru="true" checkreturn="true">
+      <arg line="export/imagepicker.min.js --compress --mangle --toplevel --output export/imagepicker.min.js"/>
+    </exec>
     <move todir="dist">
       <fileset dir="export">
         <include name="views/*.php"/>
@@ -56,12 +59,6 @@
         </replaceregexp>
       </filterchain>
     </move>
-    <jsMin targetDir="dist" suffix="" failOnError="false">
-      <fileset dir="export">
-        <include name="*.js"/>
-        <include name="connectors/*.js"/>
-      </fileset>
-    </jsMin>
     <move todir="dist">
       <fileset dir="export">
         <exclude name=".github/**"/>

@@ -44,7 +44,7 @@ finden Sie weitere Informationen.
 1. Entpacken Sie die ZIP-Datei auf Ihrem Rechner.
 1. Laden Sie das ganze Verzeichnis `extedit/` auf Ihren Server in das `plugins/`
    Verzeichnis von CMSimple_XH hoch.
-1. Machen Sie die Unterverzeichnisse `config/` und `languages/`
+1. Machen Sie die Unterverzeichnisse `config/`, `css/` und `languages/`
    beschreibbar.
 1. Navigieren Sie zu `Plugins` → `Extedit` im Administrationsbereich,
    um zu prüfen, ob alle Voraussetzungen erfüllt sind.

@@ -7,8 +7,9 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
 /**
  * @var View $this
  * @var list<array{title:string,filename:string}> $images
- * @var string $baseFolder
- * @var string $editorHook
+ * @var string $stylesheet
+ * @var string $script
+ * @var string $editor
  * @var string|null $error
  * @var string $uploadUrl
  * @var string $token
@@ -20,63 +21,23 @@ if (!defined("CMSIMPLE_XH_VERSION")) {header("HTTP/1.1 403 Forbidden"); exit;}
   <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <title><?=$this->text('imagepicker_title')?></title>
-    <style type="text/css">
-      #message {
-        background: #ffa7a7;
-      }
-      #imagepicker {}
-      #imagepicker img {
-        float: left;
-        max-height: 200px;
-        margin: 10px;
-        cursor: pointer;
-      }
-      #upload {
-        clear: both;
-      }
-    </style>
-    <script type="text/javascript">
-      var baseFolder = "<?=$baseFolder?>";
-      function init() {
-        var picker = document.getElementById("imagepicker"),
-          images = picker.getElementsByTagName("img"),
-          i, len;
-
-        function onclick(image) {
-          return function() {
-            pick(image);
-          };
-        }
-
-        for (i = 0, len = images.length; i < len; i++) {
-          images[i].onclick = onclick(images[i]);
-        }
-      }
-
-      function pick(image) {
-        var re = new RegExp('^' + location.protocol + "//" +
-                  location.host + location.pathname),
-          path = image.src.replace(re, "./");
-        
-        setUrl(path);
-      }
-    </script>
-    <script type="text/javascript" src="<?=$editorHook?>"></script>
+    <link rel="stylesheet" href="<?=$stylesheet?>" type="text/css">
+    <script type="module" src="<?=$script?>"></script>
   </head>
-  <body onload="init();">
+  <body>
 <?if (isset($error)):?>
     <div id="message"><p><?=$this->text($error)?></p></div>
 <?endif?>
-    <div id="imagepicker">
+    <div id="imagepicker" data-editor="<?=$editor?>">
 <?if (empty($images)):?>
       <p><?=$this->text('imagepicker_empty')?></p>
 <?else:?>
 <?  foreach ($images as $image):?>
-      <img src="<?=$image['filename']?>" alt="<?=$image['title']?>" title="<?=$image['title']?>"/>
+      <img src="<?=$image['filename']?>" alt="<?=$image['title']?>" title="<?=$image['title']?>" data-url="<?=$image['filename']?>"/>
 <?  endforeach?>
 <?endif?>
     </div>
-    <form id="upload" action="<?=$uploadUrl?>" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="<?=$uploadUrl?>" method="post" enctype="multipart/form-data">
       <input type="hidden" name="extedit_token" value="<?=$token?>">
       <input name="extedit_file" type="file">
       <button><?=$this->text('imagepicker_upload')?></button>

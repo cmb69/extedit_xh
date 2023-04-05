@@ -4,55 +4,15 @@
   <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <title>Choose an Image</title>
-    <style type="text/css">
-      #message {
-        background: #ffa7a7;
-      }
-      #imagepicker {}
-      #imagepicker img {
-        float: left;
-        max-height: 200px;
-        margin: 10px;
-        cursor: pointer;
-      }
-      #upload {
-        clear: both;
-      }
-    </style>
-    <script type="text/javascript">
-      var baseFolder = "";
-      function init() {
-        var picker = document.getElementById("imagepicker"),
-          images = picker.getElementsByTagName("img"),
-          i, len;
-
-        function onclick(image) {
-          return function() {
-            pick(image);
-          };
-        }
-
-        for (i = 0, len = images.length; i < len; i++) {
-          images[i].onclick = onclick(images[i]);
-        }
-      }
-
-      function pick(image) {
-        var re = new RegExp('^' + location.protocol + "//" +
-                  location.host + location.pathname),
-          path = image.src.replace(re, "./");
-        
-        setUrl(path);
-      }
-    </script>
-    <script type="text/javascript" src="./connectors/tinymce4.js"></script>
+    <link rel="stylesheet" href="./css/stylesheet.css" type="text/css">
+    <script type="module" src="./imagepicker.min.js"></script>
   </head>
-  <body onload="init();">
+  <body>
     <div id="message"><p>You are not authorized for this action!</p></div>
-    <div id="imagepicker">
+    <div id="imagepicker" data-editor="tinymce4">
       <p>There are no images in the image folder.</p>
     </div>
-    <form id="upload" action="/?&amp;function=extedit_imagepicker" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/?&amp;function=extedit_imagepicker" method="post" enctype="multipart/form-data">
       <input type="hidden" name="extedit_token" value="C241yFT+b4BFU7hhp2oY">
       <input name="extedit_file" type="file">
       <button>Upload</button>
