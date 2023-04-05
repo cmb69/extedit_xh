@@ -96,6 +96,41 @@ function extedit_imagepicker(field_name, url, type, win) {
 EOS;
     }
 
+    private function tinymce5(Request $request): string
+    {
+        $title = json_encode($this->text["imagepicker_title"]);
+        $url = json_encode($request->url()->with("function", "extedit_imagepicker")->relative());
+        return <<<EOS
+<script>
+addEventListener("load", function () {
+    tinymce.EditorManager.editors.forEach(function (editor) {
+        settings = editor.settings;
+        settings.file_picker_callback = extedit_imagepicker;
+        editor.destroy();
+        tinymce.init(settings);
+    });
+});
+function extedit_imagepicker(callback, value, meta) {
+    if (meta.filetype !== "image") {
+        return false;
+    };
+    let dialog =  tinymce.activeEditor.windowManager.openUrl({
+        title: $title,
+        width: 800,
+        url: $url,
+        onMessage: function (aDialog, data) {
+            if (aDialog === dialog && data.mceAction === "setUrl") {
+                callback(data.url);
+                dialog.close();
+            }
+        }
+    });
+    return false;
+}
+</script>
+EOS;
+    }
+
     private function ckeditor(Request $request): string
     {
         $url = json_encode($request->url()->with("function", "extedit_imagepicker")->relative());
