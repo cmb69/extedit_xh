@@ -87,7 +87,7 @@ class ImagePicker
 
     private function show(Request $request): Response
     {
-        return Response::create($this->render($request))->withContentType("text/html; charset=utf-8");
+        return $this->respondWith($this->render($request));
     }
 
     private function render(Request $request, ?string $error = null): string
@@ -123,31 +123,29 @@ class ImagePicker
     private function upload(Request $request): Response
     {
         if (!$this->csrfProtector->check()) {
-            return Response::create($this->render($request, "err_unauthorized"))
-                ->withContentType("text/html; charset=utf-8");
+            return $this->respondWith($this->render($request, "err_unauthorized"));
         }
         if (($upload = $request->upload()) === null) {
-            return Response::create($this->render($request, "imagepicker_err_nofile"))
-                ->withContentType("text/html; charset=utf-8");
+            return $this->respondWith($this->render($request, "imagepicker_err_nofile"));
         }
         if ($upload->error()) {
-            return Response::create($this->render($request, "imagepicker_err_" . $upload->error()))
-                ->withContentType("text/html; charset=utf-8");
+            return $this->respondWith($this->render($request, "imagepicker_err_" . $upload->error()));
         }
         if (!$this->imageRepo->isImage($upload->name())) {
-            return Response::create($this->render($request, "imagepicker_err_mimetype"))
-                ->withContentType("text/html; charset=utf-8");
+            return $this->respondWith($this->render($request, "imagepicker_err_mimetype"));
         }
-        $destination = $this->sanitizedName($request, $upload);
-        if ($destination === "") {
-            return Response::create($this->render($request, "imagepicker_err_save"))
-                ->withContentType("text/html; charset=utf-8");
+        if (($destination = $this->sanitizedName($request, $upload)) === "") {
+            return $this->respondWith($this->render($request, "imagepicker_err_save"));
         }
         if (!$this->imageRepo->save($upload, $destination)) {
-            return Response::create($this->render($request, "imagepicker_err_save"))
-                ->withContentType("text/html; charset=utf-8");
+            return $this->respondWith($this->render($request, "imagepicker_err_save"));
         }
         return Response::redirect($request->url()->with("function", "extedit_imagepicker")->absolute());
+    }
+
+    private function respondWith(string $output): Response
+    {
+        return Response::create($output)->withContentType("text/html; charset=utf-8");
     }
 
     private function sanitizedName(Request $request, Upload $upload): string
