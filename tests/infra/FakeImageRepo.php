@@ -23,6 +23,11 @@ namespace Extedit\Infra;
 
 class FakeImageRepo extends ImageRepo
 {
+    public function __construct(string $imageExtensions = "gif,jpeg,jpg,png,webp")
+    {
+        parent::__construct($imageExtensions);
+    }
+
     protected function moveUploadedFile(string $from, string $to): bool
     {
         return @rename($from, $to);

@@ -32,7 +32,7 @@ class Image
     /** @var int */
     private $height;
 
-    public function __construct(string $filename, int $width, int $height)
+    public function __construct(string $filename, int $width = 0, int $height = 0)
     {
         $this->filename = $filename;
         $this->width = $width;

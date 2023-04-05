@@ -30,8 +30,8 @@ class DicTest extends TestCase
         global $pth, $cf, $plugin_cf, $plugin_tx;
         $pth = ["folder" => ["base" => "", "content" => "", "images" => "", "plugins" => ""]];
         $cf = ["editor" => ["external" => ""]];
-        $plugin_cf = ["extedit" => []];
-        $plugin_tx = ["extedit" => ["imagepicker_dimensions" => ""]];
+        $plugin_cf = ["extedit" => ["images_extensions" => ""]];
+        $plugin_tx = ["extedit" => []];
     }
 
     public function testMakesMain(): void

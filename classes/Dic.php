@@ -58,7 +58,7 @@ class Dic
             $pth["folder"]["base"],
             $pth["folder"]["images"],
             $plugin_cf["extedit"] + ["editor_external" => $cf["editor"]["external"]],
-            new ImageRepo,
+            new ImageRepo($plugin_cf["extedit"]["images_extensions"]),
             new CsrfProtector,
             self::makeView()
         );

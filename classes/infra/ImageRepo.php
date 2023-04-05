@@ -26,26 +26,46 @@ use Extedit\Value\Upload;
 
 class ImageRepo
 {
+    /** @var list<string> */
+    private $imageExtensions;
+
+    public function __construct(string $imageExtensions)
+    {
+        $this->imageExtensions = array_map("trim", explode(",", $imageExtensions));
+    }
+
     /** @return list<Image> */
     public function findAll(string $folder): array
     {
         $images = [];
-        if (($dh = opendir($folder)) !== false) {
-            while (($entry = readdir($dh)) !== false) {
-                if ($entry[0] != '.' && is_file($ffn = $folder . $entry)
-                    && is_readable($ffn) && getimagesize($ffn) !== false
-                ) {
-                    $info = getimagesize($ffn);
-                    if ($info) {
-                        [$width, $height] = $info;
-                    } else {
-                        $width = $height = 0;
-                    }
-                    $images[] = new Image($ffn, $width, $height);
+        if (($dir = opendir($folder)) !== false) {
+            while (($entry = readdir($dir)) !== false) {
+                if (($image = $this->imageFromEntry($folder, $entry)) === null) {
+                    continue;
                 }
+                $images[] = $image;
             }
+            closedir($dir);
         }
         return $images;
+    }
+
+    private function imageFromEntry(string $folder, string $entry): ?Image
+    {
+        if ($entry[0] === "." || !$this->isImage($entry)) {
+            return null;
+        }
+        $filename = $folder . $entry;
+        if (!($info = @getimagesize($filename))) {
+            return new Image($filename);
+        }
+        [$width, $height] = $info;
+        return new Image($filename, $width, $height);
+    }
+
+    public function isImage(string $filename): bool
+    {
+        return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $this->imageExtensions, true);
     }
 
     public function save(Upload $upload, string $destination): bool

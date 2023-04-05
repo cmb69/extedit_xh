@@ -22,33 +22,49 @@
 namespace Extedit\Infra;
 
 use Extedit\Value\Image;
+use Extedit\Value\Upload;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
 class ImageRepoTest extends TestCase
 {
+    public function setUp(): void
+    {
+        vfsStream::setup("root");
+    }
+
+    private function sut(): ImageRepo
+    {
+        return new ImageRepo(XH_includeVar("./config/config.php", "plugin_cf")["extedit"]["images_extensions"]);
+    }
+
     public function testFindsNoImagesInEmptyFolder(): void
     {
-        vfsStream::setup("root/");
-        $sut = new ImageRepo(" (%1\$d × %2\$d px)");
-        $images = $sut->findAll(vfsStream::url("root/"));
+        $images = $this->sut()->findAll("vfs://root/");
         $this->assertEmpty($images);
     }
 
     public function testFindsAllImagesInNonEmptyFolder(): void
     {
-        vfsStream::setup("root/");
         $im = imagecreatetruecolor(50, 50);
-        imagejpeg($im, vfsStream::url("root/image.jpg"));
+        imagejpeg($im, "vfs://root/image1.jpg");
         $im = imagecreatetruecolor(5, 500);
-        imagejpeg($im, vfsStream::url("root/image.png"));
-        // touch(vfsStream::url("root/text.txt"));
-        $sut = new ImageRepo(" (%1\$d × %2\$d px)");
-        $images = $sut->findAll(vfsStream::url("root/"));
+        imagepng($im, "vfs://root/image2.png");
+        touch("vfs://root/image3.webp");
+        $images = $this->sut()->findAll("vfs://root/");
         $expected = [
-            new Image("vfs://root/image.jpg", 50, 50),
-            new Image("vfs://root/image.png", 5, 500),
+            new Image("vfs://root/image1.jpg", 50, 50),
+            new Image("vfs://root/image2.png", 5, 500),
+            new Image("vfs://root/image3.webp"),
         ];
         $this->assertEquals($expected, $images);
+    }
+
+    public function testFailsToSaveIfDestinationExists(): void
+    {
+        touch("vfs://root/image.jpeg");
+        $upload = new Upload(["name" => "irrelevant", "tmp_name" => "irrelevant", "error" => 0]);
+        $result = $this->sut()->save($upload, "vfs://root/image.jpeg");
+        $this->assertFalse($result);
     }
 }

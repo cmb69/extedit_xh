@@ -134,7 +134,7 @@ class ImagePicker
             return Response::create($this->render($request, "imagepicker_err_" . $upload->error()))
                 ->withContentType("text/html; charset=utf-8");
         }
-        if (!$this->hasAllowedExtension($upload->name())) {
+        if (!$this->imageRepo->isImage($upload->name())) {
             return Response::create($this->render($request, "imagepicker_err_mimetype"))
                 ->withContentType("text/html; charset=utf-8");
         }
@@ -148,12 +148,6 @@ class ImagePicker
                 ->withContentType("text/html; charset=utf-8");
         }
         return Response::redirect($request->url()->with("function", "extedit_imagepicker")->absolute());
-    }
-
-    private function hasAllowedExtension(string $filename): bool
-    {
-        $allowedExtensions = array_map("trim", explode(",", $this->conf["images_extensions"]));
-        return in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $allowedExtensions, true);
     }
 
     private function sanitizedName(Request $request, Upload $upload): string
